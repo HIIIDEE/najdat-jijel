@@ -13,7 +13,8 @@ import {
   DialogTitle,
   DialogDescription,
 } from "@/components/ui/dialog";
-import { categoryEmoji, formatQuantity, relativeTimeAr, unitLabels } from "@/lib/constants";
+import { formatQuantity, relativeTimeAr, unitLabels } from "@/lib/constants";
+import { CategoryIcon } from "@/components/shared/category-icon";
 import { splitNeedNotes } from "@/lib/notes";
 import { cn } from "@/lib/utils";
 import type { Database } from "@/types/database";
@@ -33,12 +34,11 @@ export function NeedCard({ need }: { need: Need }) {
   const coverage = hasQuantities ? Math.min(100, Math.round((available / needed) * 100)) : 0;
 
   const unit = unitLabels[need.unit] ?? need.unit;
-  const emoji = need.categories ? (categoryEmoji[need.categories.slug] ?? "📦") : "📦";
   const title = need.title || need.categories?.name_ar || "احتياج";
   const { detail, source } = splitNeedNotes(need.notes);
 
   async function share() {
-    const text = `${emoji} ${title} — ${need.commune}، ولاية ${need.wilaya}`;
+    const text = `${title} — ${need.commune}، ولاية ${need.wilaya}`;
     const url = typeof window !== "undefined" ? `${window.location.origin}/needs` : "";
     try {
       if (navigator.share) {
@@ -69,8 +69,8 @@ export function NeedCard({ need }: { need: Need }) {
           </div>
 
           <div className="flex items-start gap-2.5">
-            <span className="text-2xl leading-none" aria-hidden>
-              {emoji}
+            <span className="flex size-9 shrink-0 items-center justify-center rounded-lg bg-algeria-green/10 text-algeria-green">
+              <CategoryIcon slug={need.categories?.slug} className="size-5" />
             </span>
             <div className="min-w-0">
               <p className="font-bold leading-tight">{title}</p>
@@ -153,8 +153,8 @@ export function NeedCard({ need }: { need: Need }) {
         <DialogContent className="max-h-[85vh] overflow-y-auto sm:max-w-md">
           <DialogHeader>
             <div className="flex items-center gap-2">
-              <span className="text-2xl" aria-hidden>
-                {emoji}
+              <span className="flex size-8 shrink-0 items-center justify-center rounded-lg bg-algeria-green/10 text-algeria-green">
+                <CategoryIcon slug={need.categories?.slug} className="size-4" />
               </span>
               <DialogTitle>{title}</DialogTitle>
             </div>

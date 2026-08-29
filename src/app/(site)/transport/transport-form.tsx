@@ -74,7 +74,7 @@ export function TransportForm() {
     return (
       <div className="animate-rise space-y-5">
         <SuccessPanel
-          title="تم تسجيل عرض النقل بنجاح 🚚"
+          title="تم تسجيل عرض النقل بنجاح"
           description="سيتواصل فريق التنسيق معك لتأكيد التفاصيل والمسار. في الأسفل المساعدات التي يمكن تحميلها على مسارك."
           primaryHref="/map"
           primaryLabel="عرض نقاط الاستلام"

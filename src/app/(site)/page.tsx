@@ -9,6 +9,8 @@ import {
   Phone,
   ShieldCheck,
   TriangleAlert,
+  LifeBuoy,
+  Gift,
 } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
 import { LinkButton } from "@/components/shared/link-button";
@@ -30,10 +32,10 @@ import {
 } from "@/lib/data/public";
 
 const quickActions = [
-  { href: "/help", emoji: "🆘", title: "أنا متضرر", desc: "الإبلاغ عن احتياج أو طلب مساعدة." },
-  { href: "/donate", emoji: "🎁", title: "لدي مساعدات", desc: "تسجيل المساعدات التي أملكها." },
-  { href: "/transport", emoji: "🚚", title: "أستطيع النقل", desc: "تسجيل سيارة أو شاحنة للنقل." },
-  { href: "/map", emoji: "📍", title: "أين أسلّم؟", desc: "عرض نقاط التجميع والاستقبال." },
+  { href: "/help", icon: LifeBuoy, title: "أنا متضرر", desc: "الإبلاغ عن احتياج أو طلب مساعدة." },
+  { href: "/donate", icon: Gift, title: "لدي مساعدات", desc: "تسجيل المساعدات التي أملكها." },
+  { href: "/transport", icon: Truck, title: "أستطيع النقل", desc: "تسجيل سيارة أو شاحنة للنقل." },
+  { href: "/map", icon: MapPin, title: "أين أسلّم؟", desc: "عرض نقاط التجميع والاستقبال." },
 ];
 
 const howItWorks = [
@@ -88,8 +90,8 @@ export default async function HomePage() {
               <Link key={a.href} href={a.href} className="group">
                 <Card className="h-full transition-all group-hover:-translate-y-1 group-hover:border-algeria-green group-hover:shadow-lg">
                   <CardContent className="flex h-full flex-col items-center gap-2 px-4 py-5 text-center">
-                    <span className="text-3xl transition-transform group-hover:scale-110" aria-hidden>
-                      {a.emoji}
+                    <span className="flex size-12 items-center justify-center rounded-full bg-algeria-green/10 text-algeria-green transition-transform group-hover:scale-110">
+                      <a.icon className="size-6" aria-hidden />
                     </span>
                     <p className="font-bold">{a.title}</p>
                     <p className="text-xs text-muted-foreground">{a.desc}</p>
@@ -294,8 +296,8 @@ export default async function HomePage() {
                 key={c.label}
                 className="flex flex-col items-center gap-1 rounded-xl border border-border bg-card p-4 text-center transition-all hover:-translate-y-0.5 hover:border-priority-critical hover:shadow-md"
               >
-                <span className="text-2xl" aria-hidden>
-                  {c.emoji}
+                <span className="flex size-10 items-center justify-center rounded-full bg-priority-critical/10 text-priority-critical">
+                  <c.icon className="size-5" aria-hidden />
                 </span>
                 <a
                   href={`tel:${c.number}`}

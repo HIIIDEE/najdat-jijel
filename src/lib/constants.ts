@@ -1,3 +1,21 @@
+import {
+  Circle,
+  Flame,
+  Droplet,
+  Utensils,
+  Shirt,
+  BedDouble,
+  Baby,
+  ShowerHead,
+  Pill,
+  CookingPot,
+  Package,
+  Tent,
+  Construction,
+  HardHat,
+  Tag,
+  type LucideIcon,
+} from "lucide-react";
 import type { Database } from "@/types/database";
 
 export type AppRole = Database["public"]["Enums"]["app_role"];
@@ -20,11 +38,12 @@ export const priorityLabels: Record<PriorityLevel, string> = {
   low: "منخفض",
 };
 
-export const priorityEmoji: Record<PriorityLevel, string> = {
-  critical: "🔴",
-  high: "🟠",
-  medium: "🟡",
-  low: "⚪",
+/** أيقونة موحّدة (نقطة ملوّنة) — اللون يأتي من text-priority-* في المكوّن. */
+export const priorityIcon: Record<PriorityLevel, LucideIcon> = {
+  critical: Circle,
+  high: Circle,
+  medium: Circle,
+  low: Circle,
 };
 
 export const verificationLabels: Record<VerificationLevel, string> = {
@@ -34,11 +53,12 @@ export const verificationLabels: Record<VerificationLevel, string> = {
   field_verified: "موثق ميدانيًا",
 };
 
-export const verificationEmoji: Record<VerificationLevel, string> = {
-  unverified: "⚪",
-  pending: "🟡",
-  verified: "🟢",
-  field_verified: "🟢",
+/** أيقونة موحّدة (نقطة ملوّنة) — اللون يأتي من text-verify-* في المكوّن. */
+export const verificationIcon: Record<VerificationLevel, LucideIcon> = {
+  unverified: Circle,
+  pending: Circle,
+  verified: Circle,
+  field_verified: Circle,
 };
 
 export const requestStatusLabels: Record<RequestStatus, string> = {
@@ -121,21 +141,21 @@ export const roleLabels: Record<AppRole, string> = {
 };
 
 // يجب أن تطابق slugs جدول categories في قاعدة البيانات (migration 0009)
-export const categoryEmoji: Record<string, string> = {
-  water: "💧",
-  food: "🍚",
-  clothing: "👕",
-  blankets: "🛏️",
-  baby_supplies: "🍼",
-  hygiene: "🧼",
-  medical: "💊",
-  kitchenware: "🍳",
-  relief_materials: "📦",
-  shelter: "⛺",
-  construction_materials: "🧱",
-  cooking_gas: "🛢️",
-  manpower: "👷",
-  other: "🔖",
+export const categoryIcon: Record<string, LucideIcon> = {
+  water: Droplet,
+  food: Utensils,
+  clothing: Shirt,
+  blankets: BedDouble,
+  baby_supplies: Baby,
+  hygiene: ShowerHead,
+  medical: Pill,
+  kitchenware: CookingPot,
+  relief_materials: Package,
+  shelter: Tent,
+  construction_materials: Construction,
+  cooking_gas: Flame,
+  manpower: HardHat,
+  other: Tag,
 };
 
 export function relativeTimeAr(dateString: string | null | undefined): string {
@@ -168,12 +188,12 @@ export const severityLabels: Record<AffectedSeverity, string> = {
   unconfirmed: "بلاغ غير مؤكد",
 };
 
-export const severityEmoji: Record<AffectedSeverity, string> = {
-  ravaged: "🔴",
-  evacuated: "🟠",
-  threatened: "🟡",
-  burning: "🔥",
-  unconfirmed: "⚪",
+export const severityIcon: Record<AffectedSeverity, LucideIcon> = {
+  ravaged: Circle,
+  evacuated: Circle,
+  threatened: Circle,
+  burning: Flame,
+  unconfirmed: Circle,
 };
 
 /** ترتيب العرض: الأخطر أولًا، والبلاغات غير المؤكدة في الأخير. */

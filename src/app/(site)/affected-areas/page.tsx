@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { MapPin, TriangleAlert, Info } from "lucide-react";
+import { MapPin, TriangleAlert, Info, LifeBuoy } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
 import { EmptyState } from "@/components/shared/empty-state";
 import { SeverityBadge } from "@/components/shared/severity-badge";
@@ -148,7 +148,9 @@ export default async function AffectedAreasPage({
           المساعدة.
         </p>
         <div className="flex flex-wrap justify-center gap-2">
-          <LinkButton href="/help">🆘 تسجيل طلب مساعدة</LinkButton>
+          <LinkButton href="/help">
+            <LifeBuoy className="size-4" /> تسجيل طلب مساعدة
+          </LinkButton>
           <LinkButton href="/needs" variant="outline">
             عرض الاحتياجات
           </LinkButton>

@@ -4,7 +4,8 @@ import { getAllCategories } from "@/lib/data/admin";
 import { Card, CardContent } from "@/components/ui/card";
 import { EmptyState } from "@/components/shared/empty-state";
 import { PriorityBadge } from "@/components/shared/priority-badge";
-import { categoryEmoji, formatQuantity, relativeTimeAr, unitLabels } from "@/lib/constants";
+import { formatQuantity, relativeTimeAr, unitLabels } from "@/lib/constants";
+import { CategoryIcon } from "@/components/shared/category-icon";
 import { CreateNeedDialog } from "./create-need-dialog";
 import { NeedActions } from "./need-actions";
 
@@ -43,7 +44,7 @@ export default async function AdminNeedsPage() {
               <CardContent className="flex flex-wrap items-center justify-between gap-3 px-5">
                 <div className="min-w-0">
                   <div className="flex items-center gap-2">
-                    <span aria-hidden>{categoryEmoji[n.categories?.slug ?? ""] ?? "📦"}</span>
+                    <CategoryIcon slug={n.categories?.slug} className="size-4" />
                     <p className="font-bold">{n.title || n.categories?.name_ar}</p>
                     {n.is_auto_generated && (
                       <span className="rounded-full bg-muted px-2 py-0.5 text-[10px] font-medium text-muted-foreground">

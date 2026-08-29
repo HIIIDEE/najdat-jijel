@@ -3,7 +3,8 @@ import { createClient } from "@/lib/supabase/server";
 import { getAllCategories, getAllReliefHubs } from "@/lib/data/admin";
 import { Card, CardContent } from "@/components/ui/card";
 import { EmptyState } from "@/components/shared/empty-state";
-import { categoryEmoji, formatQuantity, unitLabels } from "@/lib/constants";
+import { formatQuantity, unitLabels } from "@/lib/constants";
+import { CategoryIcon } from "@/components/shared/category-icon";
 import { CreateDistributionDialog } from "./create-distribution-dialog";
 
 export const metadata: Metadata = { title: "عمليات التوزيع", robots: { index: false } };
@@ -40,8 +41,8 @@ export default async function AdminDistributionsPage() {
               <CardContent className="flex flex-wrap items-center justify-between gap-3 px-5">
                 <div>
                   <p className="font-bold">
-                    {categoryEmoji[d.categories?.slug ?? ""] ?? "📦"} {formatQuantity(Number(d.quantity))}{" "}
-                    {unitLabels[d.unit]} — {d.categories?.name_ar}
+                    <CategoryIcon slug={d.categories?.slug} className="inline size-3.5" />{" "}
+                    {formatQuantity(Number(d.quantity))} {unitLabels[d.unit]} — {d.categories?.name_ar}
                   </p>
                   <p className="text-sm text-muted-foreground">
                     {d.relief_hubs?.name} · {d.beneficiary_family_count} أسرة مستفيدة
