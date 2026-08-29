@@ -19,7 +19,7 @@ export default async function AdminReliefHubsPage() {
       <div className="flex flex-wrap items-center justify-between gap-3">
         <div>
           <h1 className="text-2xl font-bold">مراكز الاستقبال</h1>
-          <p className="text-sm text-muted-foreground">مراكز داخل جيجل، ولكل مركز مخزونه الخاص.</p>
+          <p className="text-sm text-muted-foreground">مراكز الاستقبال داخل ولايات الحملة، ولكل مركز مخزونه الخاص.</p>
         </div>
         <CreateHubDialog />
       </div>

@@ -6,7 +6,8 @@ import { NeedsFilters } from "./needs-filters";
 
 export const metadata: Metadata = {
   title: "الاحتياجات العاجلة",
-  description: "ماذا تحتاج جيجل الآن؟ تصفّح الاحتياجات النشطة حسب النوع والبلدية والأولوية.",
+  description:
+    "ماذا نحتاج الآن؟ تصفّح الاحتياجات النشطة عبر ولايات جيجل وبجاية وميلة وسكيكدة حسب النوع والبلدية والأولوية.",
 };
 
 export default async function NeedsPage({
@@ -31,7 +32,7 @@ export default async function NeedsPage({
   return (
     <div className="mx-auto max-w-6xl px-4 py-10">
       <div className="mb-6 text-center sm:text-right">
-        <h1 className="text-3xl font-extrabold">ماذا تحتاج جيجل الآن؟</h1>
+        <h1 className="text-3xl font-extrabold">ما هي الاحتياجات الآن؟</h1>
         <p className="mt-2 text-muted-foreground">
           بيانات مباشرة من الفرق الميدانية وفريق التنسيق، وتُحدَّث باستمرار.
         </p>

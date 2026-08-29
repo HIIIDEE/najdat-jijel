@@ -70,7 +70,7 @@ export default async function HomePage() {
               <span className="absolute inline-flex size-full animate-ping rounded-full bg-algeria-green opacity-70" />
               <span className="relative inline-flex size-2 rounded-full bg-algeria-green" />
             </span>
-            حملة حرائق جيجل — نشطة الآن
+            حملة حرائق الشمال الشرقي — نشطة الآن
           </span>
 
           <h1 className="mt-4 text-4xl font-extrabold tracking-tight sm:text-5xl">

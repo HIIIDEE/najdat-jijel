@@ -20,7 +20,7 @@ export default async function AdminCollectionPointsPage() {
         <div>
           <h1 className="text-2xl font-bold">نقاط التجميع</h1>
           <p className="text-sm text-muted-foreground">
-            حيث يسلّم المتبرعون مساعداتهم قبل نقلها إلى جيجل.
+            حيث يسلّم المتبرعون مساعداتهم قبل نقلها إلى ولايات الحملة.
           </p>
         </div>
         <CreatePointDialog categories={categories} />

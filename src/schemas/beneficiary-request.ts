@@ -20,6 +20,7 @@ export const beneficiaryRequestSchema = z.object({
     .string()
     .trim()
     .regex(/^0[5-7][0-9]{8}$/, "رقم هاتف جزائري غير صحيح (مثال: 0555xxxxxx)"),
+  wilaya: z.string().trim().min(2, "الولاية مطلوبة"),
   commune: z.string().trim().min(2, "البلدية مطلوبة"),
   address_note: z.string().trim().max(500).optional().or(z.literal("")),
   family_members_count: z.number().int().min(1).max(50),

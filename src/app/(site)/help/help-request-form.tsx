@@ -19,6 +19,7 @@ import {
 } from "@/schemas/beneficiary-request";
 import { SuccessPanel } from "@/components/shared/success-panel";
 import { submitBeneficiaryRequest } from "@/actions/beneficiary-requests";
+import { campaignWilayas } from "@/config/site";
 
 export function HelpRequestForm() {
   const [submitted, setSubmitted] = useState(false);
@@ -36,6 +37,7 @@ export function HelpRequestForm() {
     defaultValues: {
       full_name: "",
       phone: "",
+      wilaya: "جيجل",
       commune: "",
       address_note: "",
       family_members_count: 1,
@@ -111,6 +113,33 @@ export function HelpRequestForm() {
             <Input dir="ltr" placeholder="0555xxxxxx" {...register("phone")} />
             {errors.phone && <p className="mt-1 text-sm text-destructive">{errors.phone.message}</p>}
           </div>
+          <div>
+            <Label className="mb-2">الولاية</Label>
+            <div className="flex flex-wrap gap-2">
+              {campaignWilayas.map((w) => {
+                const active = watch("wilaya") === w;
+                return (
+                  <button
+                    key={w}
+                    type="button"
+                    aria-pressed={active}
+                    onClick={() => setValue("wilaya", w, { shouldValidate: true })}
+                    className={
+                      active
+                        ? "rounded-full border border-algeria-green bg-algeria-green px-4 py-1.5 text-sm font-semibold text-algeria-green-foreground"
+                        : "rounded-full border border-border bg-card px-4 py-1.5 text-sm hover:border-algeria-green/50 hover:bg-muted"
+                    }
+                  >
+                    {w}
+                  </button>
+                );
+              })}
+            </div>
+            {errors.wilaya && (
+              <p className="mt-1 text-sm text-destructive">{errors.wilaya.message}</p>
+            )}
+          </div>
+
           <div>
             <Label className="mb-1.5">البلدية</Label>
             <Input {...register("commune")} />

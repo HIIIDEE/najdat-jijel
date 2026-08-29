@@ -41,6 +41,7 @@ export async function submitBeneficiaryRequest(
     campaign_id: campaign.id,
     full_name: data.full_name,
     phone: data.phone,
+    wilaya: data.wilaya,
     commune: data.commune,
     address_note: data.address_note || null,
     family_members_count: data.family_members_count,

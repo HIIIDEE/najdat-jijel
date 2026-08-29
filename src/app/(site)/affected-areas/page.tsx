@@ -56,7 +56,7 @@ export default async function AffectedAreasPage({
           المناطق المتضررة
         </h1>
         <p className="mt-2 text-muted-foreground">
-          {areas.length} منطقة مسجَّلة عبر {wilayas.length} ولايات — جيجل، بجاية، ميلة، سكيكدة.
+          {areas.length} منطقة مسجَّلة عبر {wilayas.length} ولايات — {wilayas.join("، ")}.
         </p>
       </div>
 

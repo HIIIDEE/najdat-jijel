@@ -4,9 +4,9 @@
 
 **الفكرة الأساسية:** اعرف ما هو مطلوب فعليًا، ثم وجّه مساعدتك إليه.
 
-الحملة النشطة حاليًا داخل المنصة: **حرائق جيجل 2026**. تصميم قاعدة البيانات مبني حول مفهوم "حملة" (`campaigns`) بحيث يمكن لاحقًا إضافة حملات أخرى (ولايات أخرى، فيضانات، زلازل...) دون تغيير البنية.
+الحملة النشطة حاليًا داخل المنصة: **حرائق الشمال الشرقي 2026** — تغطي ولايات **جيجل، بجاية، ميلة، سكيكدة**. تصميم قاعدة البيانات مبني حول مفهوم "حملة" (`campaigns`) بحيث يمكن لاحقًا إضافة حملات أخرى (ولايات أخرى، فيضانات، زلازل...) دون تغيير البنية.
 
-> A Next.js + Supabase platform for coordinating in-kind disaster relief (not fundraising) — matching donors, transporters, collection points, relief hubs, and affected families for the Jijel wildfires campaign in Algeria. The schema is campaign-agnostic so future disasters/regions can be added without restructuring.
+> A Next.js + Supabase platform for coordinating in-kind disaster relief (not fundraising) — matching donors, transporters, collection points, relief hubs, and affected families for the 2026 north-east Algeria wildfires (Jijel, Béjaïa, Mila, Skikda). The schema is campaign-agnostic so future disasters/regions can be added without restructuring.
 
 ---
 
@@ -70,7 +70,9 @@ supabase/
   seed_demo_data.sql          بيانات تجريبية للتطوير فقط (قابلة للحذف بالكامل)
   seed_demo_data_cleanup.sql  سكربت حذف البيانات التجريبية
 scripts/
-  create-admin.mjs      إنشاء أول حساب أدمن
+  create-admin.mjs             إنشاء أول حساب أدمن
+  import-affected-areas.mjs    استيراد قائمة المناطق المتضررة
+  affected-areas.json          البيانات المصدر للمناطق المتضررة
 ```
 
 ### قرارات تصميم مهمة
@@ -117,7 +119,7 @@ supabase db push
 # أو تطبيق كل ملف يدويًا بالترتيب عبر SQL Editor في لوحة Supabase
 ```
 
-الترتيب مهم (الملفات مرقّمة `0001` إلى `0014`): الإضافات والأنواع، ثم الجداول المرجعية، ثم الجداول التشغيلية، ثم RLS، ثم Views/RPC العامة، ثم بيانات مرجعية أساسية (الحملة، الفئات، الولايات — **وهذه ليست بيانات تجريبية**، بل بيانات تشغيلية ضرورية).
+الترتيب مهم (الملفات مرقّمة `0001` إلى `0019`): الإضافات والأنواع، ثم الجداول المرجعية، ثم الجداول التشغيلية، ثم RLS، ثم Views/RPC العامة، ثم بيانات مرجعية أساسية (الحملة، الفئات، الولايات — **وهذه ليست بيانات تجريبية**، بل بيانات تشغيلية ضرورية).
 
 ## البيانات التجريبية (Seed)
 
