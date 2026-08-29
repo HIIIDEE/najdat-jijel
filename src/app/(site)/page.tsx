@@ -298,65 +298,63 @@ export default async function HomePage() {
       )}
 
       {/* ————————————————————————————————— الأطقم الطبية والبيطرية */}
-      {medicalVolunteers && medicalVolunteers.length > 0 && (
-        <section className="mx-auto max-w-6xl px-4 pb-14">
-          <div className="mb-6 flex items-end justify-between gap-3">
-            <div>
-              <h2 className="flex items-center gap-2 text-2xl font-bold">
-                <Stethoscope className="size-5 text-algeria-green" /> الأطقم الطبية والبيطرية المتطوعة
-              </h2>
-              <p className="mt-1 text-sm text-muted-foreground">
-                أطباء، بياطرة وكوادر صحية متطوعون لتقديم الرعاية والاستشارات الميدانية.
-              </p>
-            </div>
-            <LinkButton href="/medical" variant="outline" size="sm" className="hidden sm:inline-flex">
-              تسجيل كمتطوع
-            </LinkButton>
+      <section className="mx-auto max-w-6xl px-4 pb-14">
+        <div className="mb-6 flex items-end justify-between gap-3">
+          <div>
+            <h2 className="flex items-center gap-2 text-2xl font-bold">
+              <Stethoscope className="size-5 text-algeria-green" /> الأطقم الطبية والبيطرية المتطوعة
+            </h2>
+            <p className="mt-1 text-sm text-muted-foreground">
+              أطباء، بياطرة وكوادر صحية متطوعون لتقديم الرعاية والاستشارات الميدانية.
+            </p>
           </div>
-
-          <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
-            {medicalVolunteers.map((doc) => (
-              <Card key={doc.id}>
-                <CardContent className="space-y-2 px-5">
-                  <div className="flex items-start justify-between gap-2">
-                    <p className="font-bold leading-tight">{doc.full_name}</p>
-                    <span className="rounded-full bg-algeria-green/10 px-2.5 py-0.5 text-xs font-semibold text-algeria-green shrink-0">
-                      {doc.specialty}
-                    </span>
-                  </div>
-
-                  <p className="flex items-start gap-1.5 text-sm text-muted-foreground">
-                    <MapPin className="mt-0.5 size-3.5 shrink-0" />
-                    {doc.commune_id}
-                  </p>
-
-                  {doc.current_workplace && (
-                    <p className="text-xs text-muted-foreground">{doc.current_workplace}</p>
-                  )}
-
-                  {doc.can_teleconsult && (
-                    <p className="text-xs font-medium text-algeria-green">• متاح للاستشارات الهاتفية</p>
-                  )}
-
-                  {doc.phone && (
-                    <a
-                      href={`tel:${doc.phone.replace(/\s/g, "")}`}
-                      dir="ltr"
-                      className="inline-flex items-center gap-1.5 text-sm font-semibold text-algeria-green hover:underline pt-1"
-                    >
-                      <Phone className="size-3.5" /> {doc.phone}
-                    </a>
-                  )}
-                </CardContent>
-              </Card>
-            ))}
-          </div>
-
-          <LinkButton href="/medical" variant="outline" className="mt-5 w-full sm:hidden">
-            تسجيل كمتطوع طبي / بيطري
+          <LinkButton href="/medical" variant="outline" size="sm" className="hidden sm:inline-flex">
+            تسجيل كمتطوع
           </LinkButton>
-        </section>
-      )}
+        </div>
+
+        <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
+          {medicalVolunteers?.map((doc) => (
+            <Card key={doc.id}>
+              <CardContent className="space-y-2 px-5">
+                <div className="flex items-start justify-between gap-2">
+                  <p className="font-bold leading-tight">{doc.full_name}</p>
+                  <span className="rounded-full bg-algeria-green/10 px-2.5 py-0.5 text-xs font-semibold text-algeria-green shrink-0">
+                    {doc.specialty}
+                  </span>
+                </div>
+
+                <p className="flex items-start gap-1.5 text-sm text-muted-foreground">
+                  <MapPin className="mt-0.5 size-3.5 shrink-0" />
+                  {doc.commune_id}
+                </p>
+
+                {doc.current_workplace && (
+                  <p className="text-xs text-muted-foreground">{doc.current_workplace}</p>
+                )}
+
+                {doc.can_teleconsult && (
+                  <p className="text-xs font-medium text-algeria-green">• متاح للاستشارات الهاتفية</p>
+                )}
+
+                {doc.phone && (
+                  <a
+                    href={`tel:${doc.phone.replace(/\s/g, "")}`}
+                    dir="ltr"
+                    className="inline-flex items-center gap-1.5 text-sm font-semibold text-algeria-green hover:underline pt-1"
+                  >
+                    <Phone className="size-3.5" /> {doc.phone}
+                  </a>
+                )}
+              </CardContent>
+            </Card>
+          ))}
+        </div>
+
+        <LinkButton href="/medical" variant="outline" className="mt-5 w-full sm:hidden">
+          تسجيل كمتطوع طبي / بيطري
+        </LinkButton>
+      </section>
 
       {/* ————————————————————————————————— أرقام الطوارئ */}
       <section className="border-y border-border bg-priority-critical/5">
