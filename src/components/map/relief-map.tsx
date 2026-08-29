@@ -47,6 +47,14 @@ export function ReliefMap({ points }: { points: PointCardData[] }) {
       },
       center: [5.9, 36.75],
       zoom: 8.5,
+      minZoom: 5,
+      // يقتصر عرض الخريطة على شمال الجزائر (نطاق عمل المنصة الحالي والمتوقع)
+      // لتفادي الاعتماد على رسم الحدود المتنازع عليها جنوب غرب المغرب في بلاطات
+      // OpenStreetMap العامة، والتي لا تتحكم فيها هذه المنصة.
+      maxBounds: [
+        [-2.5, 28],
+        [12, 39],
+      ],
     });
 
     map.addControl(new maplibregl.NavigationControl(), "top-left");
