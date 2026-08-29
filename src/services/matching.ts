@@ -106,8 +106,7 @@ export async function suggestDeliveryPoint(
     if (!accepts) continue;
 
     const target = findWilayaByName(p.wilaya);
-    const distanceKm =
-      origin && target && p.lat && p.lng ? haversineDistanceKm(origin, target) : null;
+    const distanceKm = origin && target ? haversineDistanceKm(origin, target) : null;
 
     candidates.push({
       id: p.id,
