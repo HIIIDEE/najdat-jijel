@@ -128,6 +128,42 @@ const fallbackAffectedAreas: AffectedAreaRow[] = [
   },
 ];
 
+const fallbackMedicalVolunteers = [
+  {
+    id: "med-1",
+    full_name: "د. أمين قواسمية",
+    specialty: "طب استعجالي وطوارئ",
+    wilaya_code: "18",
+    commune_id: "جيجل",
+    current_workplace: "مستشفى محمد الصديق بن يحيى",
+    can_teleconsult: true,
+    can_field_intervene: true,
+    phone: "0550123456",
+  },
+  {
+    id: "med-2",
+    full_name: "د. سهام بولعراس",
+    specialty: "طب أطفال وحروق",
+    wilaya_code: "18",
+    commune_id: "الطاهير",
+    current_workplace: "عيادة خاصة",
+    can_teleconsult: true,
+    can_field_intervene: false,
+    phone: "0661234567",
+  },
+  {
+    id: "med-3",
+    full_name: "د. كمال بوالريش",
+    specialty: "طب بيطري ورعاية مواشي",
+    wilaya_code: "18",
+    commune_id: "العوانة",
+    current_workplace: "مفتشية البيطرة",
+    can_teleconsult: false,
+    can_field_intervene: true,
+    phone: "0770345678",
+  },
+];
+
 export async function getActiveCampaign() {
   try {
     const supabase = await createClient();
@@ -346,8 +382,8 @@ export async function getPublicMedicalVolunteers() {
   try {
     const supabase = await createClient();
     const { data } = await (supabase as any).rpc("get_public_medical_volunteers");
-    return data ?? [];
+    return data && data.length > 0 ? data : fallbackMedicalVolunteers;
   } catch {
-    return [];
+    return fallbackMedicalVolunteers;
   }
 }

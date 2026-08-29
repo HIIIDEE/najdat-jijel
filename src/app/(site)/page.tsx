@@ -87,6 +87,14 @@ const howItWorks = [
   { n: 4, title: "نتابع التوزيع", desc: "نسجل وصول المساعدات واستلامها بشفافية.", icon: Truck },
 ];
 
+const severityConfig: Record<string, { label: string; tone: string }> = {
+  burning: { label: "حريق نشط", tone: "bg-priority-critical/15 text-priority-critical border-priority-critical/30" },
+  evacuated: { label: "إجلاء سكان", tone: "bg-priority-critical/15 text-priority-critical border-priority-critical/30" },
+  threatened: { label: "مهددة بالخطر", tone: "bg-priority-high/15 text-priority-high border-priority-high/30" },
+  ravaged: { label: "أضرار جسيمة", tone: "bg-priority-critical/15 text-priority-critical border-priority-critical/30" },
+  contained: { label: "تحت السيطرة", tone: "bg-algeria-green/15 text-algeria-green border-algeria-green/30" },
+};
+
 export default async function HomePage() {
   const [
     criticalNeeds,
@@ -233,7 +241,7 @@ export default async function HomePage() {
               <div>
                 <h2 className="flex items-center gap-2 text-2xl font-bold">
                   <TriangleAlert className="size-5 text-priority-critical" />
-                  المناطق المتضررة
+                  المناطق المتضررة وبؤر الحرائق
                 </h2>
                 <p className="mt-1 text-sm text-muted-foreground">
                   {areas.length} بؤرة حريق وتضرر مسجَّلة عبر {areaWilayas.length} ولايات.
@@ -244,32 +252,73 @@ export default async function HomePage() {
               </LinkButton>
             </div>
 
-            <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
-              {areaWilayas.map((w) => {
-                const items = areas.filter((a) => a.wilaya === w);
-                const severe = items.filter(
-                  (a) => a.severity === "ravaged" || a.severity === "evacuated" || a.severity === "burning",
-                ).length;
-                return (
-                  <Link
-                    key={w}
-                    href={`/affected-areas?wilaya=${encodeURIComponent(w)}`}
-                    className="group rounded-xl border border-border bg-card p-4 transition-all hover:-translate-y-0.5 hover:border-priority-critical hover:shadow-md"
-                  >
-                    <p className="flex items-center justify-between font-bold">
-                      ولاية {w}
-                      <span className="text-2xl font-extrabold tabular-nums text-priority-critical">
-                        {items.length}
-                      </span>
-                    </p>
-                    <p className="mt-1 text-xs text-muted-foreground">
-                      {severe > 0
-                        ? `${severe} بؤرة حرائق نشطة أو إجلاء`
-                        : "مناطق متضررة مسجَّلة"}
-                    </p>
-                  </Link>
-                );
-              })}
+            <div className="grid gap-4 lg:grid-cols-12">
+              {/* Wilaya Summary Card */}
+              <div className={areaWilayas.length === 1 ? "lg:col-span-4" : "grid gap-3 sm:grid-cols-2 lg:col-span-12 lg:grid-cols-4"}>
+                {areaWilayas.map((w) => {
+                  const items = areas.filter((a) => a.wilaya === w);
+                  const severe = items.filter(
+                    (a) => a.severity === "ravaged" || a.severity === "evacuated" || a.severity === "burning",
+                  ).length;
+                  return (
+                    <Link
+                      key={w}
+                      href={`/affected-areas?wilaya=${encodeURIComponent(w)}`}
+                      className="group flex h-full flex-col justify-between rounded-xl border border-border bg-card p-5 transition-all hover:-translate-y-0.5 hover:border-priority-critical hover:shadow-md"
+                    >
+                      <div>
+                        <div className="flex items-center justify-between">
+                          <span className="rounded-full bg-priority-critical/10 px-2.5 py-0.5 text-xs font-bold text-priority-critical">
+                            بؤرة طوارئ
+                          </span>
+                          <span className="text-3xl font-extrabold tabular-nums text-priority-critical">
+                            {items.length}
+                          </span>
+                        </div>
+                        <p className="mt-3 text-xl font-bold">ولاية {w}</p>
+                        <p className="mt-1 text-xs text-muted-foreground">
+                          {severe > 0
+                            ? `${severe} بؤر حرائق نشطة أو إجلاء عاجل`
+                            : "مناطق متضررة مسجَّلة ميدانياً"}
+                        </p>
+                      </div>
+                      <div className="mt-5 flex items-center gap-1.5 text-xs font-semibold text-priority-critical group-hover:underline">
+                        <span>عرض كل بؤر ولاية {w}</span>
+                        <ArrowLeft className="size-3.5" />
+                      </div>
+                    </Link>
+                  );
+                })}
+              </div>
+
+              {/* Active Spots Live Breakdown when 1 wilaya */}
+              {areaWilayas.length === 1 && (
+                <div className="grid gap-3 sm:grid-cols-2 lg:col-span-8 lg:grid-cols-2">
+                  {areas.slice(0, 4).map((a) => {
+                    const sev = severityConfig[a.severity] ?? { label: a.severity, tone: "bg-muted text-muted-foreground border-border" };
+                    return (
+                      <Link
+                        key={a.id}
+                        href={`/affected-areas?wilaya=${encodeURIComponent(a.wilaya)}`}
+                        className="group flex flex-col justify-between rounded-xl border border-border bg-card p-4 transition-all hover:-translate-y-0.5 hover:border-algeria-green hover:shadow-sm"
+                      >
+                        <div className="flex items-start justify-between gap-2">
+                          <div>
+                            <p className="font-bold">{a.spot}</p>
+                            <p className="mt-0.5 flex items-center gap-1 text-xs text-muted-foreground">
+                              <MapPin className="size-3 text-muted-foreground" />
+                              بلدية {a.commune} · دائرة {a.daira}
+                            </p>
+                          </div>
+                          <span className={`shrink-0 rounded-full border px-2.5 py-0.5 text-[11px] font-bold ${sev.tone}`}>
+                            {sev.label}
+                          </span>
+                        </div>
+                      </Link>
+                    );
+                  })}
+                </div>
+              )}
             </div>
 
             <LinkButton href="/affected-areas" variant="outline" className="mt-5 w-full sm:hidden">
@@ -373,52 +422,67 @@ export default async function HomePage() {
           </LinkButton>
         </div>
 
-        <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
-          {medicalVolunteers?.slice(0, 6).map((doc: any) => (
-            <Card key={doc.id} className="transition-all hover:shadow-sm">
-              <CardContent className="space-y-2.5 px-5 pt-5">
-                <div className="flex items-start justify-between gap-2">
-                  <p className="font-bold leading-tight">{doc.full_name}</p>
-                  <span className="shrink-0 rounded-full bg-algeria-green/10 px-2.5 py-0.5 text-xs font-semibold text-algeria-green">
-                    {doc.specialty}
-                  </span>
-                </div>
-
-                <p className="flex items-start gap-1.5 text-sm text-muted-foreground">
-                  <MapPin className="mt-0.5 size-3.5 shrink-0" />
-                  {doc.commune_id}
-                </p>
-
-                {doc.current_workplace && (
-                  <p className="text-xs text-muted-foreground">{doc.current_workplace}</p>
-                )}
-
-                <div className="flex flex-wrap items-center gap-2 pt-1">
-                  {doc.can_teleconsult && (
-                    <span className="inline-flex items-center gap-1 rounded-full bg-emerald-500/10 px-2 py-0.5 text-[11px] font-semibold text-emerald-600 dark:text-emerald-400">
-                      <CheckCircle2 className="size-3" /> استشارة هاتفية
+        {medicalVolunteers && medicalVolunteers.length > 0 ? (
+          <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
+            {medicalVolunteers.slice(0, 6).map((doc: any) => (
+              <Card key={doc.id} className="transition-all hover:shadow-sm">
+                <CardContent className="space-y-2.5 px-5 pt-5">
+                  <div className="flex items-start justify-between gap-2">
+                    <p className="font-bold leading-tight">{doc.full_name}</p>
+                    <span className="shrink-0 rounded-full bg-algeria-green/10 px-2.5 py-0.5 text-xs font-semibold text-algeria-green">
+                      {doc.specialty}
                     </span>
-                  )}
-                  {doc.can_field_intervene && (
-                    <span className="inline-flex items-center gap-1 rounded-full bg-blue-500/10 px-2 py-0.5 text-[11px] font-semibold text-blue-600 dark:text-blue-400">
-                      <CheckCircle2 className="size-3" /> تدخل ميداني
-                    </span>
-                  )}
-                </div>
+                  </div>
 
-                {doc.phone && (
-                  <a
-                    href={`tel:${doc.phone.replace(/\s/g, "")}`}
-                    dir="ltr"
-                    className="inline-flex items-center gap-1.5 pt-1 text-sm font-semibold text-algeria-green hover:underline"
-                  >
-                    <Phone className="size-3.5" /> {doc.phone}
-                  </a>
-                )}
-              </CardContent>
-            </Card>
-          ))}
-        </div>
+                  <p className="flex items-start gap-1.5 text-sm text-muted-foreground">
+                    <MapPin className="mt-0.5 size-3.5 shrink-0" />
+                    {doc.commune_id}
+                  </p>
+
+                  {doc.current_workplace && (
+                    <p className="text-xs text-muted-foreground">{doc.current_workplace}</p>
+                  )}
+
+                  <div className="flex flex-wrap items-center gap-2 pt-1">
+                    {doc.can_teleconsult && (
+                      <span className="inline-flex items-center gap-1 rounded-full bg-emerald-500/10 px-2 py-0.5 text-[11px] font-semibold text-emerald-600 dark:text-emerald-400">
+                        <CheckCircle2 className="size-3" /> استشارة هاتفية
+                      </span>
+                    )}
+                    {doc.can_field_intervene && (
+                      <span className="inline-flex items-center gap-1 rounded-full bg-blue-500/10 px-2 py-0.5 text-[11px] font-semibold text-blue-600 dark:text-blue-400">
+                        <CheckCircle2 className="size-3" /> تدخل ميداني
+                      </span>
+                    )}
+                  </div>
+
+                  {doc.phone && (
+                    <a
+                      href={`tel:${doc.phone.replace(/\s/g, "")}`}
+                      dir="ltr"
+                      className="inline-flex items-center gap-1.5 pt-1 text-sm font-semibold text-algeria-green hover:underline"
+                    >
+                      <Phone className="size-3.5" /> {doc.phone}
+                    </a>
+                  )}
+                </CardContent>
+              </Card>
+            ))}
+          </div>
+        ) : (
+          <div className="flex flex-col items-center justify-center rounded-2xl border border-dashed border-algeria-green/30 bg-algeria-green/5 p-8 text-center sm:p-12">
+            <span className="flex size-14 items-center justify-center rounded-full bg-algeria-green/10 text-algeria-green">
+              <Stethoscope className="size-7" />
+            </span>
+            <h3 className="mt-4 text-lg font-bold">نداء للأطباء والكوادر الصحية والبياطرة</h3>
+            <p className="mx-auto mt-2 max-w-lg text-sm leading-relaxed text-muted-foreground">
+              تطوعكم يساهم في رعاية الأسر المتضررة في مراكز الإيواء وتقديم الاستشارات الطبية والبيطرية المستعجلة.
+            </p>
+            <LinkButton href="/medical" size="lg" className="mt-5">
+              انضم إلى الفريق الطبي المتطوع
+            </LinkButton>
+          </div>
+        )}
 
         <LinkButton href="/medical" variant="outline" className="mt-5 w-full sm:hidden">
           تسجيل كمتطوع طبي / بيطري
