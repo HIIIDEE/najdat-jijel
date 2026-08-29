@@ -216,3 +216,21 @@
     .animate-rise, .animate-pop { animation: none; }
   }
 }
+
+@layer utilities {
+  /* شريط الأخبار المتحرك — يتحرك من اليمين لليسار (RTL) */
+  @keyframes haba-ticker {
+    from { transform: translateX(100%); }
+    to   { transform: translateX(-100%); }
+  }
+  .animate-ticker {
+    animation: haba-ticker var(--ticker-duration, 40s) linear infinite;
+  }
+  .ticker-viewport:hover .animate-ticker,
+  .ticker-viewport:focus-within .animate-ticker {
+    animation-play-state: paused;
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .animate-ticker { animation: none; transform: none; }
+  }
+}

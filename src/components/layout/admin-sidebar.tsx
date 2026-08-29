@@ -17,6 +17,8 @@ import {
   ShieldCheck,
   BarChart3,
   Settings,
+  Megaphone,
+  Newspaper,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 
@@ -33,6 +35,8 @@ const sections = [
   { href: "/admin/distributions", label: "عمليات التوزيع", icon: PackageCheck },
   { href: "/admin/users", label: "المستخدمون", icon: UserCog },
   { href: "/admin/verification", label: "التحقق", icon: ShieldCheck },
+  { href: "/admin/announcements", label: "شريط الأخبار", icon: Megaphone },
+  { href: "/admin/news", label: "مدونة الأخبار", icon: Newspaper },
   { href: "/admin/reports", label: "التقارير", icon: BarChart3 },
   { href: "/admin/settings", label: "الإعدادات", icon: Settings },
 ];

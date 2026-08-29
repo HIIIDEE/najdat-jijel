@@ -127,3 +127,25 @@ export async function getAffectedAreas() {
     .order("commune");
   return data ?? [];
 }
+
+export async function getPublishedPosts(limit = 50) {
+  const supabase = await createClient();
+  const { data } = await supabase
+    .from("posts")
+    .select("id, slug, title, excerpt, published_at, author_name")
+    .eq("is_published", true)
+    .order("published_at", { ascending: false })
+    .limit(limit);
+  return data ?? [];
+}
+
+export async function getPostBySlug(slug: string) {
+  const supabase = await createClient();
+  const { data } = await supabase
+    .from("posts")
+    .select("*")
+    .eq("slug", slug)
+    .eq("is_published", true)
+    .maybeSingle();
+  return data;
+}

@@ -12,7 +12,7 @@ import {
 } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
 import { LinkButton } from "@/components/shared/link-button";
-import { EmergencyBanner } from "@/components/shared/emergency-banner";
+import { NewsTicker } from "@/components/shared/news-ticker";
 import { NeedCard } from "@/components/shared/need-card";
 import { EmptyState } from "@/components/shared/empty-state";
 import { AnimatedCounter } from "@/components/interactive/animated-counter";
@@ -56,7 +56,7 @@ export default async function HomePage() {
 
   return (
     <>
-      <EmergencyBanner />
+      <NewsTicker />
 
       {/* ————————————————————————————————— Hero */}
       <section className="relative overflow-hidden border-b border-border bg-gradient-to-b from-algeria-green/8 via-secondary/40 to-background">

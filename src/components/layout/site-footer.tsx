@@ -8,6 +8,7 @@ const columns = [
       { href: "/needs", label: "الاحتياجات العاجلة" },
       { href: "/affected-areas", label: "المناطق المتضررة" },
       { href: "/map", label: "خريطة الإغاثة" },
+      { href: "/news", label: "الأخبار" },
       { href: "/transparency", label: "الشفافية" },
       { href: "/official-information", label: "معلومات رسمية" },
     ],

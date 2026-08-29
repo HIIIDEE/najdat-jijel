@@ -8,6 +8,7 @@ const navLinks = [
   { href: "/needs", label: "الاحتياجات" },
   { href: "/affected-areas", label: "المناطق المتضررة" },
   { href: "/map", label: "الخريطة" },
+  { href: "/news", label: "الأخبار" },
   { href: "/transparency", label: "الشفافية" },
   { href: "/official-information", label: "معلومات رسمية" },
 ];
