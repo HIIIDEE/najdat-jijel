@@ -44,39 +44,6 @@ export async function submitDonation(input: DonationInput): Promise<SubmitDonati
     return { success: false, error: "تعذر تحديد الحملة النشطة حاليًا. حاول مرة أخرى لاحقًا." };
   }
 
-  const donationId = randomUUID();
-
-  const { error: donationError } = await supabase.from("donations").insert({
-    id: donationId,
-    campaign_id: campaign.id,
-    donor_name: data.donor_name,
-    donor_phone: data.donor_phone,
-    current_wilaya: data.current_wilaya,
-    current_commune: data.current_commune || null,
-    needs_transport: data.needs_transport,
-    can_deliver_self: data.can_deliver_self,
-    ready_at: data.ready_at || null,
-    notes: data.notes || null,
-  });
-
-  if (donationError) {
-    return { success: false, error: "حدث خطأ أثناء تسجيل المساعدة. حاول مرة أخرى." };
-  }
-
-  const { error: itemsError } = await supabase.from("donation_items").insert(
-    data.items.map((it) => ({
-      donation_id: donationId,
-      category_id: it.category_id,
-      quantity: it.quantity,
-      unit: it.unit,
-      description: it.description || null,
-    })),
-  );
-
-  if (itemsError) {
-    return { success: false, error: "حدث خطأ أثناء تسجيل مواد المساعدة. حاول مرة أخرى." };
-  }
-
   const matchResults = await findMatchingNeedsForDonation(
     supabase,
     data.items.map((it) => ({
@@ -102,11 +69,41 @@ export async function submitDonation(input: DonationInput): Promise<SubmitDonati
     ),
   });
 
-  if (suggestedPoints[0]) {
-    await supabase
-      .from("donations")
-      .update({ suggested_collection_point_id: suggestedPoints[0].id })
-      .eq("id", donationId);
+  const suggestedPointId =
+    suggestedPoints.find((p) => p.kind === "collection_point")?.id ?? null;
+
+  const donationId = randomUUID();
+
+  const { error: donationError } = await supabase.from("donations").insert({
+    id: donationId,
+    campaign_id: campaign.id,
+    donor_name: data.donor_name,
+    donor_phone: data.donor_phone,
+    current_wilaya: data.current_wilaya,
+    current_commune: data.current_commune || null,
+    needs_transport: data.needs_transport,
+    can_deliver_self: data.can_deliver_self,
+    ready_at: data.ready_at || null,
+    notes: data.notes || null,
+    suggested_collection_point_id: suggestedPointId,
+  });
+
+  if (donationError) {
+    return { success: false, error: "حدث خطأ أثناء تسجيل المساعدة. حاول مرة أخرى." };
+  }
+
+  const { error: itemsError } = await supabase.from("donation_items").insert(
+    data.items.map((it) => ({
+      donation_id: donationId,
+      category_id: it.category_id,
+      quantity: it.quantity,
+      unit: it.unit,
+      description: it.description || null,
+    })),
+  );
+
+  if (itemsError) {
+    return { success: false, error: "حدث خطأ أثناء تسجيل مواد المساعدة. حاول مرة أخرى." };
   }
 
   return {
