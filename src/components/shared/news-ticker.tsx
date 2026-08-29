@@ -19,11 +19,10 @@ export async function NewsTicker() {
   if (messages.length === 0) {
     return (
       <div className="bg-priority-critical text-white">
-        <div className="mx-auto flex max-w-6xl items-center gap-2 px-4 py-2.5 text-sm">
+        <div className="mx-auto flex max-w-6xl items-center justify-center gap-2 px-4 py-2 text-center text-xs sm:text-sm font-medium">
           <Megaphone className="size-4 shrink-0" />
           <p>
-            <strong>قبل إرسال أي مساعدات:</strong> تحقق من الاحتياجات الحالية ونقاط الاستقبال. لا
-            ترسل مساعدات عشوائيًا حتى لا تتكدس المواد في نقطة واحدة.
+            <strong>تنبيه هام:</strong> يُرجى التنسيق المسبق مع نقاط التجميع ومراكز الإيواء قبل توجيه القوافل لضمان وصول المساعدات مباشرة للمتضررين.
           </p>
         </div>
       </div>
@@ -36,15 +35,15 @@ export async function NewsTicker() {
 
   return (
     <div className="bg-priority-critical text-white">
-      <div className="mx-auto flex max-w-6xl items-center gap-3 px-4 py-2.5">
-        <span className="flex shrink-0 items-center gap-1.5 text-sm font-bold">
-          <Megaphone className="size-4" />
+      <div className="mx-auto flex max-w-6xl items-center justify-center gap-3 px-4 py-2">
+        <span className="flex shrink-0 items-center gap-1.5 text-xs sm:text-sm font-bold">
+          <Megaphone className="size-4 animate-pulse" />
           <span className="hidden sm:inline">عاجل</span>
         </span>
 
         <div className="ticker-viewport relative flex-1 overflow-hidden">
           <div
-            className="animate-ticker whitespace-nowrap text-sm"
+            className="animate-ticker whitespace-nowrap text-xs sm:text-sm text-center"
             style={{ "--ticker-duration": `${duration}s` } as React.CSSProperties}
           >
             {messages.map((m, i) => (
