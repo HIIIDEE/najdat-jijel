@@ -56,8 +56,8 @@ export function EmergencyFab() {
               >
                 <div className="flex items-center justify-between gap-3">
                   <span className="flex items-center gap-3">
-                    <span className="text-2xl" aria-hidden>
-                      {c.emoji}
+                    <span className="flex size-9 items-center justify-center rounded-full bg-priority-critical/10 text-priority-critical">
+                      <c.icon className="size-4" aria-hidden />
                     </span>
                     <span>
                       <span className="block font-medium leading-tight">{c.label}</span>

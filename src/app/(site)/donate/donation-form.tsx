@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { useFieldArray, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { Plus, Trash2, Loader2, MapPin, Clock } from "lucide-react";
+import { Plus, Trash2, Loader2, MapPin, Clock, CircleCheck } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
@@ -21,7 +21,8 @@ import { Alert, AlertTitle, AlertDescription } from "@/components/ui/alert";
 import { PriorityBadge } from "@/components/shared/priority-badge";
 import { PointStatusBadge } from "@/components/shared/status-badge";
 import { donationSchema, unitOptions, type DonationInput } from "@/schemas/donation";
-import { categoryEmoji, formatQuantity, unitLabels } from "@/lib/constants";
+import { formatQuantity, unitLabels } from "@/lib/constants";
+import { CategoryIcon } from "@/components/shared/category-icon";
 import { wilayaNames } from "@/lib/wilayas";
 import { SuccessPanel } from "@/components/shared/success-panel";
 import { submitDonation, type SubmitDonationResult } from "@/actions/donations";
@@ -100,7 +101,7 @@ export function DonationForm({
     return (
       <div className="animate-rise space-y-5">
         <SuccessPanel
-          title="تم تسجيل مساعدتك بنجاح 🎉"
+          title="تم تسجيل مساعدتك بنجاح"
           description="شكرًا لك. سيتواصل فريق التنسيق معك قريبًا لتأكيد التفاصيل. في الأسفل أقرب احتياج مطابق ونقطة التسليم المقترحة."
           primaryHref="/map"
           primaryLabel="عرض نقاط التسليم"
@@ -114,8 +115,8 @@ export function DonationForm({
                 <Card key={m.need.id}>
                   <CardContent className="flex items-start justify-between gap-3 px-5">
                     <div>
-                      <p className="font-bold">
-                        {categoryEmoji[m.categorySlug] ?? "📦"}{" "}
+                      <p className="flex items-center gap-1 font-bold">
+                        <CategoryIcon slug={m.categorySlug} className="size-3.5" />
                         {m.need.title ?? categories.find((c) => c.slug === m.categorySlug)?.name_ar ?? m.categorySlug}
                       </p>
                       <p className="text-sm text-muted-foreground">
@@ -167,7 +168,9 @@ export function DonationForm({
 
         {(!result.matches || result.matches.length === 0) && (
           <Alert>
-            <AlertTitle>🟢 هذه المادة متوفرة حاليًا بشكل جيد</AlertTitle>
+            <AlertTitle className="flex items-center gap-1.5">
+              <CircleCheck className="size-4 text-algeria-green" /> هذه المادة متوفرة حاليًا بشكل جيد
+            </AlertTitle>
             <AlertDescription>
               لم نجد نقصًا حرجًا في هذه المادة حاليًا. سيراجع فريق التنسيق تسجيلك ويوجّهه لأقرب نقطة
               مناسبة، أو يمكنك مراجعة صفحة الاحتياجات لرؤية ما هو أكثر إلحاحًا الآن.
@@ -215,14 +218,20 @@ export function DonationForm({
                     <SelectValue placeholder="نوع المساعدة">
                       {(value: string) => {
                         const c = categories.find((cat) => cat.id === value);
-                        return c ? `${categoryEmoji[c.slug] ?? "📦"} ${c.name_ar}` : "نوع المساعدة";
+                        return c ? (
+                          <>
+                            <CategoryIcon slug={c.slug} className="inline size-3.5" /> {c.name_ar}
+                          </>
+                        ) : (
+                          "نوع المساعدة"
+                        );
                       }}
                     </SelectValue>
                   </SelectTrigger>
                   <SelectContent>
                     {categories.map((c) => (
                       <SelectItem key={c.id} value={c.id}>
-                        {categoryEmoji[c.slug] ?? "📦"} {c.name_ar}
+                        <CategoryIcon slug={c.slug} className="inline size-3.5" /> {c.name_ar}
                       </SelectItem>
                     ))}
                   </SelectContent>

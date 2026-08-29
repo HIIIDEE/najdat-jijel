@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
-import { HeartHandshake } from "lucide-react";
+import { HeartHandshake, LifeBuoy, Gift, Truck, Eye } from "lucide-react";
 import {
   Dialog,
   DialogContent,
@@ -16,10 +16,10 @@ import { siteConfig } from "@/config/site";
 const STORAGE_KEY = "haba_welcome_seen_v1";
 
 const roles = [
-  { href: "/help", emoji: "🆘", title: "أنا متضرر", desc: "أحتاج مساعدة عاجلة لي أو لعائلتي" },
-  { href: "/donate", emoji: "🎁", title: "لدي مساعدات", desc: "أملك مواد وأريد إيصالها لمن يحتاجها" },
-  { href: "/transport", emoji: "🚚", title: "أستطيع النقل", desc: "لدي مركبة ومساحة فارغة على الطريق" },
-  { href: "/needs", emoji: "👀", title: "أتصفّح فقط", desc: "أريد الاطلاع على الاحتياجات الحالية" },
+  { href: "/help", icon: LifeBuoy, title: "أنا متضرر", desc: "أحتاج مساعدة عاجلة لي أو لعائلتي" },
+  { href: "/donate", icon: Gift, title: "لدي مساعدات", desc: "أملك مواد وأريد إيصالها لمن يحتاجها" },
+  { href: "/transport", icon: Truck, title: "أستطيع النقل", desc: "لدي مركبة ومساحة فارغة على الطريق" },
+  { href: "/needs", icon: Eye, title: "أتصفّح فقط", desc: "أريد الاطلاع على الاحتياجات الحالية" },
 ];
 
 export function WelcomeDialog() {
@@ -69,8 +69,8 @@ export function WelcomeDialog() {
               onClick={() => choose(r.href)}
               className="flex flex-col items-center gap-1 rounded-xl border border-border p-4 text-center transition-all hover:-translate-y-0.5 hover:border-algeria-green hover:bg-algeria-green/5"
             >
-              <span className="text-3xl" aria-hidden>
-                {r.emoji}
+              <span className="flex size-11 items-center justify-center rounded-full bg-algeria-green/10 text-algeria-green">
+                <r.icon className="size-5" aria-hidden />
               </span>
               <span className="font-bold">{r.title}</span>
               <span className="text-xs text-muted-foreground">{r.desc}</span>
