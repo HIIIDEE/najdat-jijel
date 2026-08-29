@@ -1,12 +1,17 @@
 import type { Metadata } from "next";
+import { createClient } from "@/lib/supabase/server";
 import { MedicalVolunteerForm } from "./medical-volunteer-form";
+import { MedicalVolunteersList } from "./medical-volunteers-list";
 
 export const metadata: Metadata = {
   title: "أنا طبيب بشري / بيطري",
   description: "انضم إلى شبكة الأطباء، البياطرة والكوادر الصحية لإغاثة المتضررين وتقديم الدعم الميداني والاستشارات.",
 };
 
-export default function MedicalPage() {
+export default async function MedicalPage() {
+  const supabase = await createClient();
+  const { data: volunteers } = await supabase.rpc("get_public_medical_volunteers");
+
   return (
     <div className="mx-auto max-w-2xl px-4 py-10">
       <div className="mb-6 text-center">
@@ -16,6 +21,7 @@ export default function MedicalPage() {
         </p>
       </div>
       <MedicalVolunteerForm />
+      <MedicalVolunteersList volunteers={volunteers ?? []} />
     </div>
   );
 }

@@ -1,6 +1,8 @@
 // أرقام الطوارئ الرسمية في الجزائر — مجانية وتعمل على مدار الساعة.
 // تم التحقق منها من مصادر رسمية (المديرية العامة للحماية المدنية، المديرية العامة للأمن
 // الوطني، المديرية العامة للغابات) — أغسطس 2026.
+import { Ambulance, Shield, ShieldAlert, TreePine, type LucideIcon } from "lucide-react";
+
 export interface EmergencyContact {
   /** رقم النجدة القصير */
   number: string;
@@ -8,7 +10,7 @@ export interface EmergencyContact {
   greenNumber?: string;
   label: string;
   hint?: string;
-  emoji: string;
+  icon: LucideIcon;
 }
 
 export const emergencyContacts: EmergencyContact[] = [
@@ -17,25 +19,25 @@ export const emergencyContacts: EmergencyContact[] = [
     greenNumber: "1021",
     label: "الحماية المدنية",
     hint: "إسعاف وإنقاذ وإخماد حرائق",
-    emoji: "🚒",
+    icon: Ambulance,
   },
   {
     number: "1055",
     label: "الدرك الوطني",
     hint: "المناطق الريفية والطرق",
-    emoji: "🛡️",
+    icon: Shield,
   },
   {
     number: "17",
     greenNumber: "1548",
     label: "الشرطة الجزائرية",
     hint: "الأمن الوطني — المناطق الحضرية",
-    emoji: "🚓",
+    icon: ShieldAlert,
   },
   {
     number: "1070",
     label: "المديرية العامة للغابات",
     hint: "التبليغ عن حرائق الغابات",
-    emoji: "🌲",
+    icon: TreePine,
   },
 ];

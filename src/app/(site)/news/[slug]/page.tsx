@@ -3,6 +3,7 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { ArrowRight, Calendar, User } from "lucide-react";
 import { getPostBySlug } from "@/lib/data/public";
+import { decodeSlug } from "@/lib/url";
 
 export async function generateMetadata({
   params,
@@ -10,7 +11,7 @@ export async function generateMetadata({
   params: Promise<{ slug: string }>;
 }): Promise<Metadata> {
   const { slug } = await params;
-  const post = await getPostBySlug(slug);
+  const post = await getPostBySlug(decodeSlug(slug));
   if (!post) return { title: "الخبر غير موجود" };
   return {
     title: post.title,
@@ -21,7 +22,7 @@ export async function generateMetadata({
 
 export default async function PostPage({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params;
-  const post = await getPostBySlug(slug);
+  const post = await getPostBySlug(decodeSlug(slug));
   if (!post) notFound();
 
   const publishedDate = post.published_at

@@ -1,5 +1,5 @@
 import { cn } from "@/lib/utils";
-import { verificationEmoji, verificationLabels, type VerificationLevel } from "@/lib/constants";
+import { verificationIcon, verificationLabels, type VerificationLevel } from "@/lib/constants";
 
 const styles: Record<VerificationLevel, string> = {
   unverified: "bg-verify-unverified/10 text-verify-unverified border-verify-unverified/30",
@@ -15,6 +15,7 @@ export function VerificationBadge({
   level: VerificationLevel;
   className?: string;
 }) {
+  const Icon = verificationIcon[level];
   return (
     <span
       className={cn(
@@ -23,7 +24,7 @@ export function VerificationBadge({
         className,
       )}
     >
-      <span aria-hidden>{verificationEmoji[level]}</span>
+      <Icon className="size-2.5" fill="currentColor" aria-hidden />
       {verificationLabels[level]}
     </span>
   );

@@ -6,16 +6,6 @@ import type { Database } from "@/types/database";
 type AffectedAreaRow = Database["public"]["Tables"]["affected_areas"]["Row"];
 type CategoryRow = Database["public"]["Tables"]["categories"]["Row"];
 
-export type MedicalVolunteer = {
-  id: string;
-  full_name: string;
-  specialty: string;
-  commune_id: string;
-  phone: string;
-  current_workplace: string | null;
-  can_teleconsult: boolean;
-};
-
 // Fallback seed data matching upstream migrations (0001, 0009, 0015, 0016, 0018)
 const fallbackCategories: CategoryRow[] = [
   { id: "cat-1", slug: "water", name_ar: "ماء", default_unit: "carton", sort_order: 10, created_at: new Date().toISOString() },
@@ -352,15 +342,11 @@ export async function getPostBySlug(slug: string) {
   }
 }
 
-export async function getMedicalVolunteers(): Promise<MedicalVolunteer[]> {
+export async function getPublicMedicalVolunteers() {
   try {
     const supabase = await createClient();
-    // Use type assertion for newly added medical_volunteers table
-    const { data } = await (supabase as any)
-      .from("medical_volunteers")
-      .select("id, full_name, specialty, commune_id, phone, current_workplace, can_teleconsult")
-      .order("created_at", { ascending: false });
-    return (data as MedicalVolunteer[]) ?? [];
+    const { data } = await (supabase as any).rpc("get_public_medical_volunteers");
+    return data ?? [];
   } catch {
     return [];
   }

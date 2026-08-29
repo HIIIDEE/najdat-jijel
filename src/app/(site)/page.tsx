@@ -10,33 +10,35 @@ import {
   ShieldCheck,
   TriangleAlert,
   Stethoscope,
+  LifeBuoy,
+  Gift,
 } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
 import { LinkButton } from "@/components/shared/link-button";
 import { NewsTicker } from "@/components/shared/news-ticker";
+import { PlatformNotice } from "@/components/shared/platform-notice";
 import { NeedCard } from "@/components/shared/need-card";
 import { EmptyState } from "@/components/shared/empty-state";
 import { AnimatedCounter } from "@/components/interactive/animated-counter";
 import { siteConfig } from "@/config/site";
 import { relativeTimeAr } from "@/lib/constants";
 import { emergencyContacts } from "@/lib/emergency";
-import { createClient } from "@/lib/supabase/server";
 import {
   getAffectedAreas,
   getAffectedCommunes,
   getCriticalNeeds,
-  getMedicalVolunteers,
   getOfficialUpdates,
+  getPublicMedicalVolunteers,
   getShelters,
   getStatOverview,
 } from "@/lib/data/public";
 
 const quickActions = [
-  { href: "/help", emoji: "🆘", title: "أنا متضرر", desc: "الإبلاغ عن احتياج أو طلب مساعدة." },
-  { href: "/donate", emoji: "🎁", title: "لدي مساعدات", desc: "تسجيل المساعدات التي أملكها." },
-  { href: "/transport", emoji: "🚚", title: "أستطيع النقل", desc: "تسجيل سيارة أو شاحنة للنقل." },
-  { href: "/medical", emoji: "🩺", title: "أنا طبيب / بيطري", desc: "التطوع الطبي أو تقديم استشارات." },
-  { href: "/map", emoji: "📍", title: "أين أسلّم؟", desc: "عرض نقاط التجميع والاستقبال." },
+  { href: "/help", icon: LifeBuoy, title: "أنا متضرر", desc: "الإبلاغ عن احتياج أو طلب مساعدة." },
+  { href: "/donate", icon: Gift, title: "لدي مساعدات", desc: "تسجيل المساعدات التي أملكها." },
+  { href: "/transport", icon: Truck, title: "أستطيع النقل", desc: "تسجيل سيارة أو شاحنة للنقل." },
+  { href: "/medical", icon: Stethoscope, title: "أنا طبيب / إطار صحي أو بيطري", desc: "التطوع الطبي وتقديم الاستشارات." },
+  { href: "/map", icon: MapPin, title: "أين أسلّم؟", desc: "عرض نقاط التجميع والاستقبال." },
 ];
 
 const howItWorks = [
@@ -62,7 +64,7 @@ export default async function HomePage() {
     getShelters(),
     getAffectedCommunes(),
     getAffectedAreas(),
-    getMedicalVolunteers(),
+    getPublicMedicalVolunteers(),
   ]);
 
   const areaWilayas = [...new Set(areas.map((a) => a.wilaya))];
@@ -100,8 +102,8 @@ export default async function HomePage() {
               <Link key={a.href} href={a.href} className="group">
                 <Card className="h-full transition-all group-hover:-translate-y-1 group-hover:border-algeria-green group-hover:shadow-lg">
                   <CardContent className="flex h-full flex-col items-center gap-2 px-4 py-5 text-center">
-                    <span className="text-3xl transition-transform group-hover:scale-110" aria-hidden>
-                      {a.emoji}
+                    <span className="flex size-12 items-center justify-center rounded-full bg-algeria-green/10 text-algeria-green transition-transform group-hover:scale-110">
+                      <a.icon className="size-6" aria-hidden />
                     </span>
                     <p className="font-bold">{a.title}</p>
                     <p className="text-xs text-muted-foreground">{a.desc}</p>
@@ -294,65 +296,63 @@ export default async function HomePage() {
       )}
 
       {/* ————————————————————————————————— الأطقم الطبية والبيطرية */}
-      {medicalVolunteers && medicalVolunteers.length > 0 && (
-        <section className="mx-auto max-w-6xl px-4 pb-14">
-          <div className="mb-6 flex items-end justify-between gap-3">
-            <div>
-              <h2 className="flex items-center gap-2 text-2xl font-bold">
-                <Stethoscope className="size-5 text-algeria-green" /> الأطقم الطبية والبيطرية المتطوعة
-              </h2>
-              <p className="mt-1 text-sm text-muted-foreground">
-                أطباء، بياطرة وكوادر صحية متطوعون لتقديم الرعاية والاستشارات الميدانية.
-              </p>
-            </div>
-            <LinkButton href="/medical" variant="outline" size="sm" className="hidden sm:inline-flex">
-              تسجيل كمتطوع
-            </LinkButton>
+      <section className="mx-auto max-w-6xl px-4 pb-14">
+        <div className="mb-6 flex items-end justify-between gap-3">
+          <div>
+            <h2 className="flex items-center gap-2 text-2xl font-bold">
+              <Stethoscope className="size-5 text-algeria-green" /> الأطقم الطبية والبيطرية المتطوعة
+            </h2>
+            <p className="mt-1 text-sm text-muted-foreground">
+              أطباء، بياطرة وكوادر صحية متطوعون لتقديم الرعاية والاستشارات الميدانية.
+            </p>
           </div>
-
-          <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
-            {medicalVolunteers.map((doc) => (
-              <Card key={doc.id}>
-                <CardContent className="space-y-2 px-5">
-                  <div className="flex items-start justify-between gap-2">
-                    <p className="font-bold leading-tight">{doc.full_name}</p>
-                    <span className="rounded-full bg-algeria-green/10 px-2.5 py-0.5 text-xs font-semibold text-algeria-green shrink-0">
-                      {doc.specialty}
-                    </span>
-                  </div>
-
-                  <p className="flex items-start gap-1.5 text-sm text-muted-foreground">
-                    <MapPin className="mt-0.5 size-3.5 shrink-0" />
-                    {doc.commune_id}
-                  </p>
-
-                  {doc.current_workplace && (
-                    <p className="text-xs text-muted-foreground">{doc.current_workplace}</p>
-                  )}
-
-                  {doc.can_teleconsult && (
-                    <p className="text-xs font-medium text-algeria-green">• متاح للاستشارات الهاتفية</p>
-                  )}
-
-                  {doc.phone && (
-                    <a
-                      href={`tel:${doc.phone.replace(/\s/g, "")}`}
-                      dir="ltr"
-                      className="inline-flex items-center gap-1.5 text-sm font-semibold text-algeria-green hover:underline pt-1"
-                    >
-                      <Phone className="size-3.5" /> {doc.phone}
-                    </a>
-                  )}
-                </CardContent>
-              </Card>
-            ))}
-          </div>
-
-          <LinkButton href="/medical" variant="outline" className="mt-5 w-full sm:hidden">
-            تسجيل كمتطوع طبي / بيطري
+          <LinkButton href="/medical" variant="outline" size="sm" className="hidden sm:inline-flex">
+            تسجيل كمتطوع
           </LinkButton>
-        </section>
-      )}
+        </div>
+
+        <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
+          {medicalVolunteers?.map((doc) => (
+            <Card key={doc.id}>
+              <CardContent className="space-y-2 px-5">
+                <div className="flex items-start justify-between gap-2">
+                  <p className="font-bold leading-tight">{doc.full_name}</p>
+                  <span className="rounded-full bg-algeria-green/10 px-2.5 py-0.5 text-xs font-semibold text-algeria-green shrink-0">
+                    {doc.specialty}
+                  </span>
+                </div>
+
+                <p className="flex items-start gap-1.5 text-sm text-muted-foreground">
+                  <MapPin className="mt-0.5 size-3.5 shrink-0" />
+                  {doc.commune_id}
+                </p>
+
+                {doc.current_workplace && (
+                  <p className="text-xs text-muted-foreground">{doc.current_workplace}</p>
+                )}
+
+                {doc.can_teleconsult && (
+                  <p className="text-xs font-medium text-algeria-green">• متاح للاستشارات الهاتفية</p>
+                )}
+
+                {doc.phone && (
+                  <a
+                    href={`tel:${doc.phone.replace(/\s/g, "")}`}
+                    dir="ltr"
+                    className="inline-flex items-center gap-1.5 text-sm font-semibold text-algeria-green hover:underline pt-1"
+                  >
+                    <Phone className="size-3.5" /> {doc.phone}
+                  </a>
+                )}
+              </CardContent>
+            </Card>
+          ))}
+        </div>
+
+        <LinkButton href="/medical" variant="outline" className="mt-5 w-full sm:hidden">
+          تسجيل كمتطوع طبي / بيطري
+        </LinkButton>
+      </section>
 
       {/* ————————————————————————————————— أرقام الطوارئ */}
       <section className="border-y border-border bg-priority-critical/5">
@@ -367,8 +367,8 @@ export default async function HomePage() {
                 key={c.label}
                 className="flex flex-col items-center gap-1 rounded-xl border border-border bg-card p-4 text-center transition-all hover:-translate-y-0.5 hover:border-priority-critical hover:shadow-md"
               >
-                <span className="text-2xl" aria-hidden>
-                  {c.emoji}
+                <span className="flex size-10 items-center justify-center rounded-full bg-priority-critical/10 text-priority-critical">
+                  <c.icon className="size-5" aria-hidden />
                 </span>
                 <a
                   href={`tel:${c.number}`}
@@ -450,6 +450,9 @@ export default async function HomePage() {
           </LinkButton>
         </div>
       </section>
+
+      {/* ————————————————————————————————— ملاحظة هامة */}
+      <PlatformNotice />
     </>
   );
 }

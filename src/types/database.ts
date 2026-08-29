@@ -669,6 +669,33 @@ export type Database = {
           },
         ]
       }
+      emergency_sos: {
+        Row: {
+          created_at: string
+          full_name: string | null
+          id: string
+          latitude: number
+          longitude: number
+          phone: string
+        }
+        Insert: {
+          created_at?: string
+          full_name?: string | null
+          id?: string
+          latitude: number
+          longitude: number
+          phone: string
+        }
+        Update: {
+          created_at?: string
+          full_name?: string | null
+          id?: string
+          latitude?: number
+          longitude?: number
+          phone?: string
+        }
+        Relationships: []
+      }
       inventory_items: {
         Row: {
           category_id: string
@@ -827,6 +854,80 @@ export type Database = {
           wilaya_name?: string
         }
         Relationships: []
+      }
+      medical_volunteers: {
+        Row: {
+          can_field_intervene: boolean
+          can_teleconsult: boolean
+          commune_id: string
+          created_at: string
+          current_workplace: string | null
+          email: string | null
+          full_name: string
+          has_emergency_kit: boolean
+          id: string
+          license_number: string | null
+          notes: string | null
+          phone: string
+          show_phone_publicly: boolean
+          specialty: string
+          status: Database["public"]["Enums"]["medical_verification_status"]
+          updated_at: string
+          verified_at: string | null
+          verified_by: string | null
+          wilaya_code: string
+        }
+        Insert: {
+          can_field_intervene?: boolean
+          can_teleconsult?: boolean
+          commune_id: string
+          created_at?: string
+          current_workplace?: string | null
+          email?: string | null
+          full_name: string
+          has_emergency_kit?: boolean
+          id?: string
+          license_number?: string | null
+          notes?: string | null
+          phone: string
+          show_phone_publicly?: boolean
+          specialty: string
+          status?: Database["public"]["Enums"]["medical_verification_status"]
+          updated_at?: string
+          verified_at?: string | null
+          verified_by?: string | null
+          wilaya_code: string
+        }
+        Update: {
+          can_field_intervene?: boolean
+          can_teleconsult?: boolean
+          commune_id?: string
+          created_at?: string
+          current_workplace?: string | null
+          email?: string | null
+          full_name?: string
+          has_emergency_kit?: boolean
+          id?: string
+          license_number?: string | null
+          notes?: string | null
+          phone?: string
+          show_phone_publicly?: boolean
+          specialty?: string
+          status?: Database["public"]["Enums"]["medical_verification_status"]
+          updated_at?: string
+          verified_at?: string | null
+          verified_by?: string | null
+          wilaya_code?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "medical_volunteers_verified_by_fkey"
+            columns: ["verified_by"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       needs: {
         Row: {
@@ -1523,6 +1624,20 @@ export type Database = {
           wilaya: string
         }[]
       }
+      get_public_medical_volunteers: {
+        Args: never
+        Returns: {
+          can_field_intervene: boolean
+          can_teleconsult: boolean
+          commune_id: string
+          current_workplace: string
+          full_name: string
+          id: string
+          phone: string
+          specialty: string
+          wilaya_code: string
+        }[]
+      }
       get_public_relief_hubs: {
         Args: never
         Returns: {
@@ -1589,6 +1704,10 @@ export type Database = {
       is_admin: { Args: never; Returns: boolean }
       is_manager: { Args: never; Returns: boolean }
       is_staff: { Args: never; Returns: boolean }
+      notify_managers: {
+        Args: { p_body: string; p_link: string; p_title: string }
+        Returns: undefined
+      }
     }
     Enums: {
       affected_severity:
@@ -1607,6 +1726,7 @@ export type Database = {
         | "beneficiary"
       donation_status: "registered" | "matched" | "delivered" | "cancelled"
       inventory_txn_type: "in" | "out" | "adjustment" | "transfer"
+      medical_verification_status: "pending" | "verified" | "rejected"
       need_status: "active" | "resolved" | "expired"
       point_status: "open" | "full" | "paused" | "closed"
       priority_level: "critical" | "high" | "medium" | "low"
@@ -1799,6 +1919,7 @@ export const Constants = {
       ],
       donation_status: ["registered", "matched", "delivered", "cancelled"],
       inventory_txn_type: ["in", "out", "adjustment", "transfer"],
+      medical_verification_status: ["pending", "verified", "rejected"],
       need_status: ["active", "resolved", "expired"],
       point_status: ["open", "full", "paused", "closed"],
       priority_level: ["critical", "high", "medium", "low"],

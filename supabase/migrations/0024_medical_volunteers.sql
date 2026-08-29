@@ -1,73 +1,63 @@
--- 1. Enum du statut
-DO $$ BEGIN
-    CREATE TYPE medical_verification_status AS ENUM ('pending', 'verified', 'rejected');
-EXCEPTION
-    WHEN duplicate_object THEN null;
-END $$;
+-- Reconciles the medical_volunteers table/type that were already created directly
+-- against production (outside of any tracked migration) with this project's
+-- security conventions: staff/manager-gated RLS, opt-in public phone disclosure,
+-- and a SECURITY DEFINER RPC for the public-facing list.
+--
+-- Uses ALTER/CREATE OR REPLACE throughout (not CREATE TABLE) because the table
+-- and the medical_verification_status enum already exist live.
 
--- 2. Table des volontaires médicaux
-CREATE TABLE IF NOT EXISTS public.medical_volunteers (
-    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-    full_name TEXT NOT NULL,
-    phone TEXT NOT NULL,
-    email TEXT,
-    specialty TEXT NOT NULL,
-    license_number TEXT,
-    wilaya_code TEXT NOT NULL,
-    commune_id TEXT NOT NULL,
-    current_workplace TEXT,
-    can_teleconsult BOOLEAN NOT NULL DEFAULT false,
-    can_field_intervene BOOLEAN NOT NULL DEFAULT true,
-    has_emergency_kit BOOLEAN NOT NULL DEFAULT false,
-    status medical_verification_status NOT NULL DEFAULT 'pending',
-    notes TEXT,
-    created_at TIMESTAMPTZ NOT NULL DEFAULT timezone('utc'::text, now()),
-    updated_at TIMESTAMPTZ NOT NULL DEFAULT timezone('utc'::text, now())
-);
+alter table public.medical_volunteers
+  add column if not exists show_phone_publicly boolean not null default false,
+  add column if not exists verified_by uuid references public.profiles(id),
+  add column if not exists verified_at timestamptz;
 
--- 3. Sécurité RLS
-ALTER TABLE public.medical_volunteers ENABLE ROW LEVEL SECURITY;
+drop trigger if exists trg_medical_volunteers_updated_at on public.medical_volunteers;
+create trigger trg_medical_volunteers_updated_at
+  before update on public.medical_volunteers
+  for each row execute function public.set_updated_at();
 
-DROP POLICY IF EXISTS "medical_volunteers_public_insert" ON public.medical_volunteers;
-DROP POLICY IF EXISTS "medical_volunteers_admin_select" ON public.medical_volunteers;
-DROP POLICY IF EXISTS "medical_volunteers_admin_update" ON public.medical_volunteers;
+-- Drop the ad-hoc policies that were applied directly to production and exposed
+-- full volunteer rows (name, phone, email, license number, notes) to anon/public
+-- with no verification gating.
+drop policy if exists "Allow public read for medical volunteers" on public.medical_volunteers;
+drop policy if exists "Lecture publique des medecins" on public.medical_volunteers;
+drop policy if exists medical_volunteers_admin_select on public.medical_volunteers;
+drop policy if exists medical_volunteers_admin_update on public.medical_volunteers;
+drop policy if exists medical_volunteers_public_insert on public.medical_volunteers;
+drop policy if exists medical_volunteers_staff_select on public.medical_volunteers;
+drop policy if exists medical_volunteers_manager_update on public.medical_volunteers;
+drop policy if exists medical_volunteers_manager_delete on public.medical_volunteers;
 
--- Insertion ouverte à tout le monde
-CREATE POLICY "medical_volunteers_public_insert"
-    ON public.medical_volunteers
-    FOR INSERT
-    TO anon, authenticated
-    WITH CHECK (true);
+create policy medical_volunteers_public_insert on public.medical_volunteers
+  for insert to anon, authenticated with check (true);
 
--- Lecture réservée aux administrateurs (aligné sur public.profiles)
-CREATE POLICY "medical_volunteers_admin_select"
-    ON public.medical_volunteers
-    FOR SELECT
-    TO authenticated
-    USING (
-        EXISTS (
-            SELECT 1 FROM public.profiles 
-            WHERE profiles.id = auth.uid() 
-            AND profiles.role = 'admin'
-        )
-    );
+create policy medical_volunteers_staff_select on public.medical_volunteers
+  for select using (public.is_staff());
 
--- Modification réservée aux administrateurs
-CREATE POLICY "medical_volunteers_admin_update"
-    ON public.medical_volunteers
-    FOR UPDATE
-    TO authenticated
-    USING (
-        EXISTS (
-            SELECT 1 FROM public.profiles 
-            WHERE profiles.id = auth.uid() 
-            AND profiles.role = 'admin'
-        )
-    )
-    WITH CHECK (
-        EXISTS (
-            SELECT 1 FROM public.profiles 
-            WHERE profiles.id = auth.uid() 
-            AND profiles.role = 'admin'
-        )
-    );
+create policy medical_volunteers_manager_update on public.medical_volunteers
+  for update using (public.is_manager());
+
+create policy medical_volunteers_manager_delete on public.medical_volunteers
+  for delete using (public.is_manager());
+
+create or replace function public.get_public_medical_volunteers()
+returns table (
+  id uuid,
+  full_name text,
+  specialty text,
+  wilaya_code text,
+  commune_id text,
+  current_workplace text,
+  can_teleconsult boolean,
+  can_field_intervene boolean,
+  phone text
+)
+language sql stable security definer set search_path = public as $$
+  select id, full_name, specialty, wilaya_code, commune_id, current_workplace,
+    can_teleconsult, can_field_intervene,
+    case when show_phone_publicly then phone else null end
+  from public.medical_volunteers
+  where status = 'verified';
+$$;
+
+grant execute on function public.get_public_medical_volunteers() to anon, authenticated;

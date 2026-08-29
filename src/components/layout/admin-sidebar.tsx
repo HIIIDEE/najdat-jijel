@@ -19,6 +19,7 @@ import {
   Settings,
   Megaphone,
   Newspaper,
+  Stethoscope,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 
@@ -35,6 +36,7 @@ const sections = [
   { href: "/admin/distributions", label: "عمليات التوزيع", icon: PackageCheck },
   { href: "/admin/users", label: "المستخدمون", icon: UserCog },
   { href: "/admin/verification", label: "التحقق", icon: ShieldCheck },
+  { href: "/admin/medical", label: "الأطقم الطبية", icon: Stethoscope },
   { href: "/admin/announcements", label: "شريط الأخبار", icon: Megaphone },
   { href: "/admin/news", label: "مدونة الأخبار", icon: Newspaper },
   { href: "/admin/reports", label: "التقارير", icon: BarChart3 },

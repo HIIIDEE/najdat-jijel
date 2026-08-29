@@ -2,7 +2,8 @@ import type { Metadata } from "next";
 import { StatCard } from "@/components/shared/stat-card";
 import { EmptyState } from "@/components/shared/empty-state";
 import { Card, CardContent } from "@/components/ui/card";
-import { categoryEmoji, formatQuantity, unitLabels } from "@/lib/constants";
+import { formatQuantity, unitLabels } from "@/lib/constants";
+import { CategoryIcon } from "@/components/shared/category-icon";
 import {
   getStatDistributionsByCategory,
   getStatDonationsByCategory,
@@ -44,7 +45,7 @@ export default async function TransparencyPage() {
             <Card key={`${row.slug}-${row.unit}`}>
               <CardContent className="flex items-center justify-between px-5">
                 <span className="flex items-center gap-2 font-medium">
-                  <span aria-hidden>{categoryEmoji[row.slug ?? ""] ?? "📦"}</span>
+                  <CategoryIcon slug={row.slug} className="size-4" />
                   {row.name_ar}
                 </span>
                 <span className="font-bold tabular-nums">
@@ -72,7 +73,7 @@ export default async function TransparencyPage() {
               <CardContent className="px-5">
                 <div className="flex items-center justify-between">
                   <span className="flex items-center gap-2 font-medium">
-                    <span aria-hidden>{categoryEmoji[row.slug ?? ""] ?? "📦"}</span>
+                    <CategoryIcon slug={row.slug} className="size-4" />
                     {row.name_ar}
                   </span>
                   <span className="font-bold tabular-nums">

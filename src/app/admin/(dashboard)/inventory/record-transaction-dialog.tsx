@@ -25,7 +25,8 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { categoryEmoji, unitLabels } from "@/lib/constants";
+import { unitLabels } from "@/lib/constants";
+import { CategoryIcon } from "@/components/shared/category-icon";
 import { recordInventoryTransaction } from "@/actions/inventory";
 import type { Database } from "@/types/database";
 
@@ -174,14 +175,20 @@ export function RecordTransactionDialog({ hubs, categories }: { hubs: Hub[]; cat
                 <SelectValue placeholder="اختر المادة">
                   {(v: string) => {
                     const c = categories.find((cat) => cat.id === v);
-                    return c ? `${categoryEmoji[c.slug] ?? "📦"} ${c.name_ar}` : "اختر المادة";
+                    return c ? (
+                      <>
+                        <CategoryIcon slug={c.slug} className="inline size-3.5" /> {c.name_ar}
+                      </>
+                    ) : (
+                      "اختر المادة"
+                    );
                   }}
                 </SelectValue>
               </SelectTrigger>
               <SelectContent>
                 {categories.map((c) => (
                   <SelectItem key={c.id} value={c.id}>
-                    {categoryEmoji[c.slug] ?? "📦"} {c.name_ar}
+                    <CategoryIcon slug={c.slug} className="inline size-3.5" /> {c.name_ar}
                   </SelectItem>
                 ))}
               </SelectContent>

@@ -88,7 +88,7 @@ export function HelpRequestForm() {
   if (submitted) {
     return (
       <SuccessPanel
-        title="تم استلام طلبك بنجاح 🙏"
+        title="تم استلام طلبك بنجاح"
         description="سيراجع فريق التنسيق طلبك ويتواصل معك في أقرب وقت ممكن. بياناتك محمية ولا تُعرض للعامة إطلاقًا."
         primaryHref="/map"
         primaryLabel="مراكز الإيواء القريبة"

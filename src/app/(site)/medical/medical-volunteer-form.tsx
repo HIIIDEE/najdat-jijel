@@ -43,6 +43,7 @@ export function MedicalVolunteerForm() {
       can_field_intervene: true,
       can_teleconsult: false,
       has_emergency_kit: false,
+      show_phone_publicly: false,
       notes: "",
     },
   });
@@ -50,6 +51,7 @@ export function MedicalVolunteerForm() {
   const canFieldIntervene = watch("can_field_intervene");
   const canTeleconsult = watch("can_teleconsult");
   const hasEmergencyKit = watch("has_emergency_kit");
+  const showPhonePublicly = watch("show_phone_publicly");
 
   async function onSubmit(values: MedicalVolunteerInput) {
     setSubmitting(true);
@@ -71,7 +73,7 @@ export function MedicalVolunteerForm() {
   if (submitted) {
     return (
       <SuccessPanel
-        title="شكراً لمبادرتكم الإنسانية 🙏"
+        title="شكراً لمبادرتكم الإنسانية"
         description="تم تسجيل بياناتكم بنجاح. ستتواصل معكم خلية التنسيق الطبي والبيطري عند الحاجة لأي تدخل أو استشارة."
         primaryHref="/"
         primaryLabel="العودة للرئيسية"
@@ -161,6 +163,14 @@ export function MedicalVolunteerForm() {
               onCheckedChange={(v) => setValue("has_emergency_kit", Boolean(v))}
             />
             حيازة حقيبة إسعافات أولية أو معدات بيطرية متنقلة
+          </label>
+
+          <label className="flex items-center gap-2 text-sm">
+            <Checkbox
+              checked={showPhonePublicly}
+              onCheckedChange={(v) => setValue("show_phone_publicly", Boolean(v))}
+            />
+            أوافق على نشر رقم هاتفي للعموم في قائمة الأطقم الطبية بعد التحقق من انضمامي
           </label>
 
           <div>
