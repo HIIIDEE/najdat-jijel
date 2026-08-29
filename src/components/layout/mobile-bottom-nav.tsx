@@ -29,7 +29,7 @@ export function MobileBottomNav() {
               key={item.href}
               href={item.href}
               className={cn(
-                "flex flex-col items-center gap-1 py-2.5 text-[11px] font-medium",
+                "flex flex-col items-center gap-1 py-2 text-xs font-semibold",
                 active ? "text-algeria-green" : "text-muted-foreground",
               )}
             >

@@ -85,15 +85,15 @@ export function NeedCard({ need }: { need: Need }) {
             <div className="mt-1 space-y-2">
               <div className="grid grid-cols-3 gap-2 rounded-lg bg-muted/60 p-3 text-center">
                 <div>
-                  <p className="text-[11px] text-muted-foreground">الاحتياج</p>
+                  <p className="text-xs font-medium text-muted-foreground">الاحتياج</p>
                   <p className="text-sm font-bold tabular-nums">{formatQuantity(needed)}</p>
                 </div>
                 <div>
-                  <p className="text-[11px] text-muted-foreground">المتوفر</p>
+                  <p className="text-xs font-medium text-muted-foreground">المتوفر</p>
                   <p className="text-sm font-bold tabular-nums">{formatQuantity(available)}</p>
                 </div>
                 <div>
-                  <p className="text-[11px] text-muted-foreground">النقص</p>
+                  <p className="text-xs font-medium text-muted-foreground">النقص</p>
                   <p className="text-sm font-bold tabular-nums text-priority-critical">
                     {formatQuantity(deficit)}
                   </p>
@@ -174,17 +174,17 @@ export function NeedCard({ need }: { need: Need }) {
           {hasQuantities && (
             <div className="grid grid-cols-3 gap-2 rounded-lg bg-muted/60 p-3 text-center">
               <div>
-                <p className="text-[11px] text-muted-foreground">الاحتياج</p>
+                <p className="text-xs font-medium text-muted-foreground">الاحتياج</p>
                 <p className="font-bold tabular-nums">
                   {formatQuantity(needed)} {unit}
                 </p>
               </div>
               <div>
-                <p className="text-[11px] text-muted-foreground">المتوفر</p>
+                <p className="text-xs font-medium text-muted-foreground">المتوفر</p>
                 <p className="font-bold tabular-nums">{formatQuantity(available)}</p>
               </div>
               <div>
-                <p className="text-[11px] text-muted-foreground">النقص</p>
+                <p className="text-xs font-medium text-muted-foreground">النقص</p>
                 <p className="font-bold tabular-nums text-priority-critical">
                   {formatQuantity(deficit)}
                 </p>
