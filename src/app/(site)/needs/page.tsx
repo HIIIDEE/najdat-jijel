@@ -31,7 +31,7 @@ export default async function NeedsPage({
       <div className="mb-6 text-center sm:text-right">
         <h1 className="text-3xl font-extrabold">ماذا تحتاج جيجل الآن؟</h1>
         <p className="mt-2 text-muted-foreground">
-          بيانات تجريبية أثناء التطوير — سيتم استبدالها ببيانات ميدانية حقيقية بعد التحقق منها.
+          بيانات مباشرة من الفرق الميدانية وفريق التنسيق، وتُحدَّث باستمرار.
         </p>
       </div>
 

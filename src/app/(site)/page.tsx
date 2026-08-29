@@ -117,7 +117,7 @@ export default async function HomePage() {
           <div>
             <h2 className="text-2xl font-bold">الاحتياجات العاجلة الآن</h2>
             <p className="mt-1 text-sm text-muted-foreground">
-              بيانات تجريبية أثناء التطوير — سيتم استبدالها ببيانات ميدانية حقيقية بعد التحقق منها.
+              بيانات مباشرة من الفرق الميدانية وفريق التنسيق، وتُحدَّث باستمرار.
             </p>
           </div>
           <LinkButton href="/needs" variant="outline" className="hidden sm:inline-flex">
