@@ -7,6 +7,7 @@ import { relativeTimeAr, roleLabels } from "@/lib/constants";
 import { UserRoleSelect } from "./user-role-select";
 import { AddStaffDialog } from "./add-staff-dialog";
 import { DeleteUserButton } from "./delete-user-button";
+import { ExportUsersCsvButton } from "./export-csv-button";
 
 export const metadata: Metadata = { title: "المستخدمون", robots: { index: false } };
 
@@ -38,7 +39,10 @@ export default async function AdminUsersPage() {
               : "تغيير الأدوار وإضافة الأعضاء متاح لحسابات الأدمن فقط."}
           </p>
         </div>
-        {isAdmin && <AddStaffDialog />}
+        <div className="flex items-center gap-2">
+          <ExportUsersCsvButton rows={rows} />
+          {isAdmin && <AddStaffDialog />}
+        </div>
       </div>
 
       {isAdmin && (
