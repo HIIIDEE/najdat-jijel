@@ -1,0 +1,191 @@
+"use client";
+
+import { useState } from "react";
+import { MapPin, Clock, Phone, Navigation, Home, Package } from "lucide-react";
+import { Card, CardContent } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { PointStatusBadge } from "@/components/shared/status-badge";
+import { VerificationBadge } from "@/components/shared/verification-badge";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogDescription,
+} from "@/components/ui/dialog";
+import { categoryEmoji } from "@/lib/constants";
+import { splitNeedNotes } from "@/lib/notes";
+import type { PointStatus, VerificationLevel } from "@/lib/constants";
+
+export interface PointCardData {
+  id: string;
+  kind: "collection_point" | "relief_hub" | "shelter";
+  name: string;
+  wilaya: string;
+  commune: string;
+  address: string | null;
+  lat: number | null;
+  lng: number | null;
+  phone: string | null;
+  openingHours: string | null;
+  capacityNote?: string | null;
+  acceptedCategories?: string[];
+  status: PointStatus;
+  verificationLevel: VerificationLevel;
+  notes: string | null;
+}
+
+const kindLabel: Record<PointCardData["kind"], string> = {
+  collection_point: "نقطة تجميع",
+  relief_hub: "مركز استقبال",
+  shelter: "مركز إيواء",
+};
+
+const kindDot: Record<PointCardData["kind"], string> = {
+  collection_point: "bg-[#00843D]",
+  relief_hub: "bg-[#1d4ed8]",
+  shelter: "bg-[#7c3aed]",
+};
+
+export function PointCard({ point }: { point: PointCardData }) {
+  const [open, setOpen] = useState(false);
+  const { detail, source } = splitNeedNotes(point.notes);
+
+  const directionsUrl =
+    point.lat != null && point.lng != null
+      ? `https://www.google.com/maps/dir/?api=1&destination=${point.lat},${point.lng}`
+      : `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(
+          `${point.name} ${point.commune} ${point.wilaya}`,
+        )}`;
+
+  return (
+    <>
+      <Card
+        onClick={() => setOpen(true)}
+        className="group h-full cursor-pointer transition-all hover:-translate-y-0.5 hover:border-algeria-green/50 hover:shadow-md"
+      >
+        <CardContent className="space-y-2 px-5">
+          <div className="flex items-start justify-between gap-2">
+            <div className="min-w-0">
+              <p className="flex items-center gap-1.5 text-[11px] font-medium text-muted-foreground">
+                <span className={`size-2 rounded-full ${kindDot[point.kind]}`} aria-hidden />
+                {kindLabel[point.kind]}
+              </p>
+              <p className="mt-0.5 font-bold leading-tight">{point.name}</p>
+            </div>
+            <PointStatusBadge status={point.status} />
+          </div>
+
+          <p className="flex items-start gap-1.5 text-sm text-muted-foreground">
+            <MapPin className="mt-0.5 size-3.5 shrink-0" />
+            {point.address ?? `${point.commune}، ولاية ${point.wilaya}`}
+          </p>
+
+          {point.openingHours && (
+            <p className="flex items-center gap-1.5 text-sm text-muted-foreground">
+              <Clock className="size-3.5 shrink-0" /> {point.openingHours}
+            </p>
+          )}
+
+          {point.acceptedCategories && point.acceptedCategories.length > 0 && (
+            <p className="flex flex-wrap gap-1 text-base" aria-label="المواد المقبولة">
+              {point.acceptedCategories.map((slug) => (
+                <span key={slug} title={slug}>
+                  {categoryEmoji[slug] ?? "📦"}
+                </span>
+              ))}
+            </p>
+          )}
+
+          <div className="flex items-center justify-between gap-2 pt-1">
+            <VerificationBadge level={point.verificationLevel} />
+            {point.phone && (
+              <a
+                href={`tel:${point.phone.replace(/\s/g, "")}`}
+                onClick={(e) => e.stopPropagation()}
+                className="flex items-center gap-1 text-sm font-semibold text-algeria-green hover:underline"
+                dir="ltr"
+              >
+                <Phone className="size-3.5" />
+                {point.phone}
+              </a>
+            )}
+          </div>
+        </CardContent>
+      </Card>
+
+      <Dialog open={open} onOpenChange={setOpen}>
+        <DialogContent className="max-h-[85vh] overflow-y-auto sm:max-w-md">
+          <DialogHeader>
+            <p className="flex items-center gap-1.5 text-xs font-medium text-muted-foreground">
+              <span className={`size-2 rounded-full ${kindDot[point.kind]}`} aria-hidden />
+              {kindLabel[point.kind]}
+            </p>
+            <DialogTitle className="flex items-center gap-2">
+              {point.kind === "shelter" && <Home className="size-4 text-[#7c3aed]" />}
+              {point.name}
+            </DialogTitle>
+            <DialogDescription className="flex items-start gap-1">
+              <MapPin className="mt-0.5 size-3.5 shrink-0" />
+              {point.address ?? `${point.commune}، ولاية ${point.wilaya}`}
+            </DialogDescription>
+          </DialogHeader>
+
+          <div className="flex flex-wrap items-center gap-2">
+            <PointStatusBadge status={point.status} />
+            <VerificationBadge level={point.verificationLevel} />
+          </div>
+
+          {point.openingHours && (
+            <p className="flex items-center gap-2 text-sm">
+              <Clock className="size-4 text-muted-foreground" /> {point.openingHours}
+            </p>
+          )}
+
+          {point.capacityNote && (
+            <div className="flex items-start gap-2 rounded-lg bg-muted/60 p-3">
+              <Package className="mt-0.5 size-4 shrink-0 text-muted-foreground" />
+              <p className="text-sm leading-relaxed">{point.capacityNote}</p>
+            </div>
+          )}
+
+          {point.acceptedCategories && point.acceptedCategories.length > 0 && (
+            <div>
+              <p className="mb-1.5 text-xs font-semibold text-muted-foreground">المواد المقبولة</p>
+              <div className="flex flex-wrap gap-1.5">
+                {point.acceptedCategories.map((slug) => (
+                  <span key={slug} className="rounded-full bg-muted px-2.5 py-1 text-xs">
+                    {categoryEmoji[slug] ?? "📦"} {slug}
+                  </span>
+                ))}
+              </div>
+            </div>
+          )}
+
+          {detail && <p className="text-sm leading-relaxed text-muted-foreground">{detail}</p>}
+          {source && <p className="text-xs text-muted-foreground">{source}</p>}
+
+          <div className="flex gap-2">
+            {point.phone ? (
+              <Button
+                size="lg"
+                className="flex-1"
+                render={<a href={`tel:${point.phone.replace(/\s/g, "")}`} />}
+              >
+                <Phone className="size-4" /> اتصال
+              </Button>
+            ) : null}
+            <Button
+              variant="outline"
+              size="lg"
+              className="flex-1"
+              render={<a href={directionsUrl} target="_blank" rel="noopener noreferrer" />}
+            >
+              <Navigation className="size-4" /> الاتجاهات
+            </Button>
+          </div>
+        </DialogContent>
+      </Dialog>
+    </>
+  );
+}
