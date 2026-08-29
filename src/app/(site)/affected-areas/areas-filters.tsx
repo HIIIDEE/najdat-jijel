@@ -3,7 +3,7 @@
 import { useRouter, useSearchParams, usePathname } from "next/navigation";
 import { X } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { severityEmoji, severityLabels, type AffectedSeverity } from "@/lib/constants";
+import { severityIcon, severityLabels, type AffectedSeverity } from "@/lib/constants";
 import { cn } from "@/lib/utils";
 
 function Chip({
@@ -21,7 +21,7 @@ function Chip({
       onClick={onClick}
       aria-pressed={active}
       className={cn(
-        "rounded-full border px-3 py-1.5 text-sm transition-all",
+        "inline-flex items-center gap-1 rounded-full border px-3 py-1.5 text-sm transition-all",
         active
           ? "border-algeria-green bg-algeria-green font-semibold text-algeria-green-foreground"
           : "border-border bg-card hover:border-algeria-green/50 hover:bg-muted",
@@ -70,11 +70,14 @@ export function AreasFilters({
       <div>
         <p className="mb-2 text-xs font-semibold text-muted-foreground">الحالة</p>
         <div className="flex flex-wrap gap-2">
-          {severities.map((s) => (
-            <Chip key={s} active={currentSeverity === s} onClick={() => toggle("severity", s)}>
-              {severityEmoji[s]} {severityLabels[s]}
-            </Chip>
-          ))}
+          {severities.map((s) => {
+            const Icon = severityIcon[s];
+            return (
+              <Chip key={s} active={currentSeverity === s} onClick={() => toggle("severity", s)}>
+                <Icon className="size-3.5" fill="currentColor" aria-hidden /> {severityLabels[s]}
+              </Chip>
+            );
+          })}
         </div>
       </div>
 

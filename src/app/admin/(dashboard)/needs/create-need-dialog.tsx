@@ -25,7 +25,8 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { categoryEmoji, priorityLabels, unitLabels } from "@/lib/constants";
+import { priorityLabels, unitLabels } from "@/lib/constants";
+import { CategoryIcon } from "@/components/shared/category-icon";
 import { wilayaNames } from "@/lib/wilayas";
 import { createNeed } from "@/actions/needs";
 import type { Database } from "@/types/database";
@@ -107,14 +108,20 @@ export function CreateNeedDialog({ categories }: { categories: Category[] }) {
                 <SelectValue placeholder="اختر المادة">
                   {(val: string) => {
                     const c = categories.find((cat) => cat.id === val);
-                    return c ? `${categoryEmoji[c.slug] ?? "📦"} ${c.name_ar}` : "اختر المادة";
+                    return c ? (
+                      <>
+                        <CategoryIcon slug={c.slug} className="inline size-3.5" /> {c.name_ar}
+                      </>
+                    ) : (
+                      "اختر المادة"
+                    );
                   }}
                 </SelectValue>
               </SelectTrigger>
               <SelectContent>
                 {categories.map((c) => (
                   <SelectItem key={c.id} value={c.id}>
-                    {categoryEmoji[c.slug] ?? "📦"} {c.name_ar}
+                    <CategoryIcon slug={c.slug} className="inline size-3.5" /> {c.name_ar}
                   </SelectItem>
                 ))}
               </SelectContent>

@@ -22,7 +22,8 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { categoryEmoji, unitLabels, type UnitType } from "@/lib/constants";
+import { unitLabels, type UnitType } from "@/lib/constants";
+import { CategoryIcon } from "@/components/shared/category-icon";
 import { createDistributionAction } from "@/actions/distributions";
 import type { Database } from "@/types/database";
 
@@ -85,14 +86,20 @@ export function CreateDistributionDialog({ hubs, categories }: { hubs: Hub[]; ca
                 <SelectValue placeholder="اختر المادة">
                   {(v: string) => {
                     const c = categories.find((cat) => cat.id === v);
-                    return c ? `${categoryEmoji[c.slug] ?? "📦"} ${c.name_ar}` : "اختر المادة";
+                    return c ? (
+                      <>
+                        <CategoryIcon slug={c.slug} className="inline size-3.5" /> {c.name_ar}
+                      </>
+                    ) : (
+                      "اختر المادة"
+                    );
                   }}
                 </SelectValue>
               </SelectTrigger>
               <SelectContent>
                 {categories.map((c) => (
                   <SelectItem key={c.id} value={c.id}>
-                    {categoryEmoji[c.slug] ?? "📦"} {c.name_ar}
+                    <CategoryIcon slug={c.slug} className="inline size-3.5" /> {c.name_ar}
                   </SelectItem>
                 ))}
               </SelectContent>

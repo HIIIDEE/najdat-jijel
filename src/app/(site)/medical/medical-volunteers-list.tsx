@@ -4,7 +4,7 @@ import { useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
-import { Phone, MapPin, Stethoscope, Briefcase, Search } from "lucide-react";
+import { Phone, MapPin, Stethoscope, Briefcase, Search, PawPrint } from "lucide-react";
 
 export interface Volunteer {
   id: string;
@@ -80,7 +80,9 @@ export function MedicalVolunteersList({ volunteers }: { volunteers: Volunteer[] 
                 : "bg-background hover:bg-muted text-muted-foreground"
             }`}
           >
-            🩺 طب بشري
+            <span className="inline-flex items-center gap-1">
+              <Stethoscope className="size-3.5" /> طب بشري
+            </span>
           </button>
           <button
             type="button"
@@ -91,7 +93,9 @@ export function MedicalVolunteersList({ volunteers }: { volunteers: Volunteer[] 
                 : "bg-background hover:bg-muted text-muted-foreground"
             }`}
           >
-            🐾 طب بيطري
+            <span className="inline-flex items-center gap-1">
+              <PawPrint className="size-3.5" /> طب بيطري
+            </span>
           </button>
         </div>
       </div>

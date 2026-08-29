@@ -4,7 +4,8 @@ import { Card, CardContent } from "@/components/ui/card";
 import { EmptyState } from "@/components/shared/empty-state";
 import { PointStatusBadge } from "@/components/shared/status-badge";
 import { VerificationBadge } from "@/components/shared/verification-badge";
-import { categoryEmoji, relativeTimeAr } from "@/lib/constants";
+import { relativeTimeAr } from "@/lib/constants";
+import { CategoryIcon } from "@/components/shared/category-icon";
 import { getAllCategories, getAllCollectionPoints } from "@/lib/data/admin";
 import { CreatePointDialog } from "./create-point-dialog";
 import { PointActions } from "./point-actions";
@@ -51,7 +52,7 @@ export default async function AdminCollectionPointsPage() {
                 {p.accepted_categories.length > 0 && (
                   <p className="flex flex-wrap gap-1 text-sm">
                     {p.accepted_categories.map((slug) => (
-                      <span key={slug}>{categoryEmoji[slug] ?? "📦"}</span>
+                      <CategoryIcon key={slug} slug={slug} className="size-4" />
                     ))}
                   </p>
                 )}

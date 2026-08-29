@@ -2,7 +2,8 @@ import type { Metadata } from "next";
 import { createClient } from "@/lib/supabase/server";
 import { Card, CardContent } from "@/components/ui/card";
 import { EmptyState } from "@/components/shared/empty-state";
-import { categoryEmoji, formatQuantity, relativeTimeAr, unitLabels } from "@/lib/constants";
+import { formatQuantity, relativeTimeAr, unitLabels } from "@/lib/constants";
+import { CategoryIcon } from "@/components/shared/category-icon";
 import { DonationStatusSelect } from "./donation-status-select";
 
 export const metadata: Metadata = { title: "المساعدات", robots: { index: false } };
@@ -47,7 +48,8 @@ export default async function AdminDonationsPage() {
                 <div className="flex flex-wrap gap-1.5">
                   {d.donation_items?.map((it, i) => (
                     <span key={i} className="rounded-full bg-muted px-2 py-0.5 text-xs">
-                      {categoryEmoji[it.categories?.slug ?? ""] ?? "📦"} {formatQuantity(Number(it.quantity))}{" "}
+                      <CategoryIcon slug={it.categories?.slug} className="inline size-3.5" />{" "}
+                      {formatQuantity(Number(it.quantity))}{" "}
                       {unitLabels[it.unit]}
                     </span>
                   ))}

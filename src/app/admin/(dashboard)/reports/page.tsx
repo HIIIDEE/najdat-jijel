@@ -3,11 +3,11 @@ import { createClient } from "@/lib/supabase/server";
 import { Card, CardContent } from "@/components/ui/card";
 import { EmptyState } from "@/components/shared/empty-state";
 import {
-  categoryEmoji,
   formatQuantity,
   requestStatusLabels,
   unitLabels,
 } from "@/lib/constants";
+import { CategoryIcon } from "@/components/shared/category-icon";
 import { getStatDistributionsByCategory, getStatDonationsByCategory } from "@/lib/data/public";
 
 export const metadata: Metadata = { title: "التقارير", robots: { index: false } };
@@ -79,8 +79,8 @@ export default async function AdminReportsPage() {
             {donationsByCategory.map((row) => (
               <Card key={`${row.slug}-${row.unit}`}>
                 <CardContent className="flex items-center justify-between px-5">
-                  <span className="text-sm">
-                    {categoryEmoji[row.slug ?? ""] ?? "📦"} {row.name_ar}
+                  <span className="flex items-center gap-1 text-sm">
+                    <CategoryIcon slug={row.slug} className="size-3.5" /> {row.name_ar}
                   </span>
                   <span className="font-bold tabular-nums">
                     {formatQuantity(Number(row.total_quantity))} {unitLabels[row.unit!]}
@@ -101,8 +101,8 @@ export default async function AdminReportsPage() {
             {distributionsByCategory.map((row) => (
               <Card key={`${row.slug}-${row.unit}`}>
                 <CardContent className="flex items-center justify-between px-5">
-                  <span className="text-sm">
-                    {categoryEmoji[row.slug ?? ""] ?? "📦"} {row.name_ar}
+                  <span className="flex items-center gap-1 text-sm">
+                    <CategoryIcon slug={row.slug} className="size-3.5" /> {row.name_ar}
                   </span>
                   <span className="font-bold tabular-nums">
                     {formatQuantity(Number(row.total_quantity))} {unitLabels[row.unit!]}

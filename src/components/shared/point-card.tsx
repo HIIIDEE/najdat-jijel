@@ -13,7 +13,7 @@ import {
   DialogTitle,
   DialogDescription,
 } from "@/components/ui/dialog";
-import { categoryEmoji } from "@/lib/constants";
+import { CategoryIcon } from "@/components/shared/category-icon";
 import { splitNeedNotes } from "@/lib/notes";
 import type { PointStatus, VerificationLevel } from "@/lib/constants";
 
@@ -91,7 +91,7 @@ export function PointCard({ point }: { point: PointCardData }) {
             <p className="flex flex-wrap gap-1 text-base" aria-label="المواد المقبولة">
               {point.acceptedCategories.map((slug) => (
                 <span key={slug} title={slug}>
-                  {categoryEmoji[slug] ?? "📦"}
+                  <CategoryIcon slug={slug} className="size-4" />
                 </span>
               ))}
             </p>
@@ -154,8 +154,11 @@ export function PointCard({ point }: { point: PointCardData }) {
               <p className="mb-1.5 text-xs font-semibold text-muted-foreground">المواد المقبولة</p>
               <div className="flex flex-wrap gap-1.5">
                 {point.acceptedCategories.map((slug) => (
-                  <span key={slug} className="rounded-full bg-muted px-2.5 py-1 text-xs">
-                    {categoryEmoji[slug] ?? "📦"} {slug}
+                  <span
+                    key={slug}
+                    className="inline-flex items-center gap-1 rounded-full bg-muted px-2.5 py-1 text-xs"
+                  >
+                    <CategoryIcon slug={slug} className="size-3.5" /> {slug}
                   </span>
                 ))}
               </div>
