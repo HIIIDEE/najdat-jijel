@@ -5,8 +5,8 @@ const columns = [
   {
     title: "المنصة",
     links: [
-      { href: "/needs", label: "الاحتياجات العاجلة" },
       { href: "/affected-areas", label: "المناطق المتضررة" },
+      { href: "/medical", label: "الأطقم الطبية" },
       { href: "/map", label: "خريطة الإغاثة" },
       { href: "/news", label: "الأخبار" },
       { href: "/transparency", label: "الشفافية" },
@@ -14,11 +14,11 @@ const columns = [
     ],
   },
   {
-    title: "شارك",
+    title: "شارك وتطوع",
     links: [
       { href: "/donate", label: "لدي مساعدات" },
       { href: "/transport", label: "أستطيع النقل" },
-      { href: "/help", label: "أحتاج مساعدة" },
+      { href: "/medical", label: "التطوع الطبي" },
     ],
   },
 ];

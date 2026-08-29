@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
-import { HeartHandshake, LifeBuoy, Gift, Truck, Eye } from "lucide-react";
+import { HeartHandshake, Gift, Truck, Stethoscope, MapPin } from "lucide-react";
 import {
   Dialog,
   DialogContent,
@@ -16,10 +16,10 @@ import { siteConfig } from "@/config/site";
 const STORAGE_KEY = "haba_welcome_seen_v1";
 
 const roles = [
-  { href: "/help", icon: LifeBuoy, title: "أنا متضرر", desc: "أحتاج مساعدة عاجلة لي أو لعائلتي" },
   { href: "/donate", icon: Gift, title: "لدي مساعدات", desc: "أملك مواد وأريد إيصالها لمن يحتاجها" },
   { href: "/transport", icon: Truck, title: "أستطيع النقل", desc: "لدي مركبة ومساحة فارغة على الطريق" },
-  { href: "/needs", icon: Eye, title: "أتصفّح فقط", desc: "أريد الاطلاع على الاحتياجات الحالية" },
+  { href: "/medical", icon: Stethoscope, title: "أنا طبيب / بيطري", desc: "تقديم الرعاية والاستشارات الميدانية" },
+  { href: "/map", icon: MapPin, title: "خريطة الإغاثة", desc: "مراكز التجميع ونقاط الاستقبال" },
 ];
 
 export function WelcomeDialog() {

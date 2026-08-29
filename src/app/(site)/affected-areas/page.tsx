@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { MapPin, TriangleAlert, Info, LifeBuoy } from "lucide-react";
+import { MapPin, TriangleAlert, Info, Gift, Truck } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
 import { EmptyState } from "@/components/shared/empty-state";
 import { SeverityBadge } from "@/components/shared/severity-badge";
@@ -142,17 +142,16 @@ export default async function AffectedAreasPage({
       )}
 
       <div className="mt-10 flex flex-col items-center gap-3 rounded-2xl border border-border bg-secondary/30 p-8 text-center">
-        <h2 className="text-xl font-bold">هل أنت من إحدى هذه المناطق؟</h2>
-        <p className="max-w-lg text-sm text-muted-foreground">
-          سجّل احتياج عائلتك ليصل إلى فرق التنسيق مباشرة، أو تصفّح الاحتياجات إن كنت تريد
-          المساعدة.
+        <h2 className="text-xl font-bold">هل ترغب في المساهمة في إغاثة هذه المناطق؟</h2>
+        <p className="max-w-lg text-sm text-muted-foreground leading-relaxed">
+          سجّل ما يتوفر لديك من قوافل ومواد إغاثية أو تطوع بمركبتك لنقل المساعدات مباشرة إلى مراكز التجميع.
         </p>
         <div className="flex flex-wrap justify-center gap-2">
-          <LinkButton href="/help">
-            <LifeBuoy className="size-4" /> تسجيل طلب مساعدة
+          <LinkButton href="/donate">
+            <Gift className="size-4" /> لدي مساعدات
           </LinkButton>
-          <LinkButton href="/needs" variant="outline">
-            عرض الاحتياجات
+          <LinkButton href="/transport" variant="outline">
+            <Truck className="size-4" /> أستطيع النقل
           </LinkButton>
         </div>
       </div>

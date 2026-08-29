@@ -5,8 +5,8 @@ import { LinkButton } from "@/components/shared/link-button";
 
 const navLinks = [
   { href: "/", label: "الرئيسية" },
-  { href: "/needs", label: "الاحتياجات" },
   { href: "/affected-areas", label: "المناطق المتضررة" },
+  { href: "/medical", label: "الأطقم الطبية" },
   { href: "/map", label: "الخريطة" },
   { href: "/news", label: "الأخبار" },
   { href: "/transparency", label: "الشفافية" },
@@ -37,9 +37,6 @@ export function SiteHeader() {
         </nav>
 
         <div className="flex items-center gap-2">
-          <LinkButton href="/help" size="sm" variant="outline" className="hidden sm:inline-flex">
-            <LifeBuoy className="size-4" /> أحتاج مساعدة
-          </LinkButton>
           <LinkButton href="/donate" size="sm">
             <Gift className="size-4" /> لدي مساعدات
           </LinkButton>

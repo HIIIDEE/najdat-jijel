@@ -2,15 +2,15 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { Home, ListChecks, MapPin, Gift, LifeBuoy } from "lucide-react";
+import { Home, TriangleAlert, MapPin, Gift, Truck, Stethoscope } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 const items = [
   { href: "/", label: "الرئيسية", icon: Home },
-  { href: "/needs", label: "الاحتياجات", icon: ListChecks },
-  { href: "/donate", label: "لديّ مساعدات", icon: Gift },
-  { href: "/map", label: "الخريطة", icon: MapPin },
-  { href: "/help", label: "أحتاج مساعدة", icon: LifeBuoy },
+  { href: "/affected-areas", label: "المناطق", icon: TriangleAlert },
+  { href: "/donate", label: "المساعدات", icon: Gift },
+  { href: "/transport", label: "النقل", icon: Truck },
+  { href: "/medical", label: "الأطقم الطبية", icon: Stethoscope },
 ];
 
 export function MobileBottomNav() {

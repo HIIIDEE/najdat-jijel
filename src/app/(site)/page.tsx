@@ -1,34 +1,27 @@
 import Link from "next/link";
 import {
   MapPin,
-  ClipboardList,
   Truck,
-  ListChecks,
   ArrowLeft,
   Home,
   Phone,
   ShieldCheck,
   TriangleAlert,
   Stethoscope,
-  LifeBuoy,
   Gift,
-  Flame,
   CheckCircle2,
+  Share2,
 } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
 import { LinkButton } from "@/components/shared/link-button";
 import { NewsTicker } from "@/components/shared/news-ticker";
 import { PlatformNotice } from "@/components/shared/platform-notice";
-import { NeedCard } from "@/components/shared/need-card";
-import { EmptyState } from "@/components/shared/empty-state";
 import { AnimatedCounter } from "@/components/interactive/animated-counter";
 import { siteConfig } from "@/config/site";
 import { relativeTimeAr } from "@/lib/constants";
 import { emergencyContacts } from "@/lib/emergency";
 import {
   getAffectedAreas,
-  getAffectedCommunes,
-  getCriticalNeeds,
   getOfficialUpdates,
   getPublicMedicalVolunteers,
   getShelters,
@@ -37,28 +30,20 @@ import {
 
 const quickActions = [
   {
-    href: "/help",
-    icon: LifeBuoy,
-    title: "أنا متضرر",
-    desc: "الإبلاغ عن احتياج أو طلب نجدة.",
-    badge: "طوارئ",
-    accent: "border-priority-critical/40 bg-priority-critical/5 hover:border-priority-critical hover:bg-priority-critical/10 shadow-sm",
-    iconBg: "bg-priority-critical/15 text-priority-critical",
-    badgeColor: "bg-priority-critical/15 text-priority-critical",
-  },
-  {
     href: "/donate",
     icon: Gift,
     title: "لدي مساعدات",
-    desc: "تسجيل المساعدات المتوفرة لديكم.",
-    accent: "hover:border-algeria-green hover:shadow-md",
-    iconBg: "bg-algeria-green/10 text-algeria-green",
+    desc: "تسجيل المساعدات والقوافل المتوفرة لديكم.",
+    badge: "إغاثة",
+    accent: "border-algeria-green/40 bg-algeria-green/5 hover:border-algeria-green hover:bg-algeria-green/10 shadow-sm",
+    iconBg: "bg-algeria-green/15 text-algeria-green",
+    badgeColor: "bg-algeria-green/15 text-algeria-green",
   },
   {
     href: "/transport",
     icon: Truck,
     title: "أستطيع النقل",
-    desc: "تسجيل شاحنة أو مركبة لوجستية.",
+    desc: "تسجيل شاحنة أو مركبة لوجستية لنقل المساعدات.",
     accent: "hover:border-blue-500 hover:shadow-md",
     iconBg: "bg-blue-500/10 text-blue-600 dark:text-blue-400",
   },
@@ -66,7 +51,7 @@ const quickActions = [
     href: "/medical",
     icon: Stethoscope,
     title: "أنا طبيب / بيطري",
-    desc: "التطوع الطبي وتقديم الاستشارات.",
+    desc: "التطوع الطبي وتقديم الرعاية والاستشارات.",
     accent: "hover:border-emerald-500 hover:shadow-md",
     iconBg: "bg-emerald-500/10 text-emerald-600 dark:text-emerald-400",
   },
@@ -74,17 +59,17 @@ const quickActions = [
     href: "/map",
     icon: MapPin,
     title: "أين أسلّم؟",
-    desc: "مراكز التجميع والاستقبال الميداني.",
+    desc: "مراكز التجميع ونقاط الاستقبال الميداني.",
     accent: "hover:border-purple-500 hover:shadow-md",
     iconBg: "bg-purple-500/10 text-purple-600 dark:text-purple-400",
   },
 ];
 
 const howItWorks = [
-  { n: 1, title: "نعرف الاحتياج", desc: "المتضررون والفرق الميدانية يسجلون الاحتياجات.", icon: ClipboardList },
-  { n: 2, title: "نجمع المساعدات", desc: "المتبرعون يسجلون ما لديهم من قوافل وإعانات.", icon: ListChecks },
-  { n: 3, title: "نوجّهها بدقة", desc: "النظام يطابق المساعدات مع أشد المناطق احتياجاً.", icon: MapPin },
-  { n: 4, title: "نتابع التوزيع", desc: "نسجل وصول المساعدات واستلامها بشفافية.", icon: Truck },
+  { n: 1, title: "رصد المناطق", desc: "حصر وتوثيق بؤر الحرائق ومراكز الإيواء المفتوحة.", icon: TriangleAlert },
+  { n: 2, title: "جمع المساعدات", desc: "المتبرعون والجمعيات يسجلون المساعدات والقوافل.", icon: Gift },
+  { n: 3, title: "تنسيق النقل", desc: "ربط الشاحنات والمركبات بنقاط التجميع ومراكز الإيواء.", icon: Truck },
+  { n: 4, title: "تتبع الإغاثة", desc: "توثيق استلام المساعدات بشفافية تامة للجميع.", icon: ShieldCheck },
 ];
 
 const severityConfig: Record<string, { label: string; tone: string }> = {
@@ -97,19 +82,15 @@ const severityConfig: Record<string, { label: string; tone: string }> = {
 
 export default async function HomePage() {
   const [
-    criticalNeeds,
     stats,
     updates,
     shelters,
-    communes,
     areas,
     medicalVolunteers,
   ] = await Promise.all([
-    getCriticalNeeds(6),
     getStatOverview(),
     getOfficialUpdates(3),
     getShelters(),
-    getAffectedCommunes(),
     getAffectedAreas(),
     getPublicMedicalVolunteers(),
   ]);
@@ -164,12 +145,12 @@ export default async function HomePage() {
               {siteConfig.tagline}
             </p>
             <p className="mx-auto max-w-2xl text-base leading-relaxed text-muted-foreground sm:text-lg">
-              منصة تنسيق أهلية مستقلة توجّه الإعانات، القوافل، والفرق الطبية الميدانية مباشرة إلى العائلات المنكوبة ومراكز الإيواء في الوقت والمكان الصحيح.
+              منصة تنسيق أهلية مستقلة توجّه الإعانات، القوافل، والفرق الطبية الميدانية مباشرة إلى مراكز الإيواء ونقاط التوزيع في الوقت والمكان الصحيح.
             </p>
           </div>
 
-          {/* Quick Action Cards Deck */}
-          <div className="mt-12 grid gap-4 sm:grid-cols-2 lg:grid-cols-5">
+          {/* Quick Action Cards Deck (4 balanced cards) */}
+          <div className="mt-12 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
             {quickActions.map((a) => (
               <Link key={a.href} href={a.href} className="group">
                 <div
@@ -198,10 +179,10 @@ export default async function HomePage() {
           <div className="mt-12 rounded-2xl border border-border/80 bg-card/70 p-3.5 shadow-sm backdrop-blur-md">
             <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
               {[
-                { label: "احتياج عاجل نشط", value: Number(stats.critical_needs ?? 0), tone: "text-priority-critical", icon: Flame, bg: "bg-priority-critical/10 text-priority-critical" },
                 { label: "نقطة تجميع واستقبال", value: Number(stats.active_points ?? 0), tone: "text-algeria-green", icon: MapPin, bg: "bg-algeria-green/10 text-algeria-green" },
-                { label: "منطقة متضررة مسجّلة", value: areas.length, tone: "text-priority-high", icon: TriangleAlert, bg: "bg-priority-high/10 text-priority-high" },
+                { label: "منطقة متضررة مسجّلة", value: areas.length, tone: "text-priority-critical", icon: TriangleAlert, bg: "bg-priority-critical/10 text-priority-critical" },
                 { label: "مركز إيواء مفتوح", value: shelters.length, tone: "text-blue-600 dark:text-blue-400", icon: Home, bg: "bg-blue-500/10 text-blue-600 dark:text-blue-400" },
+                { label: "طاقم طبي وبيطري متطوع", value: medicalVolunteers.length, tone: "text-emerald-600 dark:text-emerald-400", icon: Stethoscope, bg: "bg-emerald-500/10 text-emerald-600 dark:text-emerald-400" },
               ].map((s) => (
                 <div key={s.label} className="flex flex-col items-center justify-center rounded-xl bg-background/60 p-4 transition-all hover:bg-background/90">
                   <div className="flex items-center gap-2">
@@ -218,41 +199,6 @@ export default async function HomePage() {
             </div>
           </div>
         </div>
-      </section>
-
-      {/* ————————————————————————————————— الاحتياجات العاجلة */}
-      <section className="mx-auto max-w-6xl px-4 py-14">
-        <div className="mb-6 flex items-end justify-between gap-3">
-          <div>
-            <div className="flex items-center gap-2">
-              <span className="flex size-2 rounded-full bg-priority-critical animate-pulse" />
-              <h2 className="text-2xl font-bold">الاحتياجات العاجلة الآن</h2>
-            </div>
-            <p className="mt-1 text-sm text-muted-foreground">
-              احتياجات ميدانية مؤكدة من المتضررين واللجان الميدانية.
-            </p>
-          </div>
-          <LinkButton href="/needs" variant="outline" className="hidden sm:inline-flex">
-            عرض كل الاحتياجات <ArrowLeft className="size-4" />
-          </LinkButton>
-        </div>
-
-        {criticalNeeds.length === 0 ? (
-          <EmptyState
-            title="لا توجد حاليًا احتياجات مسجلة"
-            description="يتم تحديث البيانات باستمرار من الفرق الميدانية."
-          />
-        ) : (
-          <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-            {criticalNeeds.map((need) => (
-              <NeedCard key={need.id} need={need} />
-            ))}
-          </div>
-        )}
-
-        <LinkButton href="/needs" variant="outline" className="mt-6 w-full sm:hidden">
-          عرض كل الاحتياجات
-        </LinkButton>
       </section>
 
       {/* ————————————————————————————————— المناطق المتضررة */}
@@ -346,39 +292,6 @@ export default async function HomePage() {
             <LinkButton href="/affected-areas" variant="outline" className="mt-6 w-full sm:hidden">
               القائمة الكاملة للمناطق المتضررة
             </LinkButton>
-          </div>
-        </section>
-      )}
-
-      {/* ————————————————————————————————— البلديات المتضررة */}
-      {communes.length > 0 && (
-        <section className="border-y border-border bg-secondary/30">
-          <div className="mx-auto max-w-6xl px-4 py-16">
-            <h2 className="mb-1 text-2xl font-bold">البلديات الأكثر احتياجاً</h2>
-            <p className="mb-6 text-sm text-muted-foreground">
-              ترتيب البلديات حسب كثافة الاحتياجات الميدانية الحرجة.
-            </p>
-            <div className="flex flex-wrap gap-2">
-              {communes.map((c) => (
-                <Link
-                  key={c.commune}
-                  href={`/needs?commune=${encodeURIComponent(c.commune)}`}
-                  className="group flex items-center gap-2 rounded-full border border-border bg-card px-4 py-2 text-sm transition-all hover:-translate-y-0.5 hover:border-algeria-green hover:shadow-sm"
-                >
-                  <MapPin className="size-3.5 text-muted-foreground group-hover:text-algeria-green" />
-                  <span className="font-medium">{c.commune}</span>
-                  <span
-                    className={`rounded-full px-2 py-0.5 text-xs font-bold tabular-nums ${
-                      c.critical > 0
-                        ? "bg-priority-critical/10 text-priority-critical"
-                        : "bg-muted text-muted-foreground"
-                    }`}
-                  >
-                    {c.total}
-                  </span>
-                </Link>
-              ))}
-            </div>
           </div>
         </section>
       )}
