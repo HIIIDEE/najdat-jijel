@@ -7,6 +7,7 @@ import { VerificationBadge } from "@/components/shared/verification-badge";
 import { needCategoryOptions } from "@/schemas/beneficiary-request";
 import { relativeTimeAr, requestStatusLabels } from "@/lib/constants";
 import { BeneficiaryActions } from "./beneficiary-actions";
+import { ExportBeneficiariesCsvButton } from "./export-csv-button";
 
 export const metadata: Metadata = { title: "الأسر المتضررة", robots: { index: false } };
 
@@ -22,11 +23,14 @@ export default async function AdminBeneficiariesPage() {
 
   return (
     <div className="space-y-6">
-      <div>
-        <h1 className="text-2xl font-bold">الأسر المتضررة</h1>
-        <p className="text-sm text-muted-foreground">
-          بيانات حساسة — لا تُعرض للعامة إطلاقًا. تظهر هنا فقط للطاقم المصرَّح له.
-        </p>
+      <div className="flex flex-wrap items-center justify-between gap-3">
+        <div>
+          <h1 className="text-2xl font-bold">الأسر المتضررة</h1>
+          <p className="text-sm text-muted-foreground">
+            بيانات حساسة — لا تُعرض للعامة إطلاقًا. تظهر هنا فقط للطاقم المصرَّح له.
+          </p>
+        </div>
+        <ExportBeneficiariesCsvButton rows={rows} />
       </div>
 
       {rows.length === 0 ? (
