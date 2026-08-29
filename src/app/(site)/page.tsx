@@ -13,6 +13,7 @@ import {
 import { Card, CardContent } from "@/components/ui/card";
 import { LinkButton } from "@/components/shared/link-button";
 import { NewsTicker } from "@/components/shared/news-ticker";
+import { PlatformNotice } from "@/components/shared/platform-notice";
 import { NeedCard } from "@/components/shared/need-card";
 import { EmptyState } from "@/components/shared/empty-state";
 import { AnimatedCounter } from "@/components/interactive/animated-counter";
@@ -376,6 +377,9 @@ export default async function HomePage() {
           </LinkButton>
         </div>
       </section>
+
+      {/* ————————————————————————————————— ملاحظة هامة */}
+      <PlatformNotice />
     </>
   );
 }
