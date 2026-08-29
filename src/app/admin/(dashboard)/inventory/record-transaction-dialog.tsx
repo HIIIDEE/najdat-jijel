@@ -39,7 +39,7 @@ const formSchema = z.object({
   category_id: z.string().uuid("اختر المادة"),
   type: z.enum(["in", "out", "adjustment", "transfer"]),
   quantity: z.number().positive("يجب أن تكون أكبر من صفر"),
-  unit: z.enum(["piece", "box", "portion", "carton", "liter", "kg", "ton", "bundle"]),
+  unit: z.enum(["piece", "box", "portion", "carton", "liter", "kg", "ton", "bundle", "person"]),
   destination_hub_id: z.string().optional(),
   note: z.string().optional(),
 });

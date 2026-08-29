@@ -39,7 +39,7 @@ const formSchema = z.object({
   title: z.string().optional(),
   quantity_needed: z.number().positive("يجب أن تكون أكبر من صفر"),
   quantity_available: z.number().min(0),
-  unit: z.enum(["piece", "box", "portion", "carton", "liter", "kg", "ton", "bundle"]),
+  unit: z.enum(["piece", "box", "portion", "carton", "liter", "kg", "ton", "bundle", "person"]),
   priority: z.enum(["critical", "high", "medium", "low"]),
   notes: z.string().optional(),
 });

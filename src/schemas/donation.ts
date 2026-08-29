@@ -22,13 +22,14 @@ export const unitOptions = [
   { value: "kg", label: "كيلوغرام" },
   { value: "ton", label: "طن" },
   { value: "bundle", label: "طرد" },
+  { value: "person", label: "شخص" },
 ] as const;
 
 export const donationItemSchema = z.object({
   category_id: z.string().uuid("اختر نوع المساعدة"),
   category_slug: z.string().min(1),
   quantity: z.number().positive("الكمية يجب أن تكون أكبر من صفر"),
-  unit: z.enum(["piece", "box", "portion", "carton", "liter", "kg", "ton", "bundle"]),
+  unit: z.enum(["piece", "box", "portion", "carton", "liter", "kg", "ton", "bundle", "person"]),
   description: z.string().trim().max(300).optional().or(z.literal("")),
 });
 

@@ -1527,6 +1527,7 @@ export type Database = {
         | "kg"
         | "ton"
         | "bundle"
+        | "person"
       vehicle_type:
         | "car"
         | "van"
@@ -1721,6 +1722,7 @@ export const Constants = {
         "kg",
         "ton",
         "bundle",
+        "person",
       ],
       vehicle_type: [
         "car",

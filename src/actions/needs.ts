@@ -13,7 +13,7 @@ const createNeedSchema = z.object({
   title: z.string().trim().max(200).optional().or(z.literal("")),
   quantity_needed: z.number().positive(),
   quantity_available: z.number().min(0),
-  unit: z.enum(["piece", "box", "portion", "carton", "liter", "kg", "ton", "bundle"]),
+  unit: z.enum(["piece", "box", "portion", "carton", "liter", "kg", "ton", "bundle", "person"]),
   priority: z.enum(["critical", "high", "medium", "low"]),
   notes: z.string().trim().max(500).optional().or(z.literal("")),
 });

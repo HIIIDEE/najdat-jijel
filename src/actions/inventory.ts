@@ -11,7 +11,7 @@ const txnSchema = z.object({
   category_id: z.string().uuid(),
   type: z.enum(["in", "out", "adjustment", "transfer"]),
   quantity: z.number().positive("يجب أن تكون الكمية أكبر من صفر"),
-  unit: z.enum(["piece", "box", "portion", "carton", "liter", "kg", "ton", "bundle"]),
+  unit: z.enum(["piece", "box", "portion", "carton", "liter", "kg", "ton", "bundle", "person"]),
   destination_hub_id: z.string().uuid().optional(),
   note: z.string().trim().max(300).optional().or(z.literal("")),
 });

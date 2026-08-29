@@ -85,6 +85,7 @@ export const unitLabels: Record<UnitType, string> = {
   kg: "كيلوغرام",
   ton: "طن",
   bundle: "طرد",
+  person: "شخص",
 };
 
 export const vehicleLabels: Record<VehicleType, string> = {
@@ -132,6 +133,8 @@ export const categoryEmoji: Record<string, string> = {
   relief_materials: "📦",
   shelter: "⛺",
   construction_materials: "🧱",
+  cooking_gas: "🛢️",
+  manpower: "👷",
   other: "🔖",
 };
 

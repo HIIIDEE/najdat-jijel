@@ -11,7 +11,7 @@ const schema = z.object({
   hub_id: z.string().uuid("اختر المركز"),
   category_id: z.string().uuid("اختر المادة"),
   quantity: z.coerce.number().positive("يجب أن تكون أكبر من صفر"),
-  unit: z.enum(["piece", "box", "portion", "carton", "liter", "kg", "ton", "bundle"]),
+  unit: z.enum(["piece", "box", "portion", "carton", "liter", "kg", "ton", "bundle", "person"]),
   beneficiary_family_count: z.coerce.number().int().min(0),
   distribution_date: z.string().optional(),
   responsible_name: z.string().trim().min(2, "اسم المسؤول مطلوب"),
