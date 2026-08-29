@@ -6,128 +6,6 @@ import type { Database } from "@/types/database";
 type AffectedAreaRow = Database["public"]["Tables"]["affected_areas"]["Row"];
 type CategoryRow = Database["public"]["Tables"]["categories"]["Row"];
 
-// Fallback seed data matching upstream migrations (0001, 0009, 0015, 0016, 0018)
-const fallbackCategories: CategoryRow[] = [
-  { id: "cat-1", slug: "water", name_ar: "ماء", default_unit: "carton", sort_order: 10, created_at: new Date().toISOString() },
-  { id: "cat-2", slug: "food", name_ar: "غذاء", default_unit: "portion", sort_order: 20, created_at: new Date().toISOString() },
-  { id: "cat-3", slug: "medical", name_ar: "دواء ومستلزمات طبية", default_unit: "box", sort_order: 30, created_at: new Date().toISOString() },
-  { id: "cat-4", slug: "bedding", name_ar: "أغطية وأفرشة", default_unit: "piece", sort_order: 40, created_at: new Date().toISOString() },
-  { id: "cat-5", slug: "tents", name_ar: "خيم ومآوي مؤقتة", default_unit: "piece", sort_order: 50, created_at: new Date().toISOString() },
-  { id: "cat-6", slug: "clothing", name_ar: "ملابس", default_unit: "piece", sort_order: 60, created_at: new Date().toISOString() },
-  { id: "cat-7", slug: "baby", name_ar: "حليب وحفاضات أطفال", default_unit: "box", sort_order: 70, created_at: new Date().toISOString() },
-  { id: "cat-8", slug: "hygiene", name_ar: "مواد نظافة وتعقيم", default_unit: "piece", sort_order: 80, created_at: new Date().toISOString() },
-  { id: "cat-9", slug: "tools", name_ar: "أدوات ومعدات إطفاء", default_unit: "piece", sort_order: 90, created_at: new Date().toISOString() },
-  { id: "cat-10", slug: "fuel", name_ar: "وقود وطاقة", default_unit: "liter", sort_order: 100, created_at: new Date().toISOString() },
-];
-
-const fallbackAffectedAreas: AffectedAreaRow[] = [
-  {
-    id: "aa-1",
-    campaign_id: "camp-01",
-    wilaya: "جيجل",
-    wilaya_fr: "Jijel",
-    daira: "جيجل",
-    daira_fr: "Jijel",
-    commune: "جيجل",
-    commune_fr: "Jijel",
-    spot: "بوالجرور",
-    spot_fr: "Boudjarour",
-    severity: "burning",
-    source: "خلية متابعة أزمة حرائق الشمال الشرقي",
-    notes: null,
-    status_raw: null,
-    lat: 36.825,
-    lng: 5.766,
-    created_by: null,
-    created_at: new Date().toISOString(),
-    updated_at: new Date().toISOString(),
-  },
-  {
-    id: "aa-2",
-    campaign_id: "camp-01",
-    wilaya: "جيجل",
-    wilaya_fr: "Jijel",
-    daira: "جيجل",
-    daira_fr: "Jijel",
-    commune: "جيجل",
-    commune_fr: "Jijel",
-    spot: "200 مسكن",
-    spot_fr: "200 Logements",
-    severity: "evacuated",
-    source: "خلية متابعة أزمة حرائق الشمال الشرقي",
-    notes: null,
-    status_raw: null,
-    lat: 36.815,
-    lng: 5.755,
-    created_by: null,
-    created_at: new Date().toISOString(),
-    updated_at: new Date().toISOString(),
-  },
-  {
-    id: "aa-3",
-    campaign_id: "camp-01",
-    wilaya: "جيجل",
-    wilaya_fr: "Jijel",
-    daira: "العوانة",
-    daira_fr: "El Aouana",
-    commune: "العوانة",
-    commune_fr: "El Aouana",
-    spot: "غابة العوانة",
-    spot_fr: "Foret El Aouana",
-    severity: "burning",
-    source: "خلية متابعة أزمة حرائق الشمال الشرقي",
-    notes: null,
-    status_raw: null,
-    lat: 36.775,
-    lng: 5.688,
-    created_by: null,
-    created_at: new Date().toISOString(),
-    updated_at: new Date().toISOString(),
-  },
-  {
-    id: "aa-4",
-    campaign_id: "camp-01",
-    wilaya: "جيجل",
-    wilaya_fr: "Jijel",
-    daira: "الميلية",
-    daira_fr: "El Milia",
-    commune: "الميلية",
-    commune_fr: "El Milia",
-    spot: "غابة بوعفرون",
-    spot_fr: "Bouafroun",
-    severity: "threatened",
-    source: "خلية متابعة أزمة حرائق الشمال الشرقي",
-    notes: null,
-    status_raw: null,
-    lat: 36.745,
-    lng: 6.265,
-    created_by: null,
-    created_at: new Date().toISOString(),
-    updated_at: new Date().toISOString(),
-  },
-  {
-    id: "aa-5",
-    campaign_id: "camp-01",
-    wilaya: "جيجل",
-    wilaya_fr: "Jijel",
-    daira: "الطاهير",
-    daira_fr: "Taher",
-    commune: "الطاهير",
-    commune_fr: "Taher",
-    spot: "حي الشهداء",
-    spot_fr: "Cite Chouhada",
-    severity: "threatened",
-    source: "خلية متابعة أزمة حرائق الشمال الشرقي",
-    notes: null,
-    status_raw: null,
-    lat: 36.772,
-    lng: 5.885,
-    created_by: null,
-    created_at: new Date().toISOString(),
-    updated_at: new Date().toISOString(),
-  },
-];
-
 export async function getActiveCampaign() {
   try {
     const supabase = await createClient();
@@ -136,9 +14,9 @@ export async function getActiveCampaign() {
       .select("*")
       .eq("slug", activeCampaignSlug)
       .maybeSingle();
-    return data ?? { id: "camp-01", slug: activeCampaignSlug, name: "حرائق الشمال الشرقي 2026", is_active: true };
+    return data;
   } catch {
-    return { id: "camp-01", slug: activeCampaignSlug, name: "حرائق الشمال الشرقي 2026", is_active: true };
+    return null;
   }
 }
 
@@ -146,9 +24,9 @@ export async function getCategories(): Promise<CategoryRow[]> {
   try {
     const supabase = await createClient();
     const { data } = await supabase.from("categories").select("*").order("sort_order");
-    return data && data.length > 0 ? data : fallbackCategories;
+    return data ?? [];
   } catch {
-    return fallbackCategories;
+    return [];
   }
 }
 
@@ -186,29 +64,22 @@ export async function getAllActiveNeeds() {
   }
 }
 
+const emptyStatOverview = {
+  total_families: 0,
+  families_awaiting: 0,
+  areas_reached: 0,
+  active_points: 0,
+  critical_needs: 0,
+  active_shipments: 0,
+};
+
 export async function getStatOverview() {
   try {
     const supabase = await createClient();
     const { data } = await supabase.rpc("get_stat_overview").single();
-    return (
-      data ?? {
-        total_families: 48,
-        families_awaiting: 12,
-        areas_reached: 8,
-        active_points: 6,
-        critical_needs: 7,
-        active_shipments: 4,
-      }
-    );
+    return data ?? emptyStatOverview;
   } catch {
-    return {
-      total_families: 48,
-      families_awaiting: 12,
-      areas_reached: 8,
-      active_points: 6,
-      critical_needs: 7,
-      active_shipments: 4,
-    };
+    return emptyStatOverview;
   }
 }
 
@@ -306,9 +177,9 @@ export async function getAffectedAreas(): Promise<AffectedAreaRow[]> {
       .order("wilaya")
       .order("daira")
       .order("commune");
-    return data && data.length > 0 ? (data as AffectedAreaRow[]) : fallbackAffectedAreas;
+    return (data as AffectedAreaRow[] | null) ?? [];
   } catch {
-    return fallbackAffectedAreas;
+    return [];
   }
 }
 
