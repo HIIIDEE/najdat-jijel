@@ -201,7 +201,13 @@ export function TransportForm() {
           <div className="grid grid-cols-2 gap-3">
             <div>
               <Label className="mb-1.5">الحمولة القصوى (كغ) — اختياري</Label>
-              <Input type="number" min={0} {...register("max_capacity_kg", { valueAsNumber: true })} />
+              <Input
+                type="number"
+                min={0}
+                {...register("max_capacity_kg", {
+                  setValueAs: (v) => (v === "" || v === null || isNaN(Number(v)) ? undefined : Number(v)),
+                })}
+              />
             </div>
             <div>
               <Label className="mb-1.5">التاريخ (اختياري)</Label>

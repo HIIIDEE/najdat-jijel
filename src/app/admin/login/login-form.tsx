@@ -32,7 +32,9 @@ export function LoginForm() {
       return;
     }
 
-    router.replace(searchParams.get("next") || "/admin");
+    const next = searchParams.get("next");
+    const safeNext = next && next.startsWith("/") && !next.startsWith("//") && !next.startsWith("/\\") ? next : "/admin";
+    router.replace(safeNext);
     router.refresh();
   }
 

@@ -64,7 +64,7 @@ const supabase = createClient(
 );
 
 const { data: campaign } = await supabase
-  .from("campaigns").select("id").eq("slug", "jijel-fires-2026").single();
+  .from("campaigns").select("id").eq("slug", "northeast-fires-2026").single();
 if (!campaign) throw new Error("الحملة النشطة غير موجودة");
 
 const raw = JSON.parse(readFileSync(join(__dirname, "affected-areas.json"), "utf-8"));
