@@ -7,6 +7,7 @@ import { PriorityBadge } from "@/components/shared/priority-badge";
 import { categoryEmoji, formatQuantity, relativeTimeAr, unitLabels } from "@/lib/constants";
 import { CreateNeedDialog } from "./create-need-dialog";
 import { NeedActions } from "./need-actions";
+import { ExportNeedsCsvButton } from "./export-csv-button";
 
 export const metadata: Metadata = { title: "الاحتياجات", robots: { index: false } };
 
@@ -31,7 +32,10 @@ export default async function AdminNeedsPage() {
             الاحتياجات المُعلَّمة (auto) أُنشئت تلقائيًا من انخفاض المخزون تحت الحد الأدنى.
           </p>
         </div>
-        <CreateNeedDialog categories={categories} />
+        <div className="flex items-center gap-2">
+          <ExportNeedsCsvButton rows={rows} />
+          <CreateNeedDialog categories={categories} />
+        </div>
       </div>
 
       {rows.length === 0 ? (
