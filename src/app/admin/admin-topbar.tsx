@@ -5,6 +5,7 @@ import { Menu, LogOut } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Sheet, SheetContent, SheetTrigger, SheetTitle } from "@/components/ui/sheet";
 import { AdminSidebarNav } from "@/components/layout/admin-sidebar";
+import { NotificationBell } from "@/components/admin/notification-bell";
 import { signOut } from "@/actions/auth";
 import { roleLabels, type AppRole } from "@/lib/constants";
 
@@ -31,6 +32,7 @@ export function AdminTopbar({ fullName, role }: { fullName: string | null; role:
       </div>
 
       <div className="flex items-center gap-3">
+        <NotificationBell />
         <div className="hidden text-end sm:block">
           <p className="text-sm font-medium leading-tight">{fullName || "بدون اسم"}</p>
           <p className="text-xs text-muted-foreground leading-tight">{roleLabels[role]}</p>
