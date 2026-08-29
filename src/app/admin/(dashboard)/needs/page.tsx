@@ -46,7 +46,7 @@ export default async function AdminNeedsPage() {
                     <span aria-hidden>{categoryEmoji[n.categories?.slug ?? ""] ?? "📦"}</span>
                     <p className="font-bold">{n.title || n.categories?.name_ar}</p>
                     {n.is_auto_generated && (
-                      <span className="rounded-full bg-muted px-2 py-0.5 text-[10px] font-medium text-muted-foreground">
+                      <span className="rounded-full bg-muted px-2 py-0.5 text-xs font-semibold text-muted-foreground">
                         auto
                       </span>
                     )}

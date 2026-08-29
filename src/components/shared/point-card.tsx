@@ -67,7 +67,7 @@ export function PointCard({ point }: { point: PointCardData }) {
         <CardContent className="space-y-2 px-5">
           <div className="flex items-start justify-between gap-2">
             <div className="min-w-0">
-              <p className="flex items-center gap-1.5 text-[11px] font-medium text-muted-foreground">
+              <p className="flex items-center gap-1.5 text-xs font-semibold text-muted-foreground">
                 <span className={`size-2 rounded-full ${kindDot[point.kind]}`} aria-hidden />
                 {kindLabel[point.kind]}
               </p>

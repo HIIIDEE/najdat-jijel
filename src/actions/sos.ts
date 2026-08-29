@@ -15,7 +15,7 @@ export async function submitSosSignal(data: {
 
   try {
     const supabase = await createClient();
-    const { error } = await supabase.from("emergency_sos").insert({
+    const { error } = await (supabase as any).from("emergency_sos").insert({
       full_name: data.full_name || "شخص في حالة خطر",
       phone: data.phone,
       latitude: data.latitude,

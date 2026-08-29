@@ -65,7 +65,7 @@ export default async function AffectedAreasPage({
           <Card key={c.severity} className="py-3">
             <CardContent className="px-3 text-center">
               <p className="text-xl font-bold tabular-nums">{c.count}</p>
-              <p className="text-[11px] text-muted-foreground">{severityLabels[c.severity]}</p>
+              <p className="text-xs font-medium text-muted-foreground">{severityLabels[c.severity]}</p>
             </CardContent>
           </Card>
         ))}
@@ -124,7 +124,7 @@ export default async function AffectedAreasPage({
                               بلدية {a.commune}
                             </p>
                             {a.commune_fr && (
-                              <p className="text-[11px] text-muted-foreground/70" dir="ltr">
+                              <p className="text-xs text-muted-foreground/80" dir="ltr">
                                 {a.commune_fr}
                                 {a.spot_fr ? ` — ${a.spot_fr}` : ""}
                               </p>
