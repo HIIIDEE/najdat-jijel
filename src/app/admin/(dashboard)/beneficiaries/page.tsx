@@ -5,21 +5,40 @@ import { EmptyState } from "@/components/shared/empty-state";
 import { PriorityBadge } from "@/components/shared/priority-badge";
 import { VerificationBadge } from "@/components/shared/verification-badge";
 import { needCategoryOptions } from "@/schemas/beneficiary-request";
-import { relativeTimeAr, requestStatusLabels } from "@/lib/constants";
+import {
+  relativeTimeAr,
+  requestStatusLabels,
+  priorityLabels,
+  type PriorityLevel,
+  type RequestStatus,
+} from "@/lib/constants";
 import { BeneficiaryActions } from "./beneficiary-actions";
 import { ExportBeneficiariesCsvButton } from "./export-csv-button";
+import { BeneficiariesFilters } from "./beneficiaries-filters";
 
 export const metadata: Metadata = { title: "الأسر المتضررة", robots: { index: false } };
 
-export default async function AdminBeneficiariesPage() {
+export default async function AdminBeneficiariesPage({
+  searchParams,
+}: {
+  searchParams: Promise<{ wilaya?: string; status?: string; priority?: string }>;
+}) {
   const supabase = await createClient();
-  const { data } = await supabase
-    .from("beneficiary_requests")
-    .select("*")
-    .order("created_at", { ascending: false });
+  const [params, { data }] = await Promise.all([
+    searchParams,
+    supabase.from("beneficiary_requests").select("*").order("created_at", { ascending: false }),
+  ]);
 
-  const rows = data ?? [];
+  const allRows = data ?? [];
+  const wilayas = [...new Set(allRows.map((r) => r.wilaya))].sort();
   const categoryLabel = (slug: string) => needCategoryOptions.find((o) => o.value === slug)?.label ?? slug;
+
+  const rows = allRows.filter((r) => {
+    if (params.wilaya && r.wilaya !== params.wilaya) return false;
+    if (params.status && r.status !== params.status) return false;
+    if (params.priority && r.priority !== params.priority) return false;
+    return true;
+  });
 
   return (
     <div className="space-y-6">
@@ -33,8 +52,18 @@ export default async function AdminBeneficiariesPage() {
         <ExportBeneficiariesCsvButton rows={rows} />
       </div>
 
-      {rows.length === 0 ? (
+      {allRows.length > 0 && (
+        <BeneficiariesFilters
+          wilayas={wilayas}
+          statuses={Object.keys(requestStatusLabels) as RequestStatus[]}
+          priorities={Object.keys(priorityLabels) as PriorityLevel[]}
+        />
+      )}
+
+      {allRows.length === 0 ? (
         <EmptyState title="لا توجد طلبات مسجَّلة بعد" />
+      ) : rows.length === 0 ? (
+        <EmptyState title="لا توجد نتائج مطابقة للفلاتر" />
       ) : (
         <div className="space-y-3">
           {rows.map((r) => (

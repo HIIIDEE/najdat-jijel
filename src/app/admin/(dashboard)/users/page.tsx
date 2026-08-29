@@ -3,30 +3,38 @@ import { ShieldCheck, Info } from "lucide-react";
 import { createClient } from "@/lib/supabase/server";
 import { Card, CardContent } from "@/components/ui/card";
 import { EmptyState } from "@/components/shared/empty-state";
-import { relativeTimeAr, roleLabels } from "@/lib/constants";
+import { relativeTimeAr, roleLabels, type AppRole } from "@/lib/constants";
 import { UserRoleSelect } from "./user-role-select";
 import { AddStaffDialog } from "./add-staff-dialog";
 import { DeleteUserButton } from "./delete-user-button";
 import { ExportUsersCsvButton } from "./export-csv-button";
+import { UsersFilters } from "./users-filters";
 
 export const metadata: Metadata = { title: "المستخدمون", robots: { index: false } };
 
-export default async function AdminUsersPage() {
+export default async function AdminUsersPage({
+  searchParams,
+}: {
+  searchParams: Promise<{ role?: string }>;
+}) {
   const supabase = await createClient();
   const {
     data: { user },
   } = await supabase.auth.getUser();
 
-  const [{ data: profiles }, { data: me }] = await Promise.all([
+  const [params, { data: profiles }, { data: me }] = await Promise.all([
+    searchParams,
     supabase.from("profiles").select("*").order("created_at", { ascending: false }),
     user
       ? supabase.from("profiles").select("role").eq("id", user.id).maybeSingle()
       : Promise.resolve({ data: null }),
   ]);
 
-  const rows = profiles ?? [];
+  const allRows = profiles ?? [];
   const isAdmin = me?.role === "admin";
-  const adminCount = rows.filter((p) => p.role === "admin").length;
+  const adminCount = allRows.filter((p) => p.role === "admin").length;
+  const roles = [...new Set(allRows.map((p) => p.role))] as AppRole[];
+  const rows = params.role ? allRows.filter((p) => p.role === params.role) : allRows;
 
   return (
     <div className="space-y-6">
@@ -55,8 +63,12 @@ export default async function AdminUsersPage() {
         </div>
       )}
 
-      {rows.length === 0 ? (
+      {allRows.length > 1 && <UsersFilters roles={roles} />}
+
+      {allRows.length === 0 ? (
         <EmptyState title="لا يوجد مستخدمون بعد" />
+      ) : rows.length === 0 ? (
+        <EmptyState title="لا توجد نتائج مطابقة للفلتر" />
       ) : (
         <div className="space-y-3">
           {rows.map((p) => (
