@@ -160,6 +160,7 @@ update public.profiles set role = 'admin' where id = '<user-id>';
 | `SUPABASE_SERVICE_ROLE_KEY` | للسكربتات فقط | مفتاح الخدمة — لا يُستخدم في تشغيل الموقع العام، فقط في `scripts/create-admin.mjs` |
 | `NEXT_PUBLIC_SITE_NAME` | لا | اسم المنصة المعروض (افتراضيًا "هبة الجزائر") |
 | `NEXT_PUBLIC_SITE_URL` | لا | الرابط العام للمنصة (لِـ SEO/Open Graph) |
+| `NEXT_PUBLIC_GA_ID` | لا | معرّف Google Analytics 4 (`G-XXXXXXXXXX`). بدونه لا يُحمَّل أي سكربت تتبّع. |
 
 ## الأمان و RLS
 

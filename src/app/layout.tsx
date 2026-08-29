@@ -1,5 +1,6 @@
 import type { Metadata, Viewport } from "next";
 import { Vazirmatn } from "next/font/google";
+import { Analytics } from "@vercel/analytics/next"
 import "./globals.css";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { Toaster } from "@/components/ui/sonner";
@@ -43,6 +44,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
     <html lang="ar" dir="rtl" className={`${vazirmatn.variable} h-full antialiased`}>
       <body className="min-h-full flex flex-col bg-background text-foreground">
         <TooltipProvider>
+          <Analytics />
           {children}
           <Toaster position="top-center" richColors dir="rtl" />
         </TooltipProvider>

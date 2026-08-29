@@ -1,3 +1,4 @@
+import { GoogleAnalytics } from "@/components/analytics/google-analytics";
 import { SiteHeader } from "@/components/layout/site-header";
 import { SiteFooter } from "@/components/layout/site-footer";
 import { MobileBottomNav } from "@/components/layout/mobile-bottom-nav";
@@ -12,6 +13,7 @@ export default function SiteLayout({ children }: { children: React.ReactNode }) 
       <SiteFooter />
       <MobileBottomNav />
       <EmergencyFab />
+      <GoogleAnalytics />
       <WelcomeDialog />
     </div>
   );
