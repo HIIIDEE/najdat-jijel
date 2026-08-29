@@ -26,7 +26,7 @@ export async function submitMedicalVolunteer(
 
   const supabase = await createClient();
 
-  const { error } = await supabase.from("medical_volunteers").insert({
+  const { error } = await (supabase as any).from("medical_volunteers").insert({
     full_name: result.data.full_name,
     phone: result.data.phone,
     email: result.data.email || null,

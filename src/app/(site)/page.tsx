@@ -23,12 +23,12 @@ import { AnimatedCounter } from "@/components/interactive/animated-counter";
 import { siteConfig } from "@/config/site";
 import { relativeTimeAr } from "@/lib/constants";
 import { emergencyContacts } from "@/lib/emergency";
-import { createClient } from "@/lib/supabase/server";
 import {
   getAffectedAreas,
   getAffectedCommunes,
   getCriticalNeeds,
   getOfficialUpdates,
+  getPublicMedicalVolunteers,
   getShelters,
   getStatOverview,
 } from "@/lib/data/public";
@@ -49,8 +49,6 @@ const howItWorks = [
 ];
 
 export default async function HomePage() {
-  const supabase = await createClient();
-
   const [
     criticalNeeds,
     stats,
@@ -58,7 +56,7 @@ export default async function HomePage() {
     shelters,
     communes,
     areas,
-    { data: medicalVolunteers },
+    medicalVolunteers,
   ] = await Promise.all([
     getCriticalNeeds(6),
     getStatOverview(),
@@ -66,7 +64,7 @@ export default async function HomePage() {
     getShelters(),
     getAffectedCommunes(),
     getAffectedAreas(),
-    supabase.rpc("get_public_medical_volunteers"),
+    getPublicMedicalVolunteers(),
   ]);
 
   const areaWilayas = [...new Set(areas.map((a) => a.wilaya))];
@@ -314,7 +312,7 @@ export default async function HomePage() {
         </div>
 
         <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
-          {medicalVolunteers?.map((doc) => (
+          {medicalVolunteers?.map((doc: any) => (
             <Card key={doc.id}>
               <CardContent className="space-y-2 px-5">
                 <div className="flex items-start justify-between gap-2">
