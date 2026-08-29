@@ -312,7 +312,7 @@ export default async function HomePage() {
         </div>
 
         <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
-          {medicalVolunteers?.map((doc: any) => (
+          {medicalVolunteers?.map((doc) => (
             <Card key={doc.id}>
               <CardContent className="space-y-2 px-5">
                 <div className="flex items-start justify-between gap-2">
