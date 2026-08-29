@@ -70,19 +70,19 @@ export default async function MapPage() {
         <Card className="py-3">
           <CardContent className="px-3 text-center">
             <p className="text-xl font-bold tabular-nums text-[#00843D]">{collect}</p>
-            <p className="text-[11px] text-muted-foreground">نقطة تجميع</p>
+            <p className="text-xs font-medium text-muted-foreground">نقطة تجميع</p>
           </CardContent>
         </Card>
         <Card className="py-3">
           <CardContent className="px-3 text-center">
             <p className="text-xl font-bold tabular-nums text-[#1d4ed8]">{hubs}</p>
-            <p className="text-[11px] text-muted-foreground">مركز استقبال</p>
+            <p className="text-xs font-medium text-muted-foreground">مركز استقبال</p>
           </CardContent>
         </Card>
         <Card className="py-3">
           <CardContent className="px-3 text-center">
             <p className="text-xl font-bold tabular-nums text-[#7c3aed]">{shelters}</p>
-            <p className="text-[11px] text-muted-foreground">مركز إيواء</p>
+            <p className="text-xs font-medium text-muted-foreground">مركز إيواء</p>
           </CardContent>
         </Card>
       </div>
