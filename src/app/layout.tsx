@@ -40,8 +40,16 @@ export const viewport: Viewport = {
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="ar" dir="rtl" className={`${vazirmatn.variable} h-full antialiased`}>
-      <body className="min-h-full flex flex-col bg-background text-foreground">
+    <html
+      lang="ar"
+      dir="rtl"
+      className={`${vazirmatn.variable} h-full antialiased`}
+      suppressHydrationWarning
+    >
+      <body
+        className="min-h-full flex flex-col bg-background text-foreground"
+        suppressHydrationWarning
+      >
         <TooltipProvider>
           {children}
           <Toaster position="top-center" richColors dir="rtl" />
