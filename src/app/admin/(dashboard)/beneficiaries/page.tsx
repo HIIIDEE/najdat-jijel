@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { House, Bandage, Pill } from "lucide-react";
 import { createClient } from "@/lib/supabase/server";
 import { Card, CardContent } from "@/components/ui/card";
 import { EmptyState } from "@/components/shared/empty-state";
@@ -7,6 +8,7 @@ import { VerificationBadge } from "@/components/shared/verification-badge";
 import { needCategoryOptions } from "@/schemas/beneficiary-request";
 import { relativeTimeAr, requestStatusLabels } from "@/lib/constants";
 import { BeneficiaryActions } from "./beneficiary-actions";
+import { ExportBeneficiariesCsvButton } from "./export-csv-button";
 
 export const metadata: Metadata = { title: "الأسر المتضررة", robots: { index: false } };
 
@@ -22,11 +24,14 @@ export default async function AdminBeneficiariesPage() {
 
   return (
     <div className="space-y-6">
-      <div>
-        <h1 className="text-2xl font-bold">الأسر المتضررة</h1>
-        <p className="text-sm text-muted-foreground">
-          بيانات حساسة — لا تُعرض للعامة إطلاقًا. تظهر هنا فقط للطاقم المصرَّح له.
-        </p>
+      <div className="flex flex-wrap items-center justify-between gap-3">
+        <div>
+          <h1 className="text-2xl font-bold">الأسر المتضررة</h1>
+          <p className="text-sm text-muted-foreground">
+            بيانات حساسة — لا تُعرض للعامة إطلاقًا. تظهر هنا فقط للطاقم المصرَّح له.
+          </p>
+        </div>
+        <ExportBeneficiariesCsvButton rows={rows} />
       </div>
 
       {rows.length === 0 ? (
@@ -62,11 +67,23 @@ export default async function AdminBeneficiariesPage() {
                 </div>
 
                 {(r.has_injuries || r.needs_medical || r.is_housing_habitable === false) && (
-                  <p className="text-xs font-medium text-priority-critical">
-                    {r.is_housing_habitable === false && "🏚️ السكن غير صالح "}
-                    {r.has_injuries && "🩹 توجد إصابات "}
-                    {r.needs_medical && "💊 حاجة طبية"}
-                  </p>
+                  <div className="flex flex-wrap items-center gap-3 text-xs font-medium text-priority-critical">
+                    {r.is_housing_habitable === false && (
+                      <span className="flex items-center gap-1">
+                        <House className="size-3.5" /> السكن غير صالح
+                      </span>
+                    )}
+                    {r.has_injuries && (
+                      <span className="flex items-center gap-1">
+                        <Bandage className="size-3.5" /> توجد إصابات
+                      </span>
+                    )}
+                    {r.needs_medical && (
+                      <span className="flex items-center gap-1">
+                        <Pill className="size-3.5" /> حاجة طبية
+                      </span>
+                    )}
+                  </div>
                 )}
 
                 <div className="flex flex-wrap items-center justify-between gap-2 pt-1">

@@ -1,5 +1,5 @@
 import { cn } from "@/lib/utils";
-import { severityEmoji, severityLabels, type AffectedSeverity } from "@/lib/constants";
+import { severityIcon, severityLabels, type AffectedSeverity } from "@/lib/constants";
 
 const styles: Record<AffectedSeverity, string> = {
   ravaged: "bg-priority-critical/10 text-priority-critical border-priority-critical/30",
@@ -16,6 +16,7 @@ export function SeverityBadge({
   severity: AffectedSeverity;
   className?: string;
 }) {
+  const Icon = severityIcon[severity];
   return (
     <span
       className={cn(
@@ -24,7 +25,7 @@ export function SeverityBadge({
         className,
       )}
     >
-      <span aria-hidden>{severityEmoji[severity]}</span>
+      <Icon className="size-2.5" fill="currentColor" aria-hidden />
       {severityLabels[severity]}
     </span>
   );

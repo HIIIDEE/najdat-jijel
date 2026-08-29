@@ -1,5 +1,5 @@
 import { cn } from "@/lib/utils";
-import { priorityEmoji, priorityLabels, type PriorityLevel } from "@/lib/constants";
+import { priorityIcon, priorityLabels, type PriorityLevel } from "@/lib/constants";
 
 const styles: Record<PriorityLevel, string> = {
   critical: "bg-priority-critical/10 text-priority-critical border-priority-critical/30",
@@ -15,6 +15,7 @@ export function PriorityBadge({
   priority: PriorityLevel;
   className?: string;
 }) {
+  const Icon = priorityIcon[priority];
   return (
     <span
       className={cn(
@@ -23,7 +24,7 @@ export function PriorityBadge({
         className,
       )}
     >
-      <span aria-hidden>{priorityEmoji[priority]}</span>
+      <Icon className="size-2.5" fill="currentColor" aria-hidden />
       {priorityLabels[priority]}
     </span>
   );

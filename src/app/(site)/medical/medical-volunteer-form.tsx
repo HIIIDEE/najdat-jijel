@@ -71,7 +71,7 @@ export function MedicalVolunteerForm() {
   if (submitted) {
     return (
       <SuccessPanel
-        title="شكراً لمبادرتكم الإنسانية 🙏"
+        title="شكراً لمبادرتكم الإنسانية"
         description="تم تسجيل بياناتكم بنجاح. ستتواصل معكم خلية التنسيق الطبي والبيطري عند الحاجة لأي تدخل أو استشارة."
         primaryHref="/"
         primaryLabel="العودة للرئيسية"

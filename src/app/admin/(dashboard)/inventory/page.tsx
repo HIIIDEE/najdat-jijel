@@ -3,7 +3,8 @@ import { createClient } from "@/lib/supabase/server";
 import { getAllCategories, getAllReliefHubs } from "@/lib/data/admin";
 import { Card, CardContent } from "@/components/ui/card";
 import { EmptyState } from "@/components/shared/empty-state";
-import { categoryEmoji, formatQuantity, unitLabels } from "@/lib/constants";
+import { formatQuantity, unitLabels } from "@/lib/constants";
+import { CategoryIcon } from "@/components/shared/category-icon";
 import { RecordTransactionDialog } from "./record-transaction-dialog";
 import { ThresholdInput } from "./threshold-input";
 
@@ -62,7 +63,7 @@ export default async function AdminInventoryPage() {
                             className="flex flex-wrap items-center justify-between gap-3 px-5 py-3"
                           >
                             <span className="flex items-center gap-2 text-sm font-medium">
-                              {categoryEmoji[item.categories?.slug ?? ""] ?? "📦"}
+                              <CategoryIcon slug={item.categories?.slug} className="size-4" />
                               {item.categories?.name_ar}
                             </span>
                             <span className={low ? "text-sm font-bold text-priority-critical" : "text-sm font-bold"}>

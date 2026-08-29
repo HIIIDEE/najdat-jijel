@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { HeartHandshake } from "lucide-react";
+import { HeartHandshake, LifeBuoy, Gift } from "lucide-react";
 import { siteConfig } from "@/config/site";
 import { LinkButton } from "@/components/shared/link-button";
 
@@ -38,10 +38,10 @@ export function SiteHeader() {
 
         <div className="flex items-center gap-2">
           <LinkButton href="/help" size="sm" variant="outline" className="hidden sm:inline-flex">
-            🆘 أحتاج مساعدة
+            <LifeBuoy className="size-4" /> أحتاج مساعدة
           </LinkButton>
           <LinkButton href="/donate" size="sm">
-            🎁 لدي مساعدات
+            <Gift className="size-4" /> لدي مساعدات
           </LinkButton>
         </div>
       </div>
