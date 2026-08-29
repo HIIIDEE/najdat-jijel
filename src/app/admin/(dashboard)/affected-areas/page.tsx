@@ -41,7 +41,7 @@ export default async function AdminAffectedAreasPage() {
                     ولاية {a.wilaya} · دائرة {a.daira} · بلدية {a.commune}
                   </p>
                   {a.status_raw && (
-                    <p className="text-[11px] text-muted-foreground/70" dir="ltr">
+                    <p className="text-xs text-muted-foreground/80" dir="ltr">
                       {a.status_raw}
                     </p>
                   )}

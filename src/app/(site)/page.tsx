@@ -303,12 +303,12 @@ export default async function HomePage() {
                 >
                   {c.number}
                 </a>
-                <span className="text-xs font-medium">{c.label}</span>
-                {c.hint && <span className="text-[11px] text-muted-foreground">{c.hint}</span>}
+                <span className="text-sm font-semibold">{c.label}</span>
+                {c.hint && <span className="text-xs text-muted-foreground">{c.hint}</span>}
                 {c.greenNumber && (
                   <a
                     href={`tel:${c.greenNumber}`}
-                    className="mt-1 rounded-full bg-algeria-green/10 px-2 py-0.5 text-[11px] font-semibold text-algeria-green hover:underline"
+                    className="mt-1 rounded-full bg-algeria-green/10 px-2.5 py-0.5 text-xs font-semibold text-algeria-green hover:underline"
                   >
                     الرقم الأخضر {c.greenNumber}
                   </a>

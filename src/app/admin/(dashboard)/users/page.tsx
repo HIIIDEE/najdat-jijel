@@ -66,7 +66,7 @@ export default async function AdminUsersPage() {
                   <p className="font-medium">
                     {p.full_name || "بدون اسم"}
                     {p.id === user?.id && (
-                      <span className="ms-2 rounded-full bg-algeria-green/10 px-2 py-0.5 text-[11px] font-semibold text-algeria-green">
+                      <span className="ms-2 rounded-full bg-algeria-green/10 px-2 py-0.5 text-xs font-semibold text-algeria-green">
                         أنت
                       </span>
                     )}
