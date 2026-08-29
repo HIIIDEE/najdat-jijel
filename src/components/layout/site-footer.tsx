@@ -6,6 +6,7 @@ const columns = [
     title: "المنصة",
     links: [
       { href: "/needs", label: "الاحتياجات العاجلة" },
+      { href: "/affected-areas", label: "المناطق المتضررة" },
       { href: "/map", label: "خريطة الإغاثة" },
       { href: "/transparency", label: "الشفافية" },
       { href: "/official-information", label: "معلومات رسمية" },

@@ -1,0 +1,387 @@
+[
+ {
+  "wilaya": "Jijel — جيجل",
+  "daira": "Chekfa — الشقفة",
+  "commune": "Bordj T'har — برج الطهر",
+  "spot": "Taghrast — تغراست",
+  "status": "Ravagé / dégâts importants"
+ },
+ {
+  "wilaya": "Jijel — جيجل",
+  "daira": "Chekfa — الشقفة",
+  "commune": "Chekfa — الشقفة",
+  "spot": "Ghebala — غبالة",
+  "status": "Évacuation préventive"
+ },
+ {
+  "wilaya": "Jijel — جيجل",
+  "daira": "Chekfa — الشقفة",
+  "commune": "Chekfa — الشقفة",
+  "spot": "Es-Sabt — السبت",
+  "status": "Incendie"
+ },
+ {
+  "wilaya": "Jijel — جيجل",
+  "daira": "El Milia — الميلية",
+  "commune": "Ouled Yahia Khadrouche — أولاد يحيى خدروش",
+  "spot": "Sidi M'hamed — سيدي محمد",
+  "status": "Habitations menacées / évacuations"
+ },
+ {
+  "wilaya": "Jijel — جيجل",
+  "daira": "El Milia — الميلية",
+  "commune": "El Milia — الميلية",
+  "spot": "Secteurs de la commune",
+  "status": "Incendie"
+ },
+ {
+  "wilaya": "Jijel — جيجل",
+  "daira": "Djimla — جيملة",
+  "commune": "Boudria Beniyadjis — بوراوي بن ياجيس",
+  "spot": "Secteurs de la commune",
+  "status": "Incendie"
+ },
+ {
+  "wilaya": "Jijel — جيجل",
+  "daira": "Sidi Maarouf — سيدي معروف",
+  "commune": "Sidi Maarouf — سيدي معروف",
+  "spot": "Secteurs de la commune",
+  "status": "Incendie"
+ },
+ {
+  "wilaya": "Jijel — جيجل",
+  "daira": "Sidi Maarouf — سيدي معروف",
+  "commune": "Ouled Rabah — أولاد رابح",
+  "spot": "El Annab — العناب",
+  "status": "Incendie"
+ },
+ {
+  "wilaya": "Jijel — جيجل",
+  "daira": "Texenna — تاكسنة",
+  "commune": "Texenna — تاكسنة",
+  "spot": "Oum El Hout — أم الحوت",
+  "status": "Habitations menacées"
+ },
+ {
+  "wilaya": "Jijel — جيجل",
+  "daira": "Texenna — تاكسنة",
+  "commune": "Texenna — تاكسنة",
+  "spot": "Boukhelaf — بوخلاف",
+  "status": "Incendie"
+ },
+ {
+  "wilaya": "Jijel — جيجل",
+  "daira": "Ziama Mansouriah — زيامة منصورية",
+  "commune": "Ziama Mansouriah — زيامة منصورية",
+  "spot": "Ech-Charia — الشرية",
+  "status": "Incendie"
+ },
+ {
+  "wilaya": "Jijel — جيجل",
+  "daira": "Ziama Mansouriah — زيامة منصورية",
+  "commune": "Ziama Mansouriah — زيامة منصورية",
+  "spot": "Ouled Ali — أولاد علي",
+  "status": "Incendie"
+ },
+ {
+  "wilaya": "Jijel — جيجل",
+  "daira": "El Aouana — العوانة",
+  "commune": "Selma Benziada — سلمى بن زيادة",
+  "spot": "Secteurs de la commune",
+  "status": "Incendie"
+ },
+ {
+  "wilaya": "Jijel — جيجل",
+  "daira": "Taher — الطاهير",
+  "commune": "Boussif Ouled Askeur — بوسيف أولاد عسكر",
+  "spot": "Secteurs de la commune",
+  "status": "Incendie"
+ },
+ {
+  "wilaya": "Béjaïa — بجاية",
+  "daira": "Darguina — درقينة",
+  "commune": "Darguina — درقينة",
+  "spot": "Aït Anane — آيت عنان",
+  "status": "Incendie"
+ },
+ {
+  "wilaya": "Béjaïa — بجاية",
+  "daira": "Darguina — درقينة",
+  "commune": "Darguina — درقينة",
+  "spot": "Plusieurs villages",
+  "status": "Touchés"
+ },
+ {
+  "wilaya": "Béjaïa — بجاية",
+  "daira": "Darguina — درقينة",
+  "commune": "Taskriout — تاسكريوت",
+  "spot": "Aârach — أعراش",
+  "status": "Évacuations"
+ },
+ {
+  "wilaya": "Béjaïa — بجاية",
+  "daira": "Darguina — درقينة",
+  "commune": "Taskriout — تاسكريوت",
+  "spot": "Aït Mebarek — آيت مبارك",
+  "status": "Évacuation"
+ },
+ {
+  "wilaya": "Béjaïa — بجاية",
+  "daira": "Souk El Ténine — سوق الاثنين",
+  "commune": "Melbou — ملبو",
+  "spot": "Bouhyane/Boulayen — بوحیان/بولاين",
+  "status": "Victimes / dégâts"
+ },
+ {
+  "wilaya": "Béjaïa — بجاية",
+  "daira": "Souk El Ténine — سوق الاثنين",
+  "commune": "Tamridjet — تامريجت",
+  "spot": "Plusieurs secteurs",
+  "status": "Incendie"
+ },
+ {
+  "wilaya": "Béjaïa — بجاية",
+  "daira": "Souk El Ténine — سوق الاثنين",
+  "commune": "Souk El Ténine — سوق الاثنين",
+  "spot": "Secteurs résidentiels",
+  "status": "Habitations menacées"
+ },
+ {
+  "wilaya": "Béjaïa — بجاية",
+  "daira": "Aokas — أوقاس",
+  "commune": "Aokas — أوقاس",
+  "spot": "Secteurs montagneux",
+  "status": "Incendie"
+ },
+ {
+  "wilaya": "Béjaïa — بجاية",
+  "daira": "Aokas — أوقاس",
+  "commune": "Tizi N'Berber — تيزي نبربر",
+  "spot": "Villages / montagne",
+  "status": "Menacés"
+ },
+ {
+  "wilaya": "Béjaïa — بجاية",
+  "daira": "El Kseur — القصر",
+  "commune": "El Kseur — القصر",
+  "spot": "Secteurs de la commune",
+  "status": "Incendie"
+ },
+ {
+  "wilaya": "Béjaïa — بجاية",
+  "daira": "El Kseur — القصر",
+  "commune": "Fenaïa Il Maten — فناية الماثن",
+  "spot": "Secteurs de la commune",
+  "status": "Incendie"
+ },
+ {
+  "wilaya": "Béjaïa — بجاية",
+  "daira": "El Kseur — القصر",
+  "commune": "Toudja — توجة",
+  "spot": "Souk El Djemaâ — سوق الجمعة",
+  "status": "Incendie"
+ },
+ {
+  "wilaya": "Béjaïa — بجاية",
+  "daira": "Tichy — تيشي",
+  "commune": "Tichy — تيشي",
+  "spot": "Secteurs montagneux",
+  "status": "Incendie"
+ },
+ {
+  "wilaya": "Béjaïa — بجاية",
+  "daira": "Tichy — تيشي",
+  "commune": "Boukhelifa — بوخليفة",
+  "spot": "Secteurs montagneux",
+  "status": "Signalements/vidéos"
+ },
+ {
+  "wilaya": "Béjaïa — بجاية",
+  "daira": "Béjaïa — بجاية",
+  "commune": "Béjaïa — بجاية",
+  "spot": "Dar Djebel — دار جبل",
+  "status": "Signalement réseaux sociaux"
+ },
+ {
+  "wilaya": "Béjaïa — بجاية",
+  "daira": "Amizour — أميزور",
+  "commune": "Feraoun — فرعون",
+  "spot": "Secteurs de la commune",
+  "status": "Incendie"
+ },
+ {
+  "wilaya": "Béjaïa — بجاية",
+  "daira": "Tichy — تيشي",
+  "commune": "Tichy — تيشي",
+  "spot": "Idjedaren / Ath Jellil — إيدجارن / آث جليل",
+  "status": "Réseaux sociaux à confirmer"
+ },
+ {
+  "wilaya": "Mila — ميلة",
+  "daira": "Grarem Gouga — القرارم قوقة",
+  "commune": "Hamala — حمالة",
+  "spot": "Mechta El Badsi — مشتة البدسي",
+  "status": "Incendie / habitations menacées"
+ },
+ {
+  "wilaya": "Mila — ميلة",
+  "daira": "Grarem Gouga — القرارم قوقة",
+  "commune": "Hamala — حمالة",
+  "spot": "Mazar Lekhal — مزار لكحل",
+  "status": "Secteur touché"
+ },
+ {
+  "wilaya": "Mila — ميلة",
+  "daira": "Terrai Bainen — ترعي باينان",
+  "commune": "Terrai Bainen — ترعي باينان",
+  "spot": "Secteurs résidentiels",
+  "status": "Évacuations"
+ },
+ {
+  "wilaya": "Mila — ميلة",
+  "daira": "Terrai Bainen — ترعي باينان",
+  "commune": "Amira Arres — عميرة أراس",
+  "spot": "Secteurs de la commune",
+  "status": "Incendie encore signalé"
+ },
+ {
+  "wilaya": "Skikda — سكيكدة",
+  "daira": "Tamalous — تمالوس",
+  "commune": "Tamalous — تمالوس",
+  "spot": "Secteurs de la commune",
+  "status": "Incendie"
+ },
+ {
+  "wilaya": "Skikda — سكيكدة",
+  "daira": "Skikda — سكيكدة",
+  "commune": "Filfila — فلفلة",
+  "spot": "Secteurs de la commune",
+  "status": "Incendie"
+ },
+ {
+  "wilaya": "Skikda — سكيكدة",
+  "daira": "Azzaba — عزابة",
+  "commune": "Aïn Charchar — عين شرشار",
+  "spot": "Secteurs résidentiels",
+  "status": "Habitations menacées"
+ },
+ {
+  "wilaya": "Skikda — سكيكدة",
+  "daira": "Azzaba — عزابة",
+  "commune": "Es Sebt — السبت",
+  "spot": "Secteurs de la commune",
+  "status": "Incendie"
+ },
+ {
+  "wilaya": "Skikda — سكيكدة",
+  "daira": "Ben Azzouz — بن عزوز",
+  "commune": "Bekkouche Lakhdar — بكوش لخضر",
+  "spot": "Secteurs de la commune",
+  "status": "Incendie"
+ },
+ {
+  "wilaya": "Skikda — سكيكدة",
+  "daira": "El Harrouch — الحروش",
+  "commune": "Ouled Hbaba — أولاد حبابة",
+  "spot": "Secteurs de la commune",
+  "status": "Incendie"
+ },
+ {
+  "wilaya": "Skikda — سكيكدة",
+  "daira": "Sidi Mezghiche — سيدي مزغيش",
+  "commune": "Aïn Bouziane — عين بوزيان",
+  "spot": "Secteurs de la commune",
+  "status": "Incendie"
+ },
+ {
+  "wilaya": "Skikda — سكيكدة",
+  "daira": "El Harrouch — الحروش",
+  "commune": "Zerdezas — زردازة",
+  "spot": "Aïn N'Chama — عين نشامة",
+  "status": "Familles évacuées"
+ },
+ {
+  "wilaya": "Skikda — سكيكدة",
+  "daira": "Zitouna — الزيتونة",
+  "commune": "Kanoua — قنواع",
+  "spot": "Akaroun — أكارون",
+  "status": "Incendie"
+ },
+ {
+  "wilaya": "Skikda — سكيكدة",
+  "daira": "Zitouna — الزيتونة",
+  "commune": "Kanoua — قنواع",
+  "spot": "Lamnakach — لمنقاش",
+  "status": "Incendie"
+ },
+ {
+  "wilaya": "Skikda — سكيكدة",
+  "daira": "Zitouna — الزيتونة",
+  "commune": "Kanoua — قنواع",
+  "spot": "Oued Boussaleh — واد بوسالح",
+  "status": "Incendie"
+ },
+ {
+  "wilaya": "Skikda — سكيكدة",
+  "daira": "Zitouna — الزيتونة",
+  "commune": "Kanoua — قنواع",
+  "spot": "Afenso — أفنسو",
+  "status": "Évacuation"
+ },
+ {
+  "wilaya": "Skikda — سكيكدة",
+  "daira": "Zitouna — الزيتونة",
+  "commune": "Kanoua — قنواع",
+  "spot": "Aïn Es-Sedma — عين السدما",
+  "status": "Évacuation"
+ },
+ {
+  "wilaya": "Skikda — سكيكدة",
+  "daira": "Oum Toub — أم الطوب",
+  "commune": "Oum Toub — أم الطوب",
+  "spot": "Taghouza Ouled Yahia — تغوزة أولاد يحيى",
+  "status": "Incendie"
+ },
+ {
+  "wilaya": "Skikda — سكيكدة",
+  "daira": "Aïn Kechra — عين قشرة",
+  "commune": "Aïn Kechra — عين قشرة",
+  "spot": "Sfsafa — الصفصاف",
+  "status": "Incendie"
+ },
+ {
+  "wilaya": "Skikda — سكيكدة",
+  "daira": "Aïn Kechra — عين قشرة",
+  "commune": "Aïn Kechra — عين قشرة",
+  "spot": "Oued Zegar — واد زقار",
+  "status": "Incendie"
+ },
+ {
+  "wilaya": "Skikda — سكيكدة",
+  "daira": "Collo — القل",
+  "commune": "Cheraïa — الشرايع",
+  "spot": "Lakbiba — لقبية",
+  "status": "Habitations menacées"
+ },
+ {
+  "wilaya": "Skikda — سكيكدة",
+  "daira": "Sidi Mezghiche — سيدي مزغيش",
+  "commune": "Sidi Mezghiche — سيدي مزغيش",
+  "spot": "Secteurs de la commune",
+  "status": "Incendie"
+ },
+ {
+  "wilaya": "Skikda — سكيكدة",
+  "daira": "Ramdane Djamel — رمضان جمال",
+  "commune": "Ramdane Djamel — رمضان جمال",
+  "spot": "Secteurs de la commune",
+  "status": "Incendie"
+ },
+ {
+  "wilaya": "Skikda — سكيكدة",
+  "daira": "Zitouna — الزيتونة",
+  "commune": "Zitouna — الزيتونة",
+  "spot": "Secteurs de la commune",
+  "status": "Incendie"
+ }
+]

@@ -8,6 +8,7 @@ import {
   Home,
   Phone,
   ShieldCheck,
+  TriangleAlert,
 } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
 import { LinkButton } from "@/components/shared/link-button";
@@ -19,6 +20,7 @@ import { siteConfig } from "@/config/site";
 import { relativeTimeAr } from "@/lib/constants";
 import { emergencyContacts } from "@/lib/emergency";
 import {
+  getAffectedAreas,
   getAffectedCommunes,
   getCriticalNeeds,
   getOfficialUpdates,
@@ -41,13 +43,16 @@ const howItWorks = [
 ];
 
 export default async function HomePage() {
-  const [criticalNeeds, stats, updates, shelters, communes] = await Promise.all([
+  const [criticalNeeds, stats, updates, shelters, communes, areas] = await Promise.all([
     getCriticalNeeds(6),
     getStatOverview(),
     getOfficialUpdates(3),
     getShelters(),
     getAffectedCommunes(),
+    getAffectedAreas(),
   ]);
+
+  const areaWilayas = [...new Set(areas.map((a) => a.wilaya))];
 
   return (
     <>
@@ -98,7 +103,7 @@ export default async function HomePage() {
             {[
               { label: "احتياج نشط", value: Number(stats.critical_needs ?? 0), tone: "text-priority-critical" },
               { label: "نقطة استقبال", value: Number(stats.active_points ?? 0), tone: "text-algeria-green" },
-              { label: "بلدية متضررة", value: communes.length, tone: "text-foreground" },
+              { label: "منطقة متضررة", value: areas.length, tone: "text-priority-high" },
               { label: "مركز إيواء", value: shelters.length, tone: "text-[#7c3aed]" },
             ].map((s) => (
               <div key={s.label} className="rounded-xl border border-border bg-card p-4">
@@ -141,6 +146,61 @@ export default async function HomePage() {
           عرض كل الاحتياجات
         </LinkButton>
       </section>
+
+      {/* ————————————————————————————————— المناطق المتضررة */}
+      {areas.length > 0 && (
+        <section className="border-y border-border bg-priority-critical/5">
+          <div className="mx-auto max-w-6xl px-4 py-14">
+            <div className="mb-6 flex items-end justify-between gap-3">
+              <div>
+                <h2 className="flex items-center gap-2 text-2xl font-bold">
+                  <TriangleAlert className="size-5 text-priority-critical" />
+                  المناطق المتضررة
+                </h2>
+                <p className="mt-1 text-sm text-muted-foreground">
+                  {areas.length} منطقة عبر {areaWilayas.length} ولايات — اضغط على ولاية لعرض
+                  تفاصيلها.
+                </p>
+              </div>
+              <LinkButton href="/affected-areas" variant="outline" size="sm" className="hidden sm:inline-flex">
+                القائمة الكاملة
+              </LinkButton>
+            </div>
+
+            <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
+              {areaWilayas.map((w) => {
+                const items = areas.filter((a) => a.wilaya === w);
+                const severe = items.filter(
+                  (a) => a.severity === "ravaged" || a.severity === "evacuated",
+                ).length;
+                return (
+                  <Link
+                    key={w}
+                    href={`/affected-areas?wilaya=${encodeURIComponent(w)}`}
+                    className="group rounded-xl border border-border bg-card p-4 transition-all hover:-translate-y-0.5 hover:border-priority-critical hover:shadow-md"
+                  >
+                    <p className="flex items-center justify-between font-bold">
+                      ولاية {w}
+                      <span className="text-2xl font-extrabold tabular-nums text-priority-critical">
+                        {items.length}
+                      </span>
+                    </p>
+                    <p className="mt-1 text-xs text-muted-foreground">
+                      {severe > 0
+                        ? `${severe} منها أضرار جسيمة أو إجلاء`
+                        : "مناطق متضررة مسجَّلة"}
+                    </p>
+                  </Link>
+                );
+              })}
+            </div>
+
+            <LinkButton href="/affected-areas" variant="outline" className="mt-5 w-full sm:hidden">
+              القائمة الكاملة للمناطق المتضررة
+            </LinkButton>
+          </div>
+        </section>
+      )}
 
       {/* ————————————————————————————————— البلديات المتضررة */}
       {communes.length > 0 && (

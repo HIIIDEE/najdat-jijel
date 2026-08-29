@@ -116,3 +116,14 @@ export async function getAffectedCommunes() {
   }
   return [...map.values()].sort((a, b) => b.critical - a.critical || b.total - a.total);
 }
+
+export async function getAffectedAreas() {
+  const supabase = await createClient();
+  const { data } = await supabase
+    .from("affected_areas")
+    .select("*")
+    .order("wilaya")
+    .order("daira")
+    .order("commune");
+  return data ?? [];
+}

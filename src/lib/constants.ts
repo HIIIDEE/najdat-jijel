@@ -154,3 +154,30 @@ export function relativeTimeAr(dateString: string | null | undefined): string {
 export function formatQuantity(value: number): string {
   return new Intl.NumberFormat("ar-DZ").format(value);
 }
+
+export type AffectedSeverity = Database["public"]["Enums"]["affected_severity"];
+
+export const severityLabels: Record<AffectedSeverity, string> = {
+  ravaged: "أضرار جسيمة",
+  evacuated: "تم الإجلاء",
+  threatened: "منازل مهددة",
+  burning: "منطقة متضررة",
+  unconfirmed: "بلاغ غير مؤكد",
+};
+
+export const severityEmoji: Record<AffectedSeverity, string> = {
+  ravaged: "🔴",
+  evacuated: "🟠",
+  threatened: "🟡",
+  burning: "🔥",
+  unconfirmed: "⚪",
+};
+
+/** ترتيب العرض: الأخطر أولًا، والبلاغات غير المؤكدة في الأخير. */
+export const severityRank: Record<AffectedSeverity, number> = {
+  ravaged: 0,
+  evacuated: 1,
+  threatened: 2,
+  burning: 3,
+  unconfirmed: 4,
+};

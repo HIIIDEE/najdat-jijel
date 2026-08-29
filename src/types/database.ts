@@ -55,6 +55,87 @@ export type Database = {
           },
         ]
       }
+      affected_areas: {
+        Row: {
+          campaign_id: string
+          commune: string
+          commune_fr: string | null
+          created_at: string
+          created_by: string | null
+          daira: string
+          daira_fr: string | null
+          id: string
+          lat: number | null
+          lng: number | null
+          notes: string | null
+          severity: Database["public"]["Enums"]["affected_severity"]
+          source: string | null
+          spot: string | null
+          spot_fr: string | null
+          status_raw: string | null
+          updated_at: string
+          wilaya: string
+          wilaya_fr: string | null
+        }
+        Insert: {
+          campaign_id: string
+          commune: string
+          commune_fr?: string | null
+          created_at?: string
+          created_by?: string | null
+          daira: string
+          daira_fr?: string | null
+          id?: string
+          lat?: number | null
+          lng?: number | null
+          notes?: string | null
+          severity?: Database["public"]["Enums"]["affected_severity"]
+          source?: string | null
+          spot?: string | null
+          spot_fr?: string | null
+          status_raw?: string | null
+          updated_at?: string
+          wilaya: string
+          wilaya_fr?: string | null
+        }
+        Update: {
+          campaign_id?: string
+          commune?: string
+          commune_fr?: string | null
+          created_at?: string
+          created_by?: string | null
+          daira?: string
+          daira_fr?: string | null
+          id?: string
+          lat?: number | null
+          lng?: number | null
+          notes?: string | null
+          severity?: Database["public"]["Enums"]["affected_severity"]
+          source?: string | null
+          spot?: string | null
+          spot_fr?: string | null
+          status_raw?: string | null
+          updated_at?: string
+          wilaya?: string
+          wilaya_fr?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "affected_areas_campaign_id_fkey"
+            columns: ["campaign_id"]
+            isOneToOne: false
+            referencedRelation: "campaigns"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "affected_areas_created_by_fkey"
+            columns: ["created_by"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       beneficiary_requests: {
         Row: {
           address_note: string | null
@@ -668,6 +749,8 @@ export type Database = {
           commune_name: string | null
           created_at: string
           id: string
+          lat: number | null
+          lng: number | null
           wilaya_code: string
           wilaya_name: string
         }
@@ -675,6 +758,8 @@ export type Database = {
           commune_name?: string | null
           created_at?: string
           id?: string
+          lat?: number | null
+          lng?: number | null
           wilaya_code: string
           wilaya_name: string
         }
@@ -682,6 +767,8 @@ export type Database = {
           commune_name?: string | null
           created_at?: string
           id?: string
+          lat?: number | null
+          lng?: number | null
           wilaya_code?: string
           wilaya_name?: string
         }
@@ -911,6 +998,8 @@ export type Database = {
           phone: string | null
           updated_at: string
           verification_level: Database["public"]["Enums"]["verification_level"]
+          verified_at: string | null
+          verified_by: string | null
           wilaya: string | null
         }
         Insert: {
@@ -923,6 +1012,8 @@ export type Database = {
           phone?: string | null
           updated_at?: string
           verification_level?: Database["public"]["Enums"]["verification_level"]
+          verified_at?: string | null
+          verified_by?: string | null
           wilaya?: string | null
         }
         Update: {
@@ -935,12 +1026,21 @@ export type Database = {
           phone?: string | null
           updated_at?: string
           verification_level?: Database["public"]["Enums"]["verification_level"]
+          verified_at?: string | null
+          verified_by?: string | null
           wilaya?: string | null
         }
         Relationships: [
           {
             foreignKeyName: "organizations_created_by_fkey"
             columns: ["created_by"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "organizations_verified_by_fkey"
+            columns: ["verified_by"]
             isOneToOne: false
             referencedRelation: "profiles"
             referencedColumns: ["id"]
@@ -1377,6 +1477,12 @@ export type Database = {
       is_staff: { Args: never; Returns: boolean }
     }
     Enums: {
+      affected_severity:
+        | "ravaged"
+        | "evacuated"
+        | "threatened"
+        | "burning"
+        | "unconfirmed"
       app_role:
         | "admin"
         | "coordinator"
@@ -1560,6 +1666,13 @@ export type CompositeTypes<
 export const Constants = {
   public: {
     Enums: {
+      affected_severity: [
+        "ravaged",
+        "evacuated",
+        "threatened",
+        "burning",
+        "unconfirmed",
+      ],
       app_role: [
         "admin",
         "coordinator",

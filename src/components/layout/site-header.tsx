@@ -6,6 +6,7 @@ import { LinkButton } from "@/components/shared/link-button";
 const navLinks = [
   { href: "/", label: "الرئيسية" },
   { href: "/needs", label: "الاحتياجات" },
+  { href: "/affected-areas", label: "المناطق المتضررة" },
   { href: "/map", label: "الخريطة" },
   { href: "/transparency", label: "الشفافية" },
   { href: "/official-information", label: "معلومات رسمية" },
