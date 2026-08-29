@@ -204,3 +204,11 @@ export const severityRank: Record<AffectedSeverity, number> = {
   burning: 3,
   unconfirmed: 4,
 };
+
+export type MedicalVerificationStatus = Database["public"]["Enums"]["medical_verification_status"];
+
+export const medicalVerificationStatusLabels: Record<MedicalVerificationStatus, string> = {
+  pending: "قيد التحقق",
+  verified: "موثّق",
+  rejected: "مرفوض",
+};

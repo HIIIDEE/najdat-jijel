@@ -3,6 +3,8 @@
 import { createClient } from "@/lib/supabase/server";
 import { medicalVolunteerSchema, MedicalVolunteerInput } from "@/schemas/medical-volunteer";
 import { revalidatePath } from "next/cache";
+import { logActivity } from "@/services/activity-log";
+import type { MedicalVerificationStatus } from "@/lib/constants";
 
 export type MedicalActionState = {
   success: boolean;
@@ -53,4 +55,25 @@ export async function submitMedicalVolunteer(
     success: true,
     message: "تم تسجيل انضمامكم إلى الفريق الطبي بنجاح. شكراً لتطوعكم!",
   };
+}
+
+export async function updateMedicalVolunteerStatus(id: string, status: MedicalVerificationStatus) {
+  const supabase = await createClient();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+
+  const { error } = await supabase.from("medical_volunteers").update({ status }).eq("id", id);
+  if (error) return { success: false, error: "ليست لديك صلاحية تغيير حالة التحقق (الأدمن فقط)." };
+
+  await logActivity(supabase, {
+    actorId: user?.id,
+    action: `غيّر حالة تحقق متطوع طبي إلى ${status}`,
+    entityType: "medical_volunteer",
+    entityId: id,
+  });
+
+  revalidatePath("/admin/medical");
+  revalidatePath("/");
+  return { success: true };
 }
