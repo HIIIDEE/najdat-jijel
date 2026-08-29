@@ -22,6 +22,7 @@ import { EmptyState } from "@/components/shared/empty-state";
 import { transportOfferSchema, vehicleOptions, type TransportOfferInput } from "@/schemas/transport-offer";
 import { wilayaNames } from "@/lib/wilayas";
 import { formatQuantity } from "@/lib/constants";
+import { SuccessPanel } from "@/components/shared/success-panel";
 import { submitTransportOffer, type SubmitTransportResult } from "@/actions/transport";
 
 export function TransportForm() {
@@ -71,11 +72,13 @@ export function TransportForm() {
 
   if (result?.success) {
     return (
-      <div className="space-y-5">
-        <Alert className="border-algeria-green/40 bg-algeria-green/5">
-          <AlertTitle className="text-algeria-green">تم تسجيل عرض النقل بنجاح 🚚</AlertTitle>
-          <AlertDescription>سيتواصل فريق التنسيق معك لتأكيد التفاصيل والمسار.</AlertDescription>
-        </Alert>
+      <div className="animate-rise space-y-5">
+        <SuccessPanel
+          title="تم تسجيل عرض النقل بنجاح 🚚"
+          description="سيتواصل فريق التنسيق معك لتأكيد التفاصيل والمسار. في الأسفل المساعدات التي يمكن تحميلها على مسارك."
+          primaryHref="/map"
+          primaryLabel="عرض نقاط الاستلام"
+        />
 
         <h2 className="font-bold">مساعدات يمكن تحميلها على مسارك</h2>
         {!result.candidates || result.candidates.length === 0 ? (

@@ -51,6 +51,18 @@ export function SiteFooter() {
         <div className="mt-8 border-t border-border pt-6 text-xs text-muted-foreground">
           <p>{siteConfig.legalNotice}</p>
           <p className="mt-2">
+            جزء من البيانات الميدانية (مراكز الإيواء والجمعيات وبلديات جيجل) مصدرها منصة{" "}
+            <a
+              href="https://sanad-ca736.web.app"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="font-medium hover:text-foreground hover:underline"
+            >
+              سند — Sanad
+            </a>{" "}
+            من تطوير Quanta Club، مع الشكر لهم على جهدهم في جمعها والتحقق منها.
+          </p>
+          <p className="mt-2">
             <Link href="/admin/login" className="hover:text-foreground">
               دخول فرق التنسيق
             </Link>

@@ -17,6 +17,7 @@ import {
   needCategoryOptions,
   type BeneficiaryRequestInput,
 } from "@/schemas/beneficiary-request";
+import { SuccessPanel } from "@/components/shared/success-panel";
 import { submitBeneficiaryRequest } from "@/actions/beneficiary-requests";
 
 export function HelpRequestForm() {
@@ -84,12 +85,12 @@ export function HelpRequestForm() {
 
   if (submitted) {
     return (
-      <Alert className="border-algeria-green/40 bg-algeria-green/5">
-        <AlertTitle className="text-algeria-green">تم استلام طلبك بنجاح 🙏</AlertTitle>
-        <AlertDescription>
-          سيراجع فريق التنسيق طلبك ويتواصل معك في أقرب وقت ممكن. بياناتك محمية ولا تُعرض للعامة.
-        </AlertDescription>
-      </Alert>
+      <SuccessPanel
+        title="تم استلام طلبك بنجاح 🙏"
+        description="سيراجع فريق التنسيق طلبك ويتواصل معك في أقرب وقت ممكن. بياناتك محمية ولا تُعرض للعامة إطلاقًا."
+        primaryHref="/map"
+        primaryLabel="مراكز الإيواء القريبة"
+      />
     );
   }
 

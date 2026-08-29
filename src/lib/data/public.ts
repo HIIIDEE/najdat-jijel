@@ -92,3 +92,27 @@ export async function getOfficialUpdates(limit = 5) {
     .limit(limit);
   return data ?? [];
 }
+
+export async function getShelters() {
+  const supabase = await createClient();
+  const { data } = await supabase.rpc("get_public_relief_hubs");
+  return (data ?? []).filter((h) => h.is_shelter && h.status === "open");
+}
+
+/** البلديات التي لديها احتياجات نشطة، مرتبة حسب عدد الاحتياجات الحرجة. */
+export async function getAffectedCommunes() {
+  const supabase = await createClient();
+  const { data } = await supabase
+    .from("needs")
+    .select("commune, priority")
+    .eq("status", "active");
+
+  const map = new Map<string, { commune: string; total: number; critical: number }>();
+  for (const n of data ?? []) {
+    const row = map.get(n.commune) ?? { commune: n.commune, total: 0, critical: 0 };
+    row.total += 1;
+    if (n.priority === "critical" || n.priority === "high") row.critical += 1;
+    map.set(n.commune, row);
+  }
+  return [...map.values()].sort((a, b) => b.critical - a.critical || b.total - a.total);
+}

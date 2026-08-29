@@ -1,17 +1,39 @@
 "use client";
 
 import { useRouter, useSearchParams, usePathname } from "next/navigation";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
-import { priorityLabels, categoryEmoji } from "@/lib/constants";
+import { X } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { categoryEmoji, priorityLabels, priorityEmoji } from "@/lib/constants";
+import { cn } from "@/lib/utils";
 import type { Database } from "@/types/database";
 
 type Category = Database["public"]["Tables"]["categories"]["Row"];
+
+function Chip({
+  active,
+  onClick,
+  children,
+}: {
+  active: boolean;
+  onClick: () => void;
+  children: React.ReactNode;
+}) {
+  return (
+    <button
+      type="button"
+      onClick={onClick}
+      aria-pressed={active}
+      className={cn(
+        "rounded-full border px-3 py-1.5 text-sm transition-all",
+        active
+          ? "border-algeria-green bg-algeria-green text-algeria-green-foreground font-semibold"
+          : "border-border bg-card hover:border-algeria-green/50 hover:bg-muted",
+      )}
+    >
+      {children}
+    </button>
+  );
+}
 
 export function NeedsFilters({
   categories,
@@ -24,80 +46,70 @@ export function NeedsFilters({
   const pathname = usePathname();
   const searchParams = useSearchParams();
 
-  function setParam(key: string, value: string | null) {
+  const current = {
+    category: searchParams.get("category"),
+    commune: searchParams.get("commune"),
+    priority: searchParams.get("priority"),
+  };
+  const hasFilters = Boolean(current.category || current.commune || current.priority);
+
+  function toggle(key: string, value: string) {
     const params = new URLSearchParams(searchParams.toString());
-    if (!value || value === "all") {
-      params.delete(key);
-    } else {
-      params.set(key, value);
-    }
-    router.push(`${pathname}?${params.toString()}`);
+    if (params.get(key) === value) params.delete(key);
+    else params.set(key, value);
+    router.push(params.toString() ? `${pathname}?${params}` : pathname, { scroll: false });
   }
 
   return (
-    <div className="grid gap-3 sm:grid-cols-3">
-      <Select
-        defaultValue={searchParams.get("category") ?? "all"}
-        onValueChange={(v) => setParam("category", v)}
-      >
-        <SelectTrigger className="w-full">
-          <SelectValue placeholder="النوع">
-            {(value: string) => {
-              if (value === "all") return "كل الأنواع";
-              const c = categories.find((cat) => cat.slug === value);
-              return c ? `${categoryEmoji[c.slug] ?? "📦"} ${c.name_ar}` : "النوع";
-            }}
-          </SelectValue>
-        </SelectTrigger>
-        <SelectContent>
-          <SelectItem value="all">كل الأنواع</SelectItem>
-          {categories.map((c) => (
-            <SelectItem key={c.id} value={c.slug}>
-              {categoryEmoji[c.slug] ?? "📦"} {c.name_ar}
-            </SelectItem>
-          ))}
-        </SelectContent>
-      </Select>
-
-      <Select
-        defaultValue={searchParams.get("commune") ?? "all"}
-        onValueChange={(v) => setParam("commune", v)}
-      >
-        <SelectTrigger className="w-full">
-          <SelectValue placeholder="البلدية" />
-        </SelectTrigger>
-        <SelectContent>
-          <SelectItem value="all">كل البلديات</SelectItem>
-          {communes.map((c) => (
-            <SelectItem key={c} value={c}>
-              {c}
-            </SelectItem>
-          ))}
-        </SelectContent>
-      </Select>
-
-      <Select
-        defaultValue={searchParams.get("priority") ?? "all"}
-        onValueChange={(v) => setParam("priority", v)}
-      >
-        <SelectTrigger className="w-full">
-          <SelectValue placeholder="الأولوية">
-            {(value: string) =>
-              value === "all"
-                ? "كل الأولويات"
-                : (priorityLabels[value as keyof typeof priorityLabels] ?? "الأولوية")
-            }
-          </SelectValue>
-        </SelectTrigger>
-        <SelectContent>
-          <SelectItem value="all">كل الأولويات</SelectItem>
+    <div className="space-y-4">
+      <div>
+        <p className="mb-2 text-xs font-semibold text-muted-foreground">الأولوية</p>
+        <div className="flex flex-wrap gap-2">
           {Object.entries(priorityLabels).map(([value, label]) => (
-            <SelectItem key={value} value={value}>
-              {label}
-            </SelectItem>
+            <Chip
+              key={value}
+              active={current.priority === value}
+              onClick={() => toggle("priority", value)}
+            >
+              {priorityEmoji[value as keyof typeof priorityEmoji]} {label}
+            </Chip>
           ))}
-        </SelectContent>
-      </Select>
+        </div>
+      </div>
+
+      {communes.length > 0 && (
+        <div>
+          <p className="mb-2 text-xs font-semibold text-muted-foreground">البلدية</p>
+          <div className="flex flex-wrap gap-2">
+            {communes.map((c) => (
+              <Chip key={c} active={current.commune === c} onClick={() => toggle("commune", c)}>
+                {c}
+              </Chip>
+            ))}
+          </div>
+        </div>
+      )}
+
+      <div>
+        <p className="mb-2 text-xs font-semibold text-muted-foreground">نوع المادة</p>
+        <div className="flex flex-wrap gap-2">
+          {categories.map((c) => (
+            <Chip
+              key={c.id}
+              active={current.category === c.slug}
+              onClick={() => toggle("category", c.slug)}
+            >
+              {categoryEmoji[c.slug] ?? "📦"} {c.name_ar}
+            </Chip>
+          ))}
+        </div>
+      </div>
+
+      {hasFilters && (
+        <Button variant="ghost" size="sm" onClick={() => router.push(pathname, { scroll: false })}>
+          <X className="size-4" /> مسح كل الفلاتر
+        </Button>
+      )}
     </div>
   );
 }

@@ -23,6 +23,7 @@ import { PointStatusBadge } from "@/components/shared/status-badge";
 import { donationSchema, unitOptions, type DonationInput } from "@/schemas/donation";
 import { categoryEmoji, formatQuantity, unitLabels } from "@/lib/constants";
 import { wilayaNames } from "@/lib/wilayas";
+import { SuccessPanel } from "@/components/shared/success-panel";
 import { submitDonation, type SubmitDonationResult } from "@/actions/donations";
 import type { Database } from "@/types/database";
 
@@ -97,13 +98,13 @@ export function DonationForm({
 
   if (result?.success) {
     return (
-      <div className="space-y-5">
-        <Alert className="border-algeria-green/40 bg-algeria-green/5">
-          <AlertTitle className="text-algeria-green">تم تسجيل مساعدتك بنجاح 🎉</AlertTitle>
-          <AlertDescription>
-            شكرًا لك. سيتواصل فريق التنسيق معك قريبًا لتأكيد التفاصيل.
-          </AlertDescription>
-        </Alert>
+      <div className="animate-rise space-y-5">
+        <SuccessPanel
+          title="تم تسجيل مساعدتك بنجاح 🎉"
+          description="شكرًا لك. سيتواصل فريق التنسيق معك قريبًا لتأكيد التفاصيل. في الأسفل أقرب احتياج مطابق ونقطة التسليم المقترحة."
+          primaryHref="/map"
+          primaryLabel="عرض نقاط التسليم"
+        />
 
         {result.matches && result.matches.length > 0 && (
           <div>

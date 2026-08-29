@@ -18,6 +18,8 @@ export default async function NeedsPage({
   const [needs, categories] = await Promise.all([getAllActiveNeeds(), getCategories()]);
 
   const communes = [...new Set(needs.map((n) => n.commune))].sort();
+  const usedCategorySlugs = new Set(needs.map((n) => n.categories?.slug).filter(Boolean));
+  const relevantCategories = categories.filter((c) => usedCategorySlugs.has(c.slug));
 
   const filtered = needs.filter((n) => {
     if (params.category && n.categories?.slug !== params.category) return false;
@@ -35,16 +37,21 @@ export default async function NeedsPage({
         </p>
       </div>
 
-      <NeedsFilters categories={categories} communes={communes} />
+      <NeedsFilters categories={relevantCategories} communes={communes} />
+
+      <p className="mt-6 text-sm text-muted-foreground">
+        عرض <strong className="text-foreground">{filtered.length}</strong> من أصل {needs.length}{" "}
+        احتياج نشط
+      </p>
 
       {filtered.length === 0 ? (
         <EmptyState
           title="لا توجد احتياجات مطابقة"
           description="جرّب تغيير الفلاتر، أو تحقق لاحقًا فالبيانات تُحدَّث باستمرار."
-          className="mt-8"
+          className="mt-4"
         />
       ) : (
-        <div className="mt-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+        <div className="mt-4 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
           {filtered.map((need) => (
             <NeedCard key={need.id} need={need} />
           ))}
