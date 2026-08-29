@@ -236,14 +236,14 @@ export default async function HomePage() {
       {/* ————————————————————————————————— المناطق المتضررة */}
       {areas.length > 0 && (
         <section className="border-y border-border bg-priority-critical/5">
-          <div className="mx-auto max-w-6xl px-4 py-14">
-            <div className="mb-6 flex items-end justify-between gap-3">
+          <div className="mx-auto max-w-6xl px-4 py-16">
+            <div className="mb-8 flex items-end justify-between gap-3">
               <div>
                 <h2 className="flex items-center gap-2 text-2xl font-bold">
-                  <TriangleAlert className="size-5 text-priority-critical" />
+                  <TriangleAlert className="size-6 text-priority-critical" />
                   المناطق المتضررة وبؤر الحرائق
                 </h2>
-                <p className="mt-1 text-sm text-muted-foreground">
+                <p className="mt-1.5 text-sm text-muted-foreground leading-relaxed">
                   {areas.length} بؤرة حريق وتضرر مسجَّلة عبر {areaWilayas.length} ولايات.
                 </p>
               </div>
@@ -252,9 +252,9 @@ export default async function HomePage() {
               </LinkButton>
             </div>
 
-            <div className="grid gap-4 lg:grid-cols-12">
+            <div className="grid gap-4 md:grid-cols-12 items-stretch">
               {/* Wilaya Summary Card */}
-              <div className={areaWilayas.length === 1 ? "lg:col-span-4" : "grid gap-3 sm:grid-cols-2 lg:col-span-12 lg:grid-cols-4"}>
+              <div className={areaWilayas.length === 1 ? "md:col-span-5 lg:col-span-4" : "grid gap-3 sm:grid-cols-2 md:col-span-12 lg:grid-cols-4"}>
                 {areaWilayas.map((w) => {
                   const items = areas.filter((a) => a.wilaya === w);
                   const severe = items.filter(
@@ -264,27 +264,27 @@ export default async function HomePage() {
                     <Link
                       key={w}
                       href={`/affected-areas?wilaya=${encodeURIComponent(w)}`}
-                      className="group flex h-full flex-col justify-between rounded-xl border border-border bg-card p-5 transition-all hover:-translate-y-0.5 hover:border-priority-critical hover:shadow-md"
+                      className="group flex h-full flex-col justify-between rounded-2xl border border-border bg-card p-6 transition-all hover:-translate-y-0.5 hover:border-priority-critical hover:shadow-md"
                     >
                       <div>
                         <div className="flex items-center justify-between">
-                          <span className="rounded-full bg-priority-critical/10 px-2.5 py-0.5 text-xs font-bold text-priority-critical">
+                          <span className="rounded-full bg-priority-critical/10 px-3 py-1 text-xs font-bold text-priority-critical">
                             بؤرة طوارئ
                           </span>
                           <span className="text-3xl font-extrabold tabular-nums text-priority-critical">
                             {items.length}
                           </span>
                         </div>
-                        <p className="mt-3 text-xl font-bold">ولاية {w}</p>
-                        <p className="mt-1 text-xs text-muted-foreground">
+                        <p className="mt-4 text-xl font-bold">ولاية {w}</p>
+                        <p className="mt-1.5 text-sm text-muted-foreground leading-relaxed">
                           {severe > 0
                             ? `${severe} بؤر حرائق نشطة أو إجلاء عاجل`
                             : "مناطق متضررة مسجَّلة ميدانياً"}
                         </p>
                       </div>
-                      <div className="mt-5 flex items-center gap-1.5 text-xs font-semibold text-priority-critical group-hover:underline">
+                      <div className="mt-6 flex items-center gap-2 text-sm font-bold text-priority-critical transition-colors group-hover:text-priority-critical/80">
                         <span>عرض كل بؤر ولاية {w}</span>
-                        <ArrowLeft className="size-3.5" />
+                        <ArrowLeft className="size-4" />
                       </div>
                     </Link>
                   );
@@ -293,24 +293,24 @@ export default async function HomePage() {
 
               {/* Active Spots Live Breakdown when 1 wilaya */}
               {areaWilayas.length === 1 && (
-                <div className="grid gap-3 sm:grid-cols-2 lg:col-span-8 lg:grid-cols-2">
+                <div className="grid gap-3 sm:grid-cols-2 md:col-span-7 lg:col-span-8">
                   {areas.slice(0, 4).map((a) => {
                     const sev = severityConfig[a.severity] ?? { label: a.severity, tone: "bg-muted text-muted-foreground border-border" };
                     return (
                       <Link
                         key={a.id}
                         href={`/affected-areas?wilaya=${encodeURIComponent(a.wilaya)}`}
-                        className="group flex flex-col justify-between rounded-xl border border-border bg-card p-4 transition-all hover:-translate-y-0.5 hover:border-algeria-green hover:shadow-sm"
+                        className="group flex flex-col justify-between rounded-2xl border border-border bg-card p-5 transition-all hover:-translate-y-0.5 hover:border-algeria-green hover:shadow-sm"
                       >
                         <div className="flex items-start justify-between gap-2">
                           <div>
-                            <p className="font-bold">{a.spot}</p>
-                            <p className="mt-0.5 flex items-center gap-1 text-xs text-muted-foreground">
-                              <MapPin className="size-3 text-muted-foreground" />
+                            <p className="font-bold text-base leading-snug">{a.spot}</p>
+                            <p className="mt-1 flex items-center gap-1 text-xs text-muted-foreground">
+                              <MapPin className="size-3.5 text-muted-foreground/70" />
                               بلدية {a.commune} · دائرة {a.daira}
                             </p>
                           </div>
-                          <span className={`shrink-0 rounded-full border px-2.5 py-0.5 text-[11px] font-bold ${sev.tone}`}>
+                          <span className={`shrink-0 rounded-full border px-2.5 py-0.5 text-xs font-bold ${sev.tone}`}>
                             {sev.label}
                           </span>
                         </div>
@@ -321,7 +321,7 @@ export default async function HomePage() {
               )}
             </div>
 
-            <LinkButton href="/affected-areas" variant="outline" className="mt-5 w-full sm:hidden">
+            <LinkButton href="/affected-areas" variant="outline" className="mt-6 w-full sm:hidden">
               القائمة الكاملة للمناطق المتضررة
             </LinkButton>
           </div>
@@ -331,7 +331,7 @@ export default async function HomePage() {
       {/* ————————————————————————————————— البلديات المتضررة */}
       {communes.length > 0 && (
         <section className="border-y border-border bg-secondary/30">
-          <div className="mx-auto max-w-6xl px-4 py-14">
+          <div className="mx-auto max-w-6xl px-4 py-16">
             <h2 className="mb-1 text-2xl font-bold">البلديات الأكثر احتياجاً</h2>
             <p className="mb-6 text-sm text-muted-foreground">
               ترتيب البلديات حسب كثافة الاحتياجات الميدانية الحرجة.
@@ -363,13 +363,13 @@ export default async function HomePage() {
 
       {/* ————————————————————————————————— مراكز الإيواء */}
       {shelters.length > 0 && (
-        <section className="mx-auto max-w-6xl px-4 py-14">
-          <div className="mb-6 flex items-end justify-between gap-3">
+        <section className="mx-auto max-w-6xl px-4 py-16">
+          <div className="mb-8 flex items-end justify-between gap-3">
             <div>
               <h2 className="flex items-center gap-2 text-2xl font-bold">
-                <Home className="size-5 text-blue-600 dark:text-blue-400" /> مراكز الإيواء المفتوحة
+                <Home className="size-6 text-blue-600 dark:text-blue-400" /> مراكز الإيواء المفتوحة
               </h2>
-              <p className="mt-1 text-sm text-muted-foreground">
+              <p className="mt-1.5 text-sm text-muted-foreground leading-relaxed">
                 مؤسسات عمومية ومراكز مجهزة لاستقبال الأسر التي تم إجلاؤها.
               </p>
             </div>
@@ -378,42 +378,44 @@ export default async function HomePage() {
             </LinkButton>
           </div>
 
-          <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
+          <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
             {shelters.slice(0, 6).map((s) => (
-              <Card key={s.id} className="transition-all hover:shadow-sm">
-                <CardContent className="space-y-2 px-5 pt-5">
-                  <p className="font-bold leading-tight">{s.name}</p>
+              <div key={s.id} className="flex flex-col justify-between rounded-2xl border border-border bg-card p-6 transition-all hover:shadow-sm">
+                <div className="space-y-2">
+                  <p className="font-bold text-base leading-snug">{s.name}</p>
                   <p className="flex items-start gap-1.5 text-sm text-muted-foreground">
-                    <MapPin className="mt-0.5 size-3.5 shrink-0 text-muted-foreground" />
+                    <MapPin className="mt-0.5 size-4 shrink-0 text-muted-foreground/70" />
                     {s.address ?? `${s.commune}، ولاية ${s.wilaya}`}
                   </p>
                   {s.capacity_note && (
-                    <p className="text-xs text-muted-foreground">{s.capacity_note}</p>
+                    <p className="text-xs text-muted-foreground leading-relaxed">{s.capacity_note}</p>
                   )}
-                  {s.phone && (
+                </div>
+                {s.phone && (
+                  <div className="mt-4 pt-3 border-t border-border/60">
                     <a
                       href={`tel:${s.phone.replace(/\s/g, "")}`}
                       dir="ltr"
-                      className="inline-flex items-center gap-1.5 pt-1 text-sm font-semibold text-algeria-green hover:underline"
+                      className="inline-flex items-center gap-1.5 text-sm font-semibold text-algeria-green hover:underline"
                     >
-                      <Phone className="size-3.5" /> {s.phone}
+                      <Phone className="size-4" /> {s.phone}
                     </a>
-                  )}
-                </CardContent>
-              </Card>
+                  </div>
+                )}
+              </div>
             ))}
           </div>
         </section>
       )}
 
       {/* ————————————————————————————————— الأطقم الطبية والبيطرية */}
-      <section className="mx-auto max-w-6xl px-4 pb-14">
-        <div className="mb-6 flex items-end justify-between gap-3">
+      <section className="mx-auto max-w-6xl px-4 py-16">
+        <div className="mb-8 flex items-end justify-between gap-3">
           <div>
             <h2 className="flex items-center gap-2 text-2xl font-bold">
-              <Stethoscope className="size-5 text-algeria-green" /> الأطقم الطبية والبيطرية المتطوعة
+              <Stethoscope className="size-6 text-algeria-green" /> الأطقم الطبية والبيطرية المتطوعة
             </h2>
-            <p className="mt-1 text-sm text-muted-foreground">
+            <p className="mt-1.5 text-sm text-muted-foreground leading-relaxed">
               أطباء، بياطرة وكوادر صحية متطوعون لتقديم الرعاية والاستشارات الميدانية.
             </p>
           </div>
@@ -423,50 +425,52 @@ export default async function HomePage() {
         </div>
 
         {medicalVolunteers && medicalVolunteers.length > 0 ? (
-          <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
+          <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
             {medicalVolunteers.slice(0, 6).map((doc: any) => (
-              <Card key={doc.id} className="transition-all hover:shadow-sm">
-                <CardContent className="space-y-2.5 px-5 pt-5">
+              <div key={doc.id} className="flex flex-col justify-between rounded-2xl border border-border bg-card p-6 transition-all hover:shadow-sm">
+                <div className="space-y-3">
                   <div className="flex items-start justify-between gap-2">
-                    <p className="font-bold leading-tight">{doc.full_name}</p>
+                    <p className="font-bold text-base leading-snug">{doc.full_name}</p>
                     <span className="shrink-0 rounded-full bg-algeria-green/10 px-2.5 py-0.5 text-xs font-semibold text-algeria-green">
                       {doc.specialty}
                     </span>
                   </div>
 
                   <p className="flex items-start gap-1.5 text-sm text-muted-foreground">
-                    <MapPin className="mt-0.5 size-3.5 shrink-0" />
+                    <MapPin className="mt-0.5 size-4 shrink-0 text-muted-foreground/70" />
                     {doc.commune_id}
                   </p>
 
                   {doc.current_workplace && (
-                    <p className="text-xs text-muted-foreground">{doc.current_workplace}</p>
+                    <p className="text-xs text-muted-foreground leading-relaxed">{doc.current_workplace}</p>
                   )}
 
                   <div className="flex flex-wrap items-center gap-2 pt-1">
                     {doc.can_teleconsult && (
-                      <span className="inline-flex items-center gap-1 rounded-full bg-emerald-500/10 px-2 py-0.5 text-[11px] font-semibold text-emerald-600 dark:text-emerald-400">
-                        <CheckCircle2 className="size-3" /> استشارة هاتفية
+                      <span className="inline-flex items-center gap-1 rounded-full bg-emerald-500/10 px-2.5 py-0.5 text-xs font-semibold text-emerald-600 dark:text-emerald-400">
+                        <CheckCircle2 className="size-3.5" /> استشارة هاتفية
                       </span>
                     )}
                     {doc.can_field_intervene && (
-                      <span className="inline-flex items-center gap-1 rounded-full bg-blue-500/10 px-2 py-0.5 text-[11px] font-semibold text-blue-600 dark:text-blue-400">
-                        <CheckCircle2 className="size-3" /> تدخل ميداني
+                      <span className="inline-flex items-center gap-1 rounded-full bg-blue-500/10 px-2.5 py-0.5 text-xs font-semibold text-blue-600 dark:text-blue-400">
+                        <CheckCircle2 className="size-3.5" /> تدخل ميداني
                       </span>
                     )}
                   </div>
+                </div>
 
-                  {doc.phone && (
+                {doc.phone && (
+                  <div className="mt-4 pt-3 border-t border-border/60">
                     <a
                       href={`tel:${doc.phone.replace(/\s/g, "")}`}
                       dir="ltr"
-                      className="inline-flex items-center gap-1.5 pt-1 text-sm font-semibold text-algeria-green hover:underline"
+                      className="inline-flex items-center gap-1.5 text-sm font-semibold text-algeria-green hover:underline"
                     >
-                      <Phone className="size-3.5" /> {doc.phone}
+                      <Phone className="size-4" /> {doc.phone}
                     </a>
-                  )}
-                </CardContent>
-              </Card>
+                  </div>
+                )}
+              </div>
             ))}
           </div>
         ) : (
@@ -484,7 +488,7 @@ export default async function HomePage() {
           </div>
         )}
 
-        <LinkButton href="/medical" variant="outline" className="mt-5 w-full sm:hidden">
+        <LinkButton href="/medical" variant="outline" className="mt-6 w-full sm:hidden">
           تسجيل كمتطوع طبي / بيطري
         </LinkButton>
       </section>
