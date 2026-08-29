@@ -47,7 +47,7 @@
   --radius-3xl: calc(var(--radius) * 2.2);
   --radius-4xl: calc(var(--radius) * 2.6);
 
-  /* هوية نجدة جيجل: أحمر جزائري + أخضر جزائري */
+  /* هوية هبة الجزائر: أحمر جزائري + أخضر جزائري */
   --color-algeria-red: var(--algeria-red);
   --color-algeria-red-foreground: var(--algeria-red-foreground);
   --color-algeria-green: var(--algeria-green);

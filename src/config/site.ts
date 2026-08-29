@@ -1,7 +1,7 @@
 // إعدادات عامة للمنصة — يمكن تغيير الاسم والشعار من هنا بسهولة دون المساس بالكود
 export const siteConfig = {
-  name: process.env.NEXT_PUBLIC_SITE_NAME || "نجدة جيجل",
-  shortName: "نجدة جيجل",
+  name: process.env.NEXT_PUBLIC_SITE_NAME || "هبة الجزائر",
+  shortName: "هبة الجزائر",
   tagline: "ننسّق التضامن، ونوصل المساعدة لمن يحتاجها.",
   description:
     "منصة جزائرية لتنسيق المساعدات وتوجيهها إلى المناطق والأسر الأكثر احتياجًا في ولاية جيجل.",

@@ -114,7 +114,8 @@ export function DonationForm({
                   <CardContent className="flex items-start justify-between gap-3 px-5">
                     <div>
                       <p className="font-bold">
-                        {categoryEmoji[m.categorySlug] ?? "📦"} {m.need.title ?? m.categorySlug}
+                        {categoryEmoji[m.categorySlug] ?? "📦"}{" "}
+                        {m.need.title ?? categories.find((c) => c.slug === m.categorySlug)?.name_ar ?? m.categorySlug}
                       </p>
                       <p className="text-sm text-muted-foreground">
                         {m.need.commune}، ولاية {m.need.wilaya}

@@ -1,4 +1,4 @@
--- نجدة جيجل: الإضافات، الأنواع (enums)، الدوال المساعدة العامة
+-- هبة الجزائر: الإضافات، الأنواع (enums)، الدوال المساعدة العامة
 
 create extension if not exists pgcrypto with schema extensions;
 
