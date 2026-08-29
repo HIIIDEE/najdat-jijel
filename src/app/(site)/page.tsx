@@ -229,19 +229,30 @@ export default async function HomePage() {
           </p>
           <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
             {emergencyContacts.map((c) => (
-              <a
-                key={c.number}
-                href={`tel:${c.number}`}
+              <div
+                key={c.label}
                 className="flex flex-col items-center gap-1 rounded-xl border border-border bg-card p-4 text-center transition-all hover:-translate-y-0.5 hover:border-priority-critical hover:shadow-md"
               >
                 <span className="text-2xl" aria-hidden>
                   {c.emoji}
                 </span>
-                <span className="text-2xl font-extrabold tabular-nums text-priority-critical">
+                <a
+                  href={`tel:${c.number}`}
+                  className="text-2xl font-extrabold tabular-nums text-priority-critical hover:underline"
+                >
                   {c.number}
-                </span>
-                <span className="text-xs text-muted-foreground">{c.label}</span>
-              </a>
+                </a>
+                <span className="text-xs font-medium">{c.label}</span>
+                {c.hint && <span className="text-[11px] text-muted-foreground">{c.hint}</span>}
+                {c.greenNumber && (
+                  <a
+                    href={`tel:${c.greenNumber}`}
+                    className="mt-1 rounded-full bg-algeria-green/10 px-2 py-0.5 text-[11px] font-semibold text-algeria-green hover:underline"
+                  >
+                    الرقم الأخضر {c.greenNumber}
+                  </a>
+                )}
+              </div>
             ))}
           </div>
         </div>

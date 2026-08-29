@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { Phone, TriangleAlert, X } from "lucide-react";
+import { Phone, TriangleAlert } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
@@ -37,7 +37,7 @@ export function EmergencyFab() {
       </button>
 
       <Dialog open={open} onOpenChange={setOpen}>
-        <DialogContent className="sm:max-w-sm">
+        <DialogContent className="max-h-[85vh] overflow-y-auto sm:max-w-sm">
           <DialogHeader>
             <DialogTitle className="flex items-center gap-2">
               <TriangleAlert className="size-5 text-priority-critical" />
@@ -50,27 +50,45 @@ export function EmergencyFab() {
 
           <div className="grid gap-2">
             {emergencyContacts.map((c) => (
-              <a
-                key={c.number}
-                href={`tel:${c.number}`}
-                className="flex items-center justify-between gap-3 rounded-xl border border-border p-3 transition-colors hover:border-priority-critical hover:bg-priority-critical/5"
+              <div
+                key={c.label}
+                className="rounded-xl border border-border p-3 transition-colors hover:border-priority-critical/60"
               >
-                <span className="flex items-center gap-3">
-                  <span className="text-2xl" aria-hidden>
-                    {c.emoji}
+                <div className="flex items-center justify-between gap-3">
+                  <span className="flex items-center gap-3">
+                    <span className="text-2xl" aria-hidden>
+                      {c.emoji}
+                    </span>
+                    <span>
+                      <span className="block font-medium leading-tight">{c.label}</span>
+                      {c.hint && (
+                        <span className="block text-xs text-muted-foreground">{c.hint}</span>
+                      )}
+                    </span>
                   </span>
-                  <span className="font-medium">{c.label}</span>
-                </span>
-                <span className="flex items-center gap-2 font-bold tabular-nums text-priority-critical">
-                  {c.number}
-                  <Phone className="size-4" />
-                </span>
-              </a>
+                  <a
+                    href={`tel:${c.number}`}
+                    className="flex items-center gap-1.5 rounded-lg bg-priority-critical px-3 py-1.5 text-sm font-bold tabular-nums text-white"
+                  >
+                    <Phone className="size-3.5" />
+                    {c.number}
+                  </a>
+                </div>
+                {c.greenNumber && (
+                  <a
+                    href={`tel:${c.greenNumber}`}
+                    className="mt-2 flex items-center justify-between rounded-lg bg-algeria-green/10 px-3 py-1.5 text-xs font-semibold text-algeria-green"
+                  >
+                    <span>الرقم الأخضر</span>
+                    <span className="tabular-nums">{c.greenNumber}</span>
+                  </a>
+                )}
+              </div>
             ))}
           </div>
 
           <Button variant="outline" onClick={() => setOpen(false)} className="w-full">
-            <X className="size-4" /> إغلاق
+            إغلاق
           </Button>
         </DialogContent>
       </Dialog>
