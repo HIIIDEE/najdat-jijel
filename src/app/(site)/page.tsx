@@ -21,7 +21,7 @@ import { NeedCard } from "@/components/shared/need-card";
 import { EmptyState } from "@/components/shared/empty-state";
 import { AnimatedCounter } from "@/components/interactive/animated-counter";
 import { siteConfig } from "@/config/site";
-import { relativeTimeAr } from "@/lib/constants";
+import { formatRelativeTime } from "@/lib/constants";
 import { emergencyContacts } from "@/lib/emergency";
 import {
   getAffectedAreas,
@@ -32,23 +32,28 @@ import {
   getShelters,
   getStatOverview,
 } from "@/lib/data/public";
-
-const quickActions = [
-  { href: "/help", icon: LifeBuoy, title: "أنا متضرر", desc: "الإبلاغ عن احتياج أو طلب مساعدة." },
-  { href: "/donate", icon: Gift, title: "لدي مساعدات", desc: "تسجيل المساعدات التي أملكها." },
-  { href: "/transport", icon: Truck, title: "أستطيع النقل", desc: "تسجيل سيارة أو شاحنة للنقل." },
-  { href: "/medical", icon: Stethoscope, title: "أنا طبيب / إطار صحي أو بيطري", desc: "التطوع الطبي وتقديم الاستشارات." },
-  { href: "/map", icon: MapPin, title: "أين أسلّم؟", desc: "عرض نقاط التجميع والاستقبال." },
-];
-
-const howItWorks = [
-  { n: 1, title: "نعرف الاحتياج", desc: "المتضررون والفرق الميدانية يسجلون الاحتياجات.", icon: ClipboardList },
-  { n: 2, title: "نجمع المساعدات", desc: "المتبرعون يسجلون ما لديهم.", icon: ListChecks },
-  { n: 3, title: "نوجّهها", desc: "النظام يطابق المساعدات مع الاحتياجات والنقاط.", icon: MapPin },
-  { n: 4, title: "نتابع التوزيع", desc: "نسجل وصول المساعدات وتوزيعها على المستفيدين.", icon: Truck },
-];
+import { getDictionary } from "@/i18n/dictionaries";
+import { getLocale } from "@/i18n/server";
 
 export default async function HomePage() {
+  const locale = await getLocale();
+  const t = await getDictionary(locale);
+
+  const quickActions = [
+    { href: "/help", icon: LifeBuoy, title: t.home.actions.help.title, desc: t.home.actions.help.desc },
+    { href: "/donate", icon: Gift, title: t.home.actions.donate.title, desc: t.home.actions.donate.desc },
+    { href: "/transport", icon: Truck, title: t.home.actions.transport.title, desc: t.home.actions.transport.desc },
+    { href: "/medical", icon: Stethoscope, title: t.home.actions.medical.title, desc: t.home.actions.medical.desc },
+    { href: "/map", icon: MapPin, title: t.home.actions.map.title, desc: t.home.actions.map.desc },
+  ];
+
+  const howItWorks = [
+    { n: 1, title: t.home.howItWorks.step1.title, desc: t.home.howItWorks.step1.desc, icon: ClipboardList },
+    { n: 2, title: t.home.howItWorks.step2.title, desc: t.home.howItWorks.step2.desc, icon: ListChecks },
+    { n: 3, title: t.home.howItWorks.step3.title, desc: t.home.howItWorks.step3.desc, icon: MapPin },
+    { n: 4, title: t.home.howItWorks.step4.title, desc: t.home.howItWorks.step4.desc, icon: Truck },
+  ];
+
   const [
     criticalNeeds,
     stats,
@@ -85,16 +90,15 @@ export default async function HomePage() {
               <span className="absolute inline-flex size-full animate-ping rounded-full bg-algeria-green opacity-70" />
               <span className="relative inline-flex size-2 rounded-full bg-algeria-green" />
             </span>
-            حملة حرائق الشمال الشرقي — نشطة الآن
+            {t.home.heroTag}
           </span>
 
           <h1 className="mt-4 text-4xl font-extrabold tracking-tight sm:text-5xl">
             {siteConfig.shortName}
           </h1>
-          <p className="mt-3 text-lg font-medium text-algeria-green sm:text-xl">{siteConfig.tagline}</p>
+          <p className="mt-3 text-lg font-medium text-algeria-green sm:text-xl">{t.site.tagline}</p>
           <p className="mx-auto mt-4 max-w-2xl text-muted-foreground">
-            آلاف الجزائريين يريدون المساعدة. مهمتنا أن نوجّه هذه المساعدة إلى المكان والوقت
-            والاحتياج الصحيح.
+            {t.home.heroDesc}
           </p>
 
           <div className="mt-8 grid gap-3 sm:grid-cols-2 lg:grid-cols-5">
@@ -116,10 +120,10 @@ export default async function HomePage() {
           {/* شريط أرقام حيّ */}
           <div className="mt-10 grid grid-cols-2 gap-3 sm:grid-cols-4">
             {[
-              { label: "احتياج نشط", value: Number(stats.critical_needs ?? 0), tone: "text-priority-critical" },
-              { label: "نقطة استقبال", value: Number(stats.active_points ?? 0), tone: "text-algeria-green" },
-              { label: "منطقة متضررة", value: areas.length, tone: "text-priority-high" },
-              { label: "مركز إيواء", value: shelters.length, tone: "text-[#7c3aed]" },
+              { label: t.home.stats.activeNeeds, value: Number(stats.critical_needs ?? 0), tone: "text-priority-critical" },
+              { label: t.home.stats.points, value: Number(stats.active_points ?? 0), tone: "text-algeria-green" },
+              { label: t.home.stats.areas, value: areas.length, tone: "text-priority-high" },
+              { label: t.home.stats.shelters, value: shelters.length, tone: "text-[#7c3aed]" },
             ].map((s) => (
               <div key={s.label} className="rounded-xl border border-border bg-card p-4">
                 <AnimatedCounter value={s.value} className={`block text-2xl font-bold tabular-nums ${s.tone}`} />
@@ -134,31 +138,31 @@ export default async function HomePage() {
       <section className="mx-auto max-w-6xl px-4 py-14">
         <div className="mb-6 flex items-end justify-between gap-3">
           <div>
-            <h2 className="text-2xl font-bold">الاحتياجات العاجلة الآن</h2>
+            <h2 className="text-2xl font-bold">{t.home.urgentNeeds.title}</h2>
             <p className="mt-1 text-sm text-muted-foreground">
-              اضغط على أي بطاقة لعرض التفاصيل الميدانية ومشاركتها.
+              {t.home.urgentNeeds.subtitle}
             </p>
           </div>
           <LinkButton href="/needs" variant="outline" className="hidden sm:inline-flex">
-            عرض الكل <ArrowLeft className="size-4" />
+            {t.home.urgentNeeds.viewAll} <ArrowLeft className="size-4" />
           </LinkButton>
         </div>
 
         {criticalNeeds.length === 0 ? (
           <EmptyState
-            title="لا توجد حاليًا احتياجات مسجلة"
-            description="يتم تحديث البيانات باستمرار من الفرق الميدانية."
+            title={t.home.urgentNeeds.emptyTitle}
+            description={t.home.urgentNeeds.emptyDesc}
           />
         ) : (
           <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
             {criticalNeeds.map((need) => (
-              <NeedCard key={need.id} need={need} />
+              <NeedCard key={need.id} need={need} locale={locale} />
             ))}
           </div>
         )}
 
         <LinkButton href="/needs" variant="outline" className="mt-6 w-full sm:hidden">
-          عرض كل الاحتياجات
+          {t.home.urgentNeeds.viewAllMobile}
         </LinkButton>
       </section>
 
@@ -170,15 +174,14 @@ export default async function HomePage() {
               <div>
                 <h2 className="flex items-center gap-2 text-2xl font-bold">
                   <TriangleAlert className="size-5 text-priority-critical" />
-                  المناطق المتضررة
+                  {t.home.affectedAreas.title}
                 </h2>
                 <p className="mt-1 text-sm text-muted-foreground">
-                  {areas.length} منطقة عبر {areaWilayas.length} ولايات — اضغط على ولاية لعرض
-                  تفاصيلها.
+                  {areas.length} {t.home.affectedAreas.subtitleCount} {areaWilayas.length} {t.home.affectedAreas.subtitleWilayas}
                 </p>
               </div>
               <LinkButton href="/affected-areas" variant="outline" size="sm" className="hidden sm:inline-flex">
-                القائمة الكاملة
+                {t.home.affectedAreas.fullList}
               </LinkButton>
             </div>
 
@@ -195,15 +198,15 @@ export default async function HomePage() {
                     className="group rounded-xl border border-border bg-card p-4 transition-all hover:-translate-y-0.5 hover:border-priority-critical hover:shadow-md"
                   >
                     <p className="flex items-center justify-between font-bold">
-                      ولاية {w}
+                      {t.home.affectedAreas.wilayaPrefix} {w}
                       <span className="text-2xl font-extrabold tabular-nums text-priority-critical">
                         {items.length}
                       </span>
                     </p>
                     <p className="mt-1 text-xs text-muted-foreground">
                       {severe > 0
-                        ? `${severe} منها أضرار جسيمة أو إجلاء`
-                        : "مناطق متضررة مسجَّلة"}
+                        ? `${severe} ${t.home.affectedAreas.severeCount}`
+                        : t.home.affectedAreas.recordedCount}
                     </p>
                   </Link>
                 );
@@ -211,7 +214,7 @@ export default async function HomePage() {
             </div>
 
             <LinkButton href="/affected-areas" variant="outline" className="mt-5 w-full sm:hidden">
-              القائمة الكاملة للمناطق المتضررة
+              {t.home.affectedAreas.fullListMobile}
             </LinkButton>
           </div>
         </section>
@@ -221,9 +224,9 @@ export default async function HomePage() {
       {communes.length > 0 && (
         <section className="border-y border-border bg-secondary/30">
           <div className="mx-auto max-w-6xl px-4 py-14">
-            <h2 className="mb-1 text-2xl font-bold">البلديات المتضررة</h2>
+            <h2 className="mb-1 text-2xl font-bold">{t.home.communes.title}</h2>
             <p className="mb-6 text-sm text-muted-foreground">
-              عدد الاحتياجات النشطة المسجَّلة في كل بلدية.
+              {t.home.communes.subtitle}
             </p>
             <div className="flex flex-wrap gap-2">
               {communes.map((c) => (
@@ -256,14 +259,14 @@ export default async function HomePage() {
           <div className="mb-6 flex items-end justify-between gap-3">
             <div>
               <h2 className="flex items-center gap-2 text-2xl font-bold">
-                <Home className="size-5 text-[#7c3aed]" /> مراكز الإيواء المفتوحة
+                <Home className="size-5 text-[#7c3aed]" /> {t.home.shelters.title}
               </h2>
               <p className="mt-1 text-sm text-muted-foreground">
-                مؤسسات عمومية مجهزة لاستقبال الأسر المتضررة.
+                {t.home.shelters.subtitle}
               </p>
             </div>
             <LinkButton href="/map" variant="outline" size="sm" className="hidden sm:inline-flex">
-              على الخريطة
+              {t.home.shelters.onMap}
             </LinkButton>
           </div>
 
@@ -274,7 +277,7 @@ export default async function HomePage() {
                   <p className="font-bold leading-tight">{s.name}</p>
                   <p className="flex items-start gap-1.5 text-sm text-muted-foreground">
                     <MapPin className="mt-0.5 size-3.5 shrink-0" />
-                    {s.address ?? `${s.commune}، ولاية ${s.wilaya}`}
+                    {s.address ?? `${s.commune}، ${t.common.wilayaPrefix} ${s.wilaya}`}
                   </p>
                   {s.capacity_note && (
                     <p className="text-xs text-muted-foreground">{s.capacity_note}</p>
@@ -300,14 +303,14 @@ export default async function HomePage() {
         <div className="mb-6 flex items-end justify-between gap-3">
           <div>
             <h2 className="flex items-center gap-2 text-2xl font-bold">
-              <Stethoscope className="size-5 text-algeria-green" /> الأطقم الطبية والبيطرية المتطوعة
+              <Stethoscope className="size-5 text-algeria-green" /> {t.home.medical.title}
             </h2>
             <p className="mt-1 text-sm text-muted-foreground">
-              أطباء، بياطرة وكوادر صحية متطوعون لتقديم الرعاية والاستشارات الميدانية.
+              {t.home.medical.subtitle}
             </p>
           </div>
           <LinkButton href="/medical" variant="outline" size="sm" className="hidden sm:inline-flex">
-            تسجيل كمتطوع
+            {t.home.medical.registerBtn}
           </LinkButton>
         </div>
 
@@ -332,7 +335,7 @@ export default async function HomePage() {
                 )}
 
                 {doc.can_teleconsult && (
-                  <p className="text-xs font-medium text-algeria-green">• متاح للاستشارات الهاتفية</p>
+                  <p className="text-xs font-medium text-algeria-green">{t.home.medical.teleconsult}</p>
                 )}
 
                 {doc.phone && (
@@ -350,16 +353,16 @@ export default async function HomePage() {
         </div>
 
         <LinkButton href="/medical" variant="outline" className="mt-5 w-full sm:hidden">
-          تسجيل كمتطوع طبي / بيطري
+          {t.home.medical.registerBtnMobile}
         </LinkButton>
       </section>
 
       {/* ————————————————————————————————— أرقام الطوارئ */}
       <section className="border-y border-border bg-priority-critical/5">
         <div className="mx-auto max-w-6xl px-4 py-12">
-          <h2 className="mb-1 text-center text-2xl font-bold">أرقام الطوارئ</h2>
+          <h2 className="mb-1 text-center text-2xl font-bold">{t.home.emergency.title}</h2>
           <p className="mb-6 text-center text-sm text-muted-foreground">
-            أرقام رسمية مجانية تعمل على مدار الساعة.
+            {t.home.emergency.subtitle}
           </p>
           <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
             {emergencyContacts.map((c) => (
@@ -383,7 +386,7 @@ export default async function HomePage() {
                     href={`tel:${c.greenNumber}`}
                     className="mt-1 rounded-full bg-algeria-green/10 px-2.5 py-0.5 text-xs font-semibold text-algeria-green hover:underline"
                   >
-                    الرقم الأخضر {c.greenNumber}
+                    {t.home.emergency.greenNumberPrefix} {c.greenNumber}
                   </a>
                 )}
               </div>
@@ -394,7 +397,7 @@ export default async function HomePage() {
 
       {/* ————————————————————————————————— كيف تعمل المنصة */}
       <section className="mx-auto max-w-6xl px-4 py-14">
-        <h2 className="mb-8 text-center text-2xl font-bold">كيف تعمل المنصة؟</h2>
+        <h2 className="mb-8 text-center text-2xl font-bold">{t.home.howItWorks.title}</h2>
         <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
           {howItWorks.map((step) => (
             <div key={step.n} className="text-center">
@@ -413,9 +416,9 @@ export default async function HomePage() {
       {updates.length > 0 && (
         <section className="mx-auto max-w-6xl px-4 pb-14">
           <div className="mb-6 flex items-end justify-between gap-3">
-            <h2 className="text-2xl font-bold">آخر المستجدات الموثقة</h2>
+            <h2 className="text-2xl font-bold">{t.home.updates.title}</h2>
             <LinkButton href="/official-information" variant="outline" size="sm">
-              كل المعلومات
+              {t.home.updates.allInfo}
             </LinkButton>
           </div>
           <div className="space-y-3">
@@ -425,11 +428,11 @@ export default async function HomePage() {
                   <div className="flex items-center justify-between gap-2">
                     <p className="font-bold">{u.title}</p>
                     <span className="shrink-0 text-xs text-muted-foreground">
-                      {relativeTimeAr(u.published_at)}
+                      {formatRelativeTime(u.published_at, locale)}
                     </span>
                   </div>
                   {u.body ? <p className="text-sm text-muted-foreground">{u.body}</p> : null}
-                  <p className="text-xs text-muted-foreground">المصدر: {u.source}</p>
+                  <p className="text-xs text-muted-foreground">{t.home.updates.sourcePrefix}{u.source}</p>
                 </CardContent>
               </Card>
             ))}
@@ -441,18 +444,18 @@ export default async function HomePage() {
       <section className="border-t border-border bg-algeria-green/5">
         <div className="mx-auto flex max-w-6xl flex-col items-center gap-3 px-4 py-14 text-center">
           <ShieldCheck className="size-8 text-algeria-green" />
-          <h2 className="text-2xl font-bold">أين ذهبت المساعدات؟</h2>
+          <h2 className="text-2xl font-bold">{t.home.transparencyCallout.title}</h2>
           <p className="max-w-xl text-muted-foreground">
-            نلتزم بعرض أرقام إجمالية واضحة عمّا تم تسجيله وتوزيعه، دون كشف أي بيانات شخصية للأسر.
+            {t.home.transparencyCallout.desc}
           </p>
           <LinkButton href="/transparency" size="lg" variant="outline">
-            صفحة الشفافية
+            {t.home.transparencyCallout.btn}
           </LinkButton>
         </div>
       </section>
 
       {/* ————————————————————————————————— ملاحظة هامة */}
-      <PlatformNotice />
+      <PlatformNotice locale={locale} />
     </>
   );
 }

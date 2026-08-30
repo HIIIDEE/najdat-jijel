@@ -3,8 +3,9 @@
 import { useRouter, useSearchParams, usePathname } from "next/navigation";
 import { X } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { severityIcon, severityLabels, type AffectedSeverity } from "@/lib/constants";
+import { getSeverityLabel, severityIcon, type AffectedSeverity } from "@/lib/constants";
 import { cn } from "@/lib/utils";
+import type { AvailableLocale } from "@/i18n/locales";
 
 function Chip({
   active,
@@ -35,9 +36,17 @@ function Chip({
 export function AreasFilters({
   wilayas,
   severities,
+  locale = "ar",
+  labels,
 }: {
   wilayas: string[];
   severities: AffectedSeverity[];
+  locale?: AvailableLocale;
+  labels?: {
+    wilaya: string;
+    severity: string;
+    clearFilters: string;
+  };
 }) {
   const router = useRouter();
   const pathname = usePathname();
@@ -54,27 +63,32 @@ export function AreasFilters({
     router.push(params.toString() ? `${pathname}?${params}` : pathname, { scroll: false });
   }
 
+  const wilayaTitle = labels?.wilaya ?? (locale === "fr" ? "Wilaya" : "الولاية");
+  const severityTitle = labels?.severity ?? (locale === "fr" ? "Niveau de dégâts" : "الحالة");
+  const clearFiltersTitle = labels?.clearFilters ?? (locale === "fr" ? "Effacer les filtres" : "مسح الفلاتر");
+
   return (
     <div className="space-y-4">
       <div>
-        <p className="mb-2 text-xs font-semibold text-muted-foreground">الولاية</p>
+        <p className="mb-2 text-xs font-semibold text-muted-foreground">{wilayaTitle}</p>
         <div className="flex flex-wrap gap-2">
           {wilayas.map((w) => (
             <Chip key={w} active={currentWilaya === w} onClick={() => toggle("wilaya", w)}>
-              {w}
+              {locale === "fr" ? `Wilaya de ${w}` : w}
             </Chip>
           ))}
         </div>
       </div>
 
       <div>
-        <p className="mb-2 text-xs font-semibold text-muted-foreground">الحالة</p>
+        <p className="mb-2 text-xs font-semibold text-muted-foreground">{severityTitle}</p>
         <div className="flex flex-wrap gap-2">
           {severities.map((s) => {
             const Icon = severityIcon[s];
+            const label = getSeverityLabel(s, locale);
             return (
               <Chip key={s} active={currentSeverity === s} onClick={() => toggle("severity", s)}>
-                <Icon className="size-3.5" fill="currentColor" aria-hidden /> {severityLabels[s]}
+                <Icon className="size-3.5" fill="currentColor" aria-hidden /> {label}
               </Chip>
             );
           })}
@@ -83,7 +97,7 @@ export function AreasFilters({
 
       {hasFilters && (
         <Button variant="ghost" size="sm" onClick={() => router.push(pathname, { scroll: false })}>
-          <X className="size-4" /> مسح الفلاتر
+          <X className="size-4" /> {clearFiltersTitle}
         </Button>
       )}
     </div>
