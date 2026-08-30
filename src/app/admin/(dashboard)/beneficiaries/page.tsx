@@ -19,9 +19,15 @@ function normalizePhone(phone: string): string {
 
 export default async function AdminBeneficiariesPage() {
   const supabase = await createClient();
+  // بيانات حساسة: نطلب فقط الأعمدة التي تعرضها البطاقات أو يصدّرها ملف CSV.
+  // الأعمدة النصية الحرة (address_note, injuries_note, medical_note, other_needs_note,
+  // internal_notes) لا تُعرض هنا إطلاقًا، ومع `select("*")` كانت تُرسَل رغم ذلك إلى
+  // المتصفح عبر خصائص مكوّن التصدير، وهو مكوّن عميل.
   const { data } = await supabase
     .from("beneficiary_requests")
-    .select("*")
+    .select(
+      "id, full_name, phone, wilaya, commune, family_members_count, children_count, is_housing_habitable, has_injuries, needs_medical, needed_categories, status, verification_level, priority, created_at",
+    )
     .order("created_at", { ascending: false });
 
   const rows = data ?? [];
