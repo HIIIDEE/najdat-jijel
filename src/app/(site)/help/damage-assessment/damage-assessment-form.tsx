@@ -11,29 +11,41 @@ import { Alert, AlertDescription } from "@/components/ui/alert";
 import { SuccessPanel } from "@/components/shared/success-panel";
 import { submitDamageAssessment, type DamageAssessmentActionState } from "@/actions/damage-assessments";
 import { campaignWilayas } from "@/config/site";
+import type { AvailableLocale } from "@/i18n/locales";
 
 const initialState: DamageAssessmentActionState = { success: false };
 
-// حقول الأضرار المُعرَّفة بدل التكرار — كل حقل هو خانة اختيار native (لا Radix) حتى يصل اسمه
-// وقيمته إلى FormData مباشرة، وهو ما يتطلبه رفع الملفات عبر Server Action.
-const damageOptions = [
+const damageOptionsAr = [
   { name: "needs_flooring", label: "أضرار في الأرضية" },
   { name: "needs_roofing", label: "أضرار في السقف" },
   { name: "needs_plumbing", label: "أضرار في التمديدات الصحية" },
   { name: "needs_electrical", label: "أضرار في التمديدات الكهربائية" },
 ] as const;
 
-export function DamageAssessmentForm() {
+const damageOptionsFr = [
+  { name: "needs_flooring", label: "Dégâts aux sols / carrelage" },
+  { name: "needs_roofing", label: "Dégâts à la toiture / plafond" },
+  { name: "needs_plumbing", label: "Dégâts de plomberie / sanitaires" },
+  { name: "needs_electrical", label: "Dégâts aux installations électriques" },
+] as const;
+
+export function DamageAssessmentForm({ locale = "ar" }: { locale?: AvailableLocale }) {
+  const isFr = locale === "fr";
   const [state, formAction, pending] = useActionState(submitDamageAssessment, initialState);
   const [needsPaint, setNeedsPaint] = useState(false);
+  const damageOptions = isFr ? damageOptionsFr : damageOptionsAr;
 
   if (state.success) {
     return (
       <SuccessPanel
-        title="تم تسجيل تقييم الأضرار بنجاح"
-        description="سيراجع فريق التنسيق طلبك، ويُحوَّل تقدير المواد اللازمة تلقائيًا إلى احتياج يظهر للمتبرعين. سنتواصل معك عند إيجاد حرفي مناسب."
+        title={isFr ? "Déclaration enregistrée avec succès" : "تم تسجيل تقييم الأضرار بنجاح"}
+        description={
+          isFr
+            ? "L'équipe examinera votre déclaration. L'estimation des matériaux est automatiquement convertie en besoin pour les donateurs. Nous vous contacterons dès qu'un artisan sera disponible."
+            : "سيراجع فريق التنسيق طلبك، ويُحوَّل تقدير المواد اللازمة تلقائيًا إلى احتياج يظهر للمتبرعين. سنتواصل معك عند إيجاد حرفي مناسب."
+        }
         primaryHref="/needs"
-        primaryLabel="تصفّح الاحتياجات"
+        primaryLabel={isFr ? "Consulter les besoins" : "تصفّح الاحتياجات"}
       />
     );
   }
@@ -42,20 +54,20 @@ export function DamageAssessmentForm() {
     <form action={formAction} className="space-y-6">
       <Card>
         <CardContent className="space-y-4 px-5 pt-6">
-          <h2 className="font-bold">بياناتك</h2>
+          <h2 className="font-bold">{isFr ? "Vos coordonnées" : "بياناتك"}</h2>
 
           <div>
-            <Label className="mb-1.5">الاسم الكامل *</Label>
+            <Label className="mb-1.5">{isFr ? "Nom complet *" : "الاسم الكامل *"}</Label>
             <Input name="full_name" required />
           </div>
 
           <div>
-            <Label className="mb-1.5">رقم الهاتف *</Label>
+            <Label className="mb-1.5">{isFr ? "Numéro de téléphone *" : "رقم الهاتف *"}</Label>
             <Input dir="ltr" name="phone" placeholder="0555xxxxxx" required />
           </div>
 
           <div>
-            <Label className="mb-1.5">الولاية *</Label>
+            <Label className="mb-1.5">{isFr ? "Wilaya *" : "الولاية *"}</Label>
             <select
               name="wilaya"
               defaultValue={campaignWilayas[0]}
@@ -64,19 +76,19 @@ export function DamageAssessmentForm() {
             >
               {campaignWilayas.map((w) => (
                 <option key={w} value={w}>
-                  {w}
+                  {isFr ? `Wilaya de ${w}` : w}
                 </option>
               ))}
             </select>
           </div>
 
           <div>
-            <Label className="mb-1.5">البلدية *</Label>
+            <Label className="mb-1.5">{isFr ? "Commune *" : "البلدية *"}</Label>
             <Input name="commune" required />
           </div>
 
           <div>
-            <Label className="mb-1.5">الحي / أقرب معلم (اختياري)</Label>
+            <Label className="mb-1.5">{isFr ? "Quartier / Repère (facultatif)" : "الحي / أقرب معلم (اختياري)"}</Label>
             <Input name="address_note" />
           </div>
         </CardContent>
@@ -84,7 +96,7 @@ export function DamageAssessmentForm() {
 
       <Card>
         <CardContent className="space-y-4 px-5 pt-6">
-          <h2 className="font-bold">تفاصيل الأضرار</h2>
+          <h2 className="font-bold">{isFr ? "Détails des dégâts" : "تفاصيل الأضرار"}</h2>
 
           <label className="flex items-center gap-2 text-sm">
             <input
@@ -94,12 +106,12 @@ export function DamageAssessmentForm() {
               onChange={(e) => setNeedsPaint(e.target.checked)}
               className="size-4 rounded border-input"
             />
-            حاجة إلى الدهان (طلاء الجدران)
+            {isFr ? "Besoin de peinture (murs et plafonds)" : "حاجة إلى الدهان (طلاء الجدران)"}
           </label>
           {needsPaint && (
             <div>
-              <Label className="mb-1.5">المساحة التقريبية المراد دهنها (م²)</Label>
-              <Input type="number" min={1} step={1} name="paint_area_sqm" placeholder="مثال: 60" />
+              <Label className="mb-1.5">{isFr ? "Surface approximative à peindre (m²)" : "المساحة التقريبية المراد دهنها (م²)"}</Label>
+              <Input type="number" min={1} step={1} name="paint_area_sqm" placeholder={isFr ? "Ex : 60" : "مثال: 60"} />
             </div>
           )}
 
@@ -111,8 +123,11 @@ export function DamageAssessmentForm() {
           ))}
 
           <div>
-            <Label className="mb-1.5">تفاصيل إضافية عن الأضرار والتشطيبات (اختياري)</Label>
-            <Textarea name="finishing_notes" placeholder="أي تفاصيل تساعد في تقدير المواد اللازمة..." />
+            <Label className="mb-1.5">{isFr ? "Précisions sur les dégâts et finitions (facultatif)" : "تفاصيل إضافية عن الأضرار والتشطيبات (اختياري)"}</Label>
+            <Textarea
+              name="finishing_notes"
+              placeholder={isFr ? "Tout détail utile pour estimer les matériaux nécessaires..." : "أي تفاصيل تساعد في تقدير المواد اللازمة..."}
+            />
           </div>
         </CardContent>
       </Card>
@@ -120,11 +135,12 @@ export function DamageAssessmentForm() {
       <Card>
         <CardContent className="space-y-3 px-5 pt-6">
           <h2 className="flex items-center gap-2 font-bold">
-            <Upload className="size-4" /> صور الأضرار
+            <Upload className="size-4" /> {isFr ? "Photos des dégâts" : "صور الأضرار"}
           </h2>
           <p className="text-sm text-muted-foreground">
-            أرفق صورًا واضحة للأضرار — تساعد فريق التنسيق على المراجعة السريعة (اختياري لكن مستحسَن
-            بشدة).
+            {isFr
+              ? "Joignez des photos claires des dégâts — utile pour accélérer l'évaluation (facultatif mais fortement recommandé)."
+              : "أرفق صورًا واضحة للأضرار — تساعد فريق التنسيق على المراجعة السريعة (اختياري لكن مستحسَن بشدة)."}
           </p>
           <input
             type="file"
@@ -144,7 +160,7 @@ export function DamageAssessmentForm() {
 
       <Button type="submit" size="lg" className="w-full" disabled={pending}>
         {pending && <Loader2 className="size-4 animate-spin" />}
-        إرسال تقييم الأضرار
+        {isFr ? "Envoyer la déclaration" : "إرسال تقييم الأضرار"}
       </Button>
     </form>
   );
