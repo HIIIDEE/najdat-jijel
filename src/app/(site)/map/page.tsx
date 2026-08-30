@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Card, CardContent } from "@/components/ui/card";
 import { EmptyState } from "@/components/shared/empty-state";
+import { DataUnavailable } from "@/components/shared/data-unavailable";
 import { PointCard, type PointCardData } from "@/components/shared/point-card";
 import { getPublicCollectionPoints, getPublicReliefHubs } from "@/lib/data/public";
 import { MapClient } from "./map-client";
@@ -22,13 +23,17 @@ export default async function MapPage() {
   const t = await getDictionary(locale);
   const isFr = locale === "fr";
 
-  const [collectionPoints, reliefHubs] = await Promise.all([
+  const [collectionPointsResult, reliefHubsResult] = await Promise.all([
     getPublicCollectionPoints(),
     getPublicReliefHubs(),
   ]);
 
+  // يكفي فشل أحد الاستعلامين حتى تكون الخريطة ناقصة: مركز إيواء غائب عن
+  // القائمة أخطر من قائمة غير مكتملة معلَنة.
+  const pointsUnavailable = collectionPointsResult.failed || reliefHubsResult.failed;
+
   const points: PointCardData[] = [
-    ...collectionPoints.map((p) => ({
+    ...collectionPointsResult.data.map((p) => ({
       id: p.id,
       kind: "collection_point" as const,
       name: p.name,
@@ -45,7 +50,7 @@ export default async function MapPage() {
       verificationLevel: p.verification_level,
       notes: p.notes,
     })),
-    ...reliefHubs.map((h) => ({
+    ...reliefHubsResult.data.map((h) => ({
       id: h.id,
       kind: h.is_shelter ? ("shelter" as const) : ("relief_hub" as const),
       name: h.name,
@@ -67,6 +72,10 @@ export default async function MapPage() {
   const hubs = points.filter((p) => p.kind === "relief_hub").length;
   const collect = points.filter((p) => p.kind === "collection_point").length;
 
+  // على قائمة فارغة لا نعرف سببها، لا عدّاد ولا قائمة: «كل النقاط (0)» تُقرأ
+  // كخبر مؤكَّد بأن لا نقاط، وهو بالضبط ما لا نعرفه في هذه الحالة.
+  const showPointsList = points.length > 0 || !pointsUnavailable;
+
   return (
     <div className="mx-auto max-w-6xl px-4 py-10">
       <div className="mb-6 text-center">
@@ -75,6 +84,8 @@ export default async function MapPage() {
           {t.map.pageSubtitle}
         </p>
       </div>
+
+      {pointsUnavailable ? <DataUnavailable className="mb-6" /> : null}
 
       <div className="mb-4 grid grid-cols-3 gap-2 sm:max-w-md sm:mx-auto">
         <Card className="py-3">
@@ -103,25 +114,29 @@ export default async function MapPage() {
         <MapClient points={points} locale={locale} />
       </div>
 
-      <h2 className="mt-10 mb-4 text-xl font-bold">
-        {isFr ? `Tous les points (${points.length})` : `كل النقاط (${points.length})`}
-      </h2>
-      {points.length === 0 ? (
-        <EmptyState
-          title={isFr ? "Aucun point enregistré pour le moment" : "لا توجد نقاط مسجَّلة بعد"}
-          description={
-            isFr
-              ? "Les points de collecte et centres d'accueil apparaîtront ici dès leur validation."
-              : "سيتم عرض نقاط التجميع ومراكز الاستقبال هنا فور إضافتها من الإدارة."
-          }
-        />
-      ) : (
-        <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-          {points.map((p) => (
-            <PointCard key={`${p.kind}-${p.id}`} point={p} locale={locale} />
-          ))}
-        </div>
-      )}
+      {showPointsList ? (
+        <>
+          <h2 className="mt-10 mb-4 text-xl font-bold">
+            {isFr ? `Tous les points (${points.length})` : `كل النقاط (${points.length})`}
+          </h2>
+          {points.length === 0 ? (
+            <EmptyState
+              title={isFr ? "Aucun point enregistré pour le moment" : "لا توجد نقاط مسجَّلة بعد"}
+              description={
+                isFr
+                  ? "Les points de collecte et centres d'accueil apparaîtront ici dès leur validation."
+                  : "سيتم عرض نقاط التجميع ومراكز الاستقبال هنا فور إضافتها من الإدارة."
+              }
+            />
+          ) : (
+            <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+              {points.map((p) => (
+                <PointCard key={`${p.kind}-${p.id}`} point={p} locale={locale} />
+              ))}
+            </div>
+          )}
+        </>
+      ) : null}
     </div>
   );
 }

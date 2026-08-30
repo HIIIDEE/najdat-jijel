@@ -15,6 +15,7 @@ import {
 } from "lucide-react";
 import { LinkButton } from "@/components/shared/link-button";
 import { PlatformNotice } from "@/components/shared/platform-notice";
+import { DataUnavailable } from "@/components/shared/data-unavailable";
 import { OfficialUpdateCard } from "@/components/shared/official-update-card";
 import { AnimatedCounter } from "@/components/interactive/animated-counter";
 import { siteConfig } from "@/config/site";
@@ -108,9 +109,9 @@ export default async function HomePage() {
   ];
 
   const [
-    stats,
+    statsResult,
     updates,
-    shelters,
+    sheltersResult,
     areas,
     medicalVolunteers,
   ] = await Promise.all([
@@ -120,6 +121,13 @@ export default async function HomePage() {
     getAffectedAreas(),
     getPublicMedicalVolunteers(),
   ]);
+
+  const stats = statsResult.data;
+  const shelters = sheltersResult.data;
+
+  // هذه الأرقام أول ما يراه الزائر وتُقرأ كحصيلة رسمية. إن تعذّر جلبها فهي
+  // أصفار لا حقائق: نقول ذلك بدل أن نعرض «0 مراكز إيواء» وكأننا نعرف.
+  const statsUnavailable = statsResult.failed || sheltersResult.failed;
 
   const areaWilayas = [...new Set(areas.map((a) => a.wilaya))];
 
@@ -231,6 +239,8 @@ export default async function HomePage() {
               </Link>
             ))}
           </div>
+
+          {statsUnavailable ? <DataUnavailable className="mt-6 sm:mt-12" /> : null}
 
           {/* Live Stat Numbers Island */}
           <div className="mt-6 sm:mt-12 rounded-2xl border border-border/80 bg-card/70 p-2.5 sm:p-3.5 shadow-sm backdrop-blur-md">

@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { StatCard } from "@/components/shared/stat-card";
 import { EmptyState } from "@/components/shared/empty-state";
+import { DataUnavailable } from "@/components/shared/data-unavailable";
 import { Card, CardContent } from "@/components/ui/card";
 import { formatQuantity, getCategoryName, getUnitLabel } from "@/lib/constants";
 import { CategoryIcon } from "@/components/shared/category-icon";
@@ -26,11 +27,13 @@ export default async function TransparencyPage() {
   const t = await getDictionary(locale);
   const isFr = locale === "fr";
 
-  const [stats, donationsByCategory, distributionsByCategory] = await Promise.all([
+  const [statsResult, donationsByCategory, distributionsByCategory] = await Promise.all([
     getStatOverview(),
     getStatDonationsByCategory(),
     getStatDistributionsByCategory(),
   ]);
+
+  const stats = statsResult.data;
 
   return (
     <div className="mx-auto max-w-4xl px-4 py-10">
@@ -40,6 +43,8 @@ export default async function TransparencyPage() {
           {t.transparency.pageSubtitle}
         </p>
       </div>
+
+      {statsResult.failed ? <DataUnavailable className="mb-6" /> : null}
 
       <div className="grid gap-4 sm:grid-cols-2">
         <StatCard

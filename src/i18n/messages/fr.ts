@@ -361,6 +361,12 @@ const fr: Dictionary = {
     share: "Partager",
     copied: "Copié !",
     errorGeneric: "Une erreur est survenue, veuillez réessayer.",
+    dataUnavailable: {
+      title: "Données momentanément indisponibles",
+      description:
+        "Nous n'avons pas pu joindre la base de données : ce qui s'affiche ici peut être incomplet. Réessayez dans un instant, et en cas d'urgence appelez les numéros officiels.",
+      action: "Numéros d'urgence",
+    },
   },
   time: {
     now: "À l'instant",
