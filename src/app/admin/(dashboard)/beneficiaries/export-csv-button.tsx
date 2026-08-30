@@ -6,7 +6,25 @@ import { needCategoryOptions } from "@/schemas/beneficiary-request";
 import { priorityLabels, requestStatusLabels, verificationLabels } from "@/lib/constants";
 import type { Database } from "@/types/database";
 
-type BeneficiaryRow = Database["public"]["Tables"]["beneficiary_requests"]["Row"];
+// هذا مكوّن عميل: كل حقل هنا يُرسَل فعليًا إلى المتصفح. لذلك نقصر النوع على الأعمدة
+// التي يصدّرها الملف فقط، فيمنع المدقّق أي إضافة لعمود حسّاس دون قصد.
+type BeneficiaryRow = Pick<
+  Database["public"]["Tables"]["beneficiary_requests"]["Row"],
+  | "full_name"
+  | "phone"
+  | "wilaya"
+  | "commune"
+  | "family_members_count"
+  | "children_count"
+  | "needed_categories"
+  | "priority"
+  | "verification_level"
+  | "status"
+  | "is_housing_habitable"
+  | "has_injuries"
+  | "needs_medical"
+  | "created_at"
+>;
 
 const columns: { header: string; value: (r: BeneficiaryRow) => string | number }[] = [
   { header: "الاسم الكامل", value: (r) => r.full_name },
