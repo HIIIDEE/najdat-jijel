@@ -146,7 +146,7 @@ export function DonationForm({
                   <CardContent className="space-y-2 px-5">
                     <div className="flex items-start justify-between gap-2">
                       <p className="font-bold">{p.name}</p>
-                      <PointStatusBadge status={p.status as never} />
+                      <PointStatusBadge status={p.status} />
                     </div>
                     <p className="flex items-center gap-1.5 text-sm text-muted-foreground">
                       <MapPin className="size-3.5" />
