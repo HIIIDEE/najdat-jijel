@@ -1,18 +1,5 @@
 import { z } from "zod";
 
-export const donationCategoryOptions = [
-  { value: "water", label: "ماء" },
-  { value: "food", label: "غذاء" },
-  { value: "clothing", label: "ملابس" },
-  { value: "blankets", label: "أغطية" },
-  { value: "baby_supplies", label: "مستلزمات أطفال" },
-  { value: "hygiene", label: "مواد نظافة" },
-  { value: "medical", label: "مستلزمات طبية" },
-  { value: "kitchenware", label: "أدوات طبخ" },
-  { value: "relief_materials", label: "مواد إغاثة" },
-  { value: "other", label: "أخرى" },
-] as const;
-
 export const unitOptions = [
   { value: "piece", label: "قطعة" },
   { value: "box", label: "صندوق" },
