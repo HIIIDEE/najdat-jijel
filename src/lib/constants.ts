@@ -446,6 +446,29 @@ export const artisanVerificationStatusLabels: Record<ArtisanVerificationStatus, 
   rejected: "مرفوض",
 };
 
+export const localizedArtisanVerificationStatusLabels: Record<
+  AvailableLocale,
+  Record<ArtisanVerificationStatus, string>
+> = {
+  ar: {
+    pending: "قيد التحقق",
+    verified: "موثّق",
+    rejected: "مرفوض",
+  },
+  fr: {
+    pending: "En attente",
+    verified: "Vérifié",
+    rejected: "Rejeté",
+  },
+};
+
+export function getArtisanVerificationStatusLabel(
+  status: ArtisanVerificationStatus,
+  locale: AvailableLocale = "ar",
+): string {
+  return localizedArtisanVerificationStatusLabels[locale]?.[status] ?? artisanVerificationStatusLabels[status];
+}
+
 export type DamageAssessmentStatus = Database["public"]["Enums"]["damage_assessment_status"];
 
 export const damageAssessmentStatusLabels: Record<DamageAssessmentStatus, string> = {
@@ -456,3 +479,33 @@ export const damageAssessmentStatusLabels: Record<DamageAssessmentStatus, string
   completed: "منجَز",
   rejected: "مرفوض",
 };
+
+export const localizedDamageAssessmentStatusLabels: Record<
+  AvailableLocale,
+  Record<DamageAssessmentStatus, string>
+> = {
+  ar: {
+    pending: "قيد المراجعة",
+    estimated: "تم التقدير",
+    matched: "تمت المطابقة",
+    in_progress: "قيد التنفيذ",
+    completed: "منجَز",
+    rejected: "مرفوض",
+  },
+  fr: {
+    pending: "En attente",
+    estimated: "Estimé",
+    matched: "Attribué",
+    in_progress: "En cours",
+    completed: "Terminé",
+    rejected: "Rejeté",
+  },
+};
+
+export function getDamageAssessmentStatusLabel(
+  status: DamageAssessmentStatus,
+  locale: AvailableLocale = "ar",
+): string {
+  return localizedDamageAssessmentStatusLabels[locale]?.[status] ?? damageAssessmentStatusLabels[status];
+}
+
