@@ -266,10 +266,10 @@ export default async function HomePage() {
               </LinkButton>
             </div>
 
-            {/* 2 items on phone, 4 on desktop */}
-            <div className="grid grid-cols-1 gap-3.5 sm:gap-4 md:grid-cols-2">
+            {/* 2 items on phone, 4 on desktop with matching heights */}
+            <div className="grid grid-cols-1 gap-3.5 sm:gap-4 md:grid-cols-2 items-stretch">
               {updates.slice(0, 4).map((u, i) => (
-                <div key={u.id} className={i >= 2 ? "hidden md:block" : "block"}>
+                <div key={u.id} className={`h-full ${i >= 2 ? "hidden md:flex flex-col" : "flex flex-col"}`}>
                   <OfficialUpdateCard update={u} />
                 </div>
               ))}

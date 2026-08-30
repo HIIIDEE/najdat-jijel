@@ -182,14 +182,14 @@ export function OfficialUpdateCard({ update }: { update: OfficialUpdateItem }) {
 
   return (
     <article
-      className={`group relative flex flex-col justify-between overflow-hidden rounded-2xl border bg-card p-5 sm:p-6 shadow-xs transition-all duration-200 hover:-translate-y-0.5 hover:shadow-md bg-gradient-to-b ${auth.accentGlow} to-card ${
+      className={`group relative flex h-full flex-col justify-between overflow-hidden rounded-2xl border bg-card p-5 sm:p-6 shadow-xs transition-all duration-200 hover:-translate-y-0.5 hover:shadow-md bg-gradient-to-b ${auth.accentGlow} to-card ${
         isUrgent
           ? "border-priority-critical/40 ring-1 ring-priority-critical/10"
           : auth.border
       }`}
     >
       {/* Top Meta Bar */}
-      <div>
+      <div className="flex-1 flex flex-col">
         <div className="flex flex-wrap items-center justify-between gap-2 pb-3.5 border-b border-border/50">
           <div className="flex flex-wrap items-center gap-1.5 sm:gap-2">
             {/* Authority Badge */}
@@ -225,8 +225,8 @@ export function OfficialUpdateCard({ update }: { update: OfficialUpdateItem }) {
           </time>
         </div>
 
-        {/* Title (Clickable link to full view) */}
-        <h3 className="mt-3.5 text-base sm:text-lg font-extrabold leading-snug tracking-tight text-foreground group-hover:text-primary transition-colors">
+        {/* Title (Clickable link with uniform height) */}
+        <h3 className="mt-3.5 text-base sm:text-lg font-extrabold leading-snug tracking-tight text-foreground group-hover:text-primary transition-colors line-clamp-2 min-h-[2.6rem] sm:min-h-[3.2rem]">
           {update.id ? (
             <Link href={`/official-information/${update.id}`} className="hover:underline">
               {update.title}
@@ -236,9 +236,9 @@ export function OfficialUpdateCard({ update }: { update: OfficialUpdateItem }) {
           )}
         </h3>
 
-        {/* Body Text with Expand/Collapse */}
+        {/* Body Text with Expand/Collapse and uniform height */}
         {update.body && (
-          <div className="mt-2.5">
+          <div className="mt-2.5 flex-1">
             <p
               className={`text-xs sm:text-sm leading-relaxed text-muted-foreground whitespace-pre-line transition-all ${
                 isExpanded ? "" : "line-clamp-3"
@@ -261,8 +261,8 @@ export function OfficialUpdateCard({ update }: { update: OfficialUpdateItem }) {
         )}
       </div>
 
-      {/* Footer Actions & Source Link */}
-      <div className="mt-5 pt-3.5 border-t border-border/40 flex flex-wrap items-center justify-between gap-3 text-xs">
+      {/* Footer Actions & Source Link pinned to bottom */}
+      <div className="mt-auto pt-4 border-t border-border/40 flex flex-wrap items-center justify-between gap-3 text-xs">
         <span className="text-muted-foreground font-medium flex items-center gap-1.5">
           <span className="text-[11px] text-muted-foreground/70">المصدر:</span>
           <strong className="text-foreground truncate max-w-[200px]">{update.source}</strong>

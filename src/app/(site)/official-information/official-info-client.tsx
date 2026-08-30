@@ -1,4 +1,4 @@
-﻿"use client";
+"use client";
 
 import { useState, useMemo } from "react";
 import {
@@ -283,9 +283,11 @@ export function OfficialInfoClient({ initialUpdates }: { initialUpdates: Officia
           description="جرّب تغيير كلمات البحث أو إعادة تعيين فلاتر الجهات الرسمية."
         />
       ) : (
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-5">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-5 items-stretch">
           {filtered.map((u, i) => (
-            <OfficialUpdateCard key={u.id || `upd-${i}`} update={u} />
+            <div key={u.id || `upd-${i}`} className="h-full flex flex-col">
+              <OfficialUpdateCard update={u} />
+            </div>
           ))}
         </div>
       )}
