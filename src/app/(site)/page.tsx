@@ -360,15 +360,27 @@ export default async function HomePage() {
 
       {/* ————————————————————————————————— ترميم المنازل */}
       <section className="border-y border-border bg-secondary/30">
-        <div className="mx-auto flex max-w-6xl flex-col items-center gap-3 px-4 py-14 text-center">
-          <Hammer className="size-8 text-algeria-green" />
-          <h2 className="text-2xl font-bold">{t.home.reconstruction.title}</h2>
-          <p className="max-w-xl text-muted-foreground">{t.home.reconstruction.desc}</p>
-          <div className="flex flex-wrap justify-center gap-3">
-            <LinkButton href="/help/damage-assessment" size="lg">
+        <div className="mx-auto max-w-6xl px-4 py-14">
+          <div className="flex items-end justify-between gap-3">
+            <div>
+              <h2 className="flex items-center gap-2 text-2xl font-bold">
+                <Hammer className="size-5 text-algeria-green" /> {t.home.reconstruction.title}
+              </h2>
+              <p className="mt-1 text-sm text-muted-foreground">{t.home.reconstruction.desc}</p>
+            </div>
+            <div className="hidden shrink-0 gap-2 sm:flex">
+              <LinkButton href="/help/damage-assessment">{t.home.reconstruction.damageBtn}</LinkButton>
+              <LinkButton href="/artisans" variant="outline">
+                {t.home.reconstruction.artisanBtn}
+              </LinkButton>
+            </div>
+          </div>
+
+          <div className="mt-5 flex gap-3 sm:hidden">
+            <LinkButton href="/help/damage-assessment" className="flex-1">
               {t.home.reconstruction.damageBtn}
             </LinkButton>
-            <LinkButton href="/artisans" size="lg" variant="outline">
+            <LinkButton href="/artisans" variant="outline" className="flex-1">
               {t.home.reconstruction.artisanBtn}
             </LinkButton>
           </div>
