@@ -1,12 +1,13 @@
 "use client";
 
-import { Phone, Paintbrush, Image as ImageIcon, Link2 } from "lucide-react";
+import { Phone, Paintbrush, Image as ImageIcon, Link2, CheckCircle2, X as XIcon } from "lucide-react";
 import NextLink from "next/link";
 import { Card, CardContent } from "@/components/ui/card";
 import { relativeTimeAr, damageAssessmentStatusLabels } from "@/lib/constants";
-import { AdminListFilter } from "@/components/admin/list-filter";
+import { AdminListFilter, type AdminBulkAction } from "@/components/admin/list-filter";
 import { DamageAssessmentStatusSelect } from "./damage-assessment-status-select";
 import { AssignArtisanSelect, type ArtisanCandidate } from "./assign-artisan-select";
+import { updateDamageAssessmentStatus } from "@/actions/damage-assessments";
 import type { Database } from "@/types/database";
 
 type Assessment = Database["public"]["Tables"]["damage_assessments"]["Row"] & {
@@ -19,6 +20,17 @@ const STATUS_OPTIONS = Object.entries(damageAssessmentStatusLabels).map(([value,
   label,
 }));
 
+const BULK_ACTIONS: AdminBulkAction<Assessment>[] = [
+  { label: "تعليم كمنجَز", icon: CheckCircle2, run: (r) => updateDamageAssessmentStatus(r.id, "completed") },
+  {
+    label: "رفض",
+    icon: XIcon,
+    variant: "destructive",
+    confirmMessage: "رفض التقييمات المحدَّدة؟",
+    run: (r) => updateDamageAssessmentStatus(r.id, "rejected"),
+  },
+];
+
 export function DamageAssessmentsList({ rows }: { rows: Assessment[] }) {
   return (
     <AdminListFilter
@@ -28,6 +40,8 @@ export function DamageAssessmentsList({ rows }: { rows: Assessment[] }) {
         r.full_name.toLowerCase().includes(q) || r.phone.includes(q) || r.commune.toLowerCase().includes(q)
       }
       filters={[{ label: "الحالة", options: STATUS_OPTIONS, match: (r, v) => r.status === v }]}
+      getRowId={(r) => r.id}
+      bulkActions={BULK_ACTIONS}
       emptyTitle="لا توجد تقييمات أضرار مسجَّلة بعد"
       renderRow={(r) => (
         <Card key={r.id}>

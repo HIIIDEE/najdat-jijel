@@ -1,15 +1,27 @@
 "use client";
 
-import { Phone, Stethoscope, PawPrint, Radio, HandHelping, Briefcase } from "lucide-react";
+import { Phone, Stethoscope, PawPrint, Radio, HandHelping, Briefcase, Check, X as XIcon } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
 import { relativeTimeAr, medicalVerificationStatusLabels } from "@/lib/constants";
-import { AdminListFilter } from "@/components/admin/list-filter";
+import { AdminListFilter, type AdminBulkAction } from "@/components/admin/list-filter";
 import { MedicalStatusSelect } from "./medical-status-select";
+import { updateMedicalVolunteerStatus } from "@/actions/medical";
 import type { Database } from "@/types/database";
 
 type Volunteer = Database["public"]["Tables"]["medical_volunteers"]["Row"];
 
 const STATUS_OPTIONS = Object.entries(medicalVerificationStatusLabels).map(([value, label]) => ({ value, label }));
+
+const BULK_ACTIONS: AdminBulkAction<Volunteer>[] = [
+  { label: "توثيق", icon: Check, run: (r) => updateMedicalVolunteerStatus(r.id, "verified") },
+  {
+    label: "رفض",
+    icon: XIcon,
+    variant: "destructive",
+    confirmMessage: "رفض المتطوعين المحدَّدين؟",
+    run: (r) => updateMedicalVolunteerStatus(r.id, "rejected"),
+  },
+];
 
 export function MedicalList({ rows }: { rows: Volunteer[] }) {
   return (
@@ -22,6 +34,8 @@ export function MedicalList({ rows }: { rows: Volunteer[] }) {
         r.commune_id.toLowerCase().includes(q)
       }
       filters={[{ label: "الحالة", options: STATUS_OPTIONS, match: (r, v) => r.status === v }]}
+      getRowId={(r) => r.id}
+      bulkActions={BULK_ACTIONS}
       emptyTitle="لا يوجد متطوعون مسجَّلون بعد"
       renderRow={(r) => {
         const isVet = r.specialty.includes("بيطر") || r.specialty.toLowerCase().includes("vet");

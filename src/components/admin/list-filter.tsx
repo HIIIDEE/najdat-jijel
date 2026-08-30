@@ -1,8 +1,12 @@
 "use client";
 
-import { useMemo, useState } from "react";
-import { Search, X } from "lucide-react";
+import { useMemo, useState, useTransition } from "react";
+import { useRouter } from "next/navigation";
+import { Search, X, Loader2, ChevronDown } from "lucide-react";
+import { toast } from "sonner";
 import { Input } from "@/components/ui/input";
+import { Checkbox } from "@/components/ui/checkbox";
+import { Button } from "@/components/ui/button";
 import { EmptyState } from "@/components/shared/empty-state";
 import { cn } from "@/lib/utils";
 
@@ -18,10 +22,23 @@ export interface AdminFilterDef<T> {
   match: (row: T, value: string) => boolean;
 }
 
+export interface AdminBulkAction<T> {
+  label: string;
+  icon?: React.ComponentType<{ className?: string }>;
+  variant?: "default" | "outline" | "destructive";
+  /** تُنفَّذ لكل صف محدَّد على حدة (نفس صلاحيات إجراء الصف المفرد) — تُرمى الأخطاء لتُحتسَب كفشل. */
+  run: (row: T) => Promise<{ success: boolean; error?: string }>;
+  /** تأكيد قبل التنفيذ (مثلاً للحذف) — نص السؤال، أو تجاهله لتنفيذ مباشر. */
+  confirmMessage?: string;
+}
+
+const PAGE_SIZE = 24;
+
 /**
- * شريط بحث + فلاتر عامّ لأي قائمة إدارية — يعمل بالكامل في المتصفح على
- * الصفوف المُحمَّلة مسبقًا (نفس نمط "اجلب كل شيء دون Pagination" المتّبع في
- * كل صفحات لوحة الإدارة)، فلا حاجة لأي طلب شبكة إضافي عند الكتابة أو التصفية.
+ * شريط بحث + فلاتر + تحديد جماعي عامّ لأي قائمة إدارية — يعمل بالكامل في
+ * المتصفح على الصفوف المُحمَّلة مسبقًا (نفس نمط "اجلب كل شيء دون Pagination
+ * من الخادم" المتّبع في كل صفحات لوحة الإدارة)، مع تصفّح "عرض المزيد" على
+ * العميل لتفادي عرض مئات البطاقات دفعة واحدة.
  */
 export function AdminListFilter<T>({
   rows,
@@ -32,6 +49,8 @@ export function AdminListFilter<T>({
   emptyTitle,
   noResultsTitle = "لا توجد نتائج مطابقة",
   listClassName = "space-y-3",
+  getRowId,
+  bulkActions,
 }: {
   rows: T[];
   searchPlaceholder: string;
@@ -43,9 +62,18 @@ export function AdminListFilter<T>({
   noResultsTitle?: string;
   /** حاوية الصفوف — الافتراضي عمود واحد، يمكن تمرير شبكة (grid) للبطاقات القصيرة. */
   listClassName?: string;
+  /** مطلوب لتفعيل التحديد الجماعي — معرِّف فريد لكل صف. */
+  getRowId?: (row: T) => string;
+  /** إجراءات جماعية تُعرض عند تحديد صف واحد على الأقل. */
+  bulkActions?: AdminBulkAction<T>[];
 }) {
   const [query, setQuery] = useState("");
   const [activeFilters, setActiveFilters] = useState<Record<number, string>>({});
+  const [visibleCount, setVisibleCount] = useState(PAGE_SIZE);
+  const [selected, setSelected] = useState<Set<string>>(new Set());
+  const [runningAction, setRunningAction] = useState<string | null>(null);
+  const [, startTransition] = useTransition();
+  const router = useRouter();
 
   const filtered = useMemo(() => {
     const q = query.trim().toLowerCase();
@@ -60,7 +88,63 @@ export function AdminListFilter<T>({
     });
   }, [rows, query, activeFilters, searchMatch, filters]);
 
+  // إعادة الصفحة الأولى عند تغيّر البحث أو الفلاتر حتى لا تظهر قائمة فارغة
+  // بينما "عرض المزيد" لا يزال محدودًا بعدد الصفحة السابقة — تعديل الحالة أثناء
+  // العرض نفسه (نمط React الموصى به) بدل useEffect لتفادي عرض مضاعف.
+  const filterKey = query + "|" + JSON.stringify(activeFilters);
+  const [lastFilterKey, setLastFilterKey] = useState(filterKey);
+  if (filterKey !== lastFilterKey) {
+    setLastFilterKey(filterKey);
+    setVisibleCount(PAGE_SIZE);
+  }
+
   const hasActiveFilters = query.trim() !== "" || Object.values(activeFilters).some((v) => v && v !== "الكل");
+  const visible = filtered.slice(0, visibleCount);
+  const canBulkSelect = Boolean(getRowId && bulkActions && bulkActions.length > 0);
+  const selectedRows = canBulkSelect ? rows.filter((r) => selected.has(getRowId!(r))) : [];
+
+  function toggleRow(id: string) {
+    setSelected((prev) => {
+      const next = new Set(prev);
+      if (next.has(id)) next.delete(id);
+      else next.add(id);
+      return next;
+    });
+  }
+
+  function toggleAllVisible() {
+    if (!getRowId) return;
+    const visibleIds = visible.map(getRowId);
+    const allSelected = visibleIds.every((id) => selected.has(id));
+    setSelected((prev) => {
+      const next = new Set(prev);
+      if (allSelected) visibleIds.forEach((id) => next.delete(id));
+      else visibleIds.forEach((id) => next.add(id));
+      return next;
+    });
+  }
+
+  async function runBulkAction(action: AdminBulkAction<T>) {
+    if (action.confirmMessage && !window.confirm(action.confirmMessage)) return;
+    setRunningAction(action.label);
+    let okCount = 0;
+    let failCount = 0;
+    for (const row of selectedRows) {
+      try {
+        const res = await action.run(row);
+        if (res.success) okCount++;
+        else failCount++;
+      } catch {
+        failCount++;
+      }
+    }
+    setRunningAction(null);
+    setSelected(new Set());
+    if (failCount === 0) toast.success(`تم تنفيذ "${action.label}" على ${okCount} عنصرًا`);
+    else toast.error(`نجح ${okCount}، وفشل ${failCount} من إجمالي ${okCount + failCount}`);
+    // يعيد تحميل بيانات المكوّن الخادمي الأب (page.tsx) دون فقد حالة البحث/الفلاتر هنا
+    startTransition(() => router.refresh());
+  }
 
   if (rows.length === 0) {
     return <EmptyState title={emptyTitle} />;
@@ -115,14 +199,89 @@ export function AdminListFilter<T>({
         )}
       </div>
 
-      <p className="text-xs text-muted-foreground">
-        عرض <strong className="text-foreground">{filtered.length}</strong> من أصل {rows.length}
-      </p>
+      <div className="flex flex-wrap items-center justify-between gap-2">
+        <p className="text-xs text-muted-foreground">
+          عرض <strong className="text-foreground">{Math.min(visible.length, filtered.length)}</strong> من أصل{" "}
+          {filtered.length}
+          {filtered.length !== rows.length && ` (إجمالي ${rows.length})`}
+        </p>
+        {canBulkSelect && (
+          <label className="flex items-center gap-1.5 text-xs text-muted-foreground">
+            <Checkbox
+              checked={visible.length > 0 && visible.every((r) => selected.has(getRowId!(r)))}
+              onCheckedChange={toggleAllVisible}
+            />
+            تحديد الكل في هذه الصفحة
+          </label>
+        )}
+      </div>
+
+      {canBulkSelect && selected.size > 0 && (
+        <div className="sticky top-2 z-10 flex flex-wrap items-center gap-2 rounded-xl border border-algeria-green/30 bg-algeria-green/10 px-3 py-2">
+          <span className="text-xs font-bold text-algeria-green">{selected.size} عنصرًا محدَّدًا</span>
+          <div className="flex flex-wrap gap-1.5">
+            {bulkActions!.map((action) => {
+              const Icon = action.icon;
+              const busy = runningAction === action.label;
+              return (
+                <Button
+                  key={action.label}
+                  type="button"
+                  size="sm"
+                  variant={action.variant ?? "outline"}
+                  disabled={runningAction !== null}
+                  onClick={() => void runBulkAction(action)}
+                >
+                  {busy ? <Loader2 className="size-3.5 animate-spin" /> : Icon ? <Icon className="size-3.5" /> : null}
+                  {action.label}
+                </Button>
+              );
+            })}
+          </div>
+          <button
+            type="button"
+            onClick={() => setSelected(new Set())}
+            className="ms-auto flex items-center gap-1 text-xs font-medium text-muted-foreground hover:text-foreground"
+          >
+            <X className="size-3.5" /> إلغاء التحديد
+          </button>
+        </div>
+      )}
 
       {filtered.length === 0 ? (
         <EmptyState title={noResultsTitle} />
       ) : (
-        <div className={listClassName}>{filtered.map(renderRow)}</div>
+        <>
+          <div className={listClassName}>
+            {visible.map((row) =>
+              canBulkSelect ? (
+                <div key={getRowId!(row)} className="flex items-start gap-2">
+                  <Checkbox
+                    className="mt-4 shrink-0"
+                    checked={selected.has(getRowId!(row))}
+                    onCheckedChange={() => toggleRow(getRowId!(row))}
+                  />
+                  <div className="min-w-0 flex-1">{renderRow(row)}</div>
+                </div>
+              ) : (
+                renderRow(row)
+              ),
+            )}
+          </div>
+          {visibleCount < filtered.length && (
+            <div className="flex justify-center pt-1">
+              <Button
+                type="button"
+                variant="outline"
+                size="sm"
+                onClick={() => setVisibleCount((c) => c + PAGE_SIZE)}
+              >
+                <ChevronDown className="size-3.5" />
+                عرض المزيد ({filtered.length - visibleCount} متبقٍ)
+              </Button>
+            </div>
+          )}
+        </>
       )}
     </div>
   );

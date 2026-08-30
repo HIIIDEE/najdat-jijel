@@ -1,15 +1,27 @@
 "use client";
 
-import { Phone, HardHat, Truck, Wrench } from "lucide-react";
+import { Phone, HardHat, Truck, Wrench, Check, X as XIcon } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
 import { relativeTimeAr, artisanVerificationStatusLabels } from "@/lib/constants";
-import { AdminListFilter } from "@/components/admin/list-filter";
+import { AdminListFilter, type AdminBulkAction } from "@/components/admin/list-filter";
 import { ArtisanStatusSelect } from "./artisan-status-select";
+import { updateArtisanVolunteerStatus } from "@/actions/artisans";
 import type { Database } from "@/types/database";
 
 type Artisan = Database["public"]["Tables"]["artisan_volunteers"]["Row"];
 
 const STATUS_OPTIONS = Object.entries(artisanVerificationStatusLabels).map(([value, label]) => ({ value, label }));
+
+const BULK_ACTIONS: AdminBulkAction<Artisan>[] = [
+  { label: "توثيق", icon: Check, run: (r) => updateArtisanVolunteerStatus(r.id, "verified") },
+  {
+    label: "رفض",
+    icon: XIcon,
+    variant: "destructive",
+    confirmMessage: "رفض الحرفيين المحدَّدين؟",
+    run: (r) => updateArtisanVolunteerStatus(r.id, "rejected"),
+  },
+];
 
 export function ArtisansList({ rows }: { rows: Artisan[] }) {
   return (
@@ -22,6 +34,8 @@ export function ArtisansList({ rows }: { rows: Artisan[] }) {
         r.commune_id.toLowerCase().includes(q)
       }
       filters={[{ label: "الحالة", options: STATUS_OPTIONS, match: (r, v) => r.status === v }]}
+      getRowId={(r) => r.id}
+      bulkActions={BULK_ACTIONS}
       emptyTitle="لا يوجد حرفيون مسجَّلون بعد"
       renderRow={(r) => (
         <Card key={r.id}>

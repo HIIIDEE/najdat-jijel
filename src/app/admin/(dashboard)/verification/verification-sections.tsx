@@ -1,11 +1,14 @@
 "use client";
 
+import { Check, X as XIcon } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
 import { VerificationBadge } from "@/components/shared/verification-badge";
-import { AdminListFilter } from "@/components/admin/list-filter";
+import { AdminListFilter, type AdminBulkAction } from "@/components/admin/list-filter";
 import { PointActions } from "../collection-points/point-actions";
 import { HubActions } from "../relief-hubs/hub-actions";
 import { BeneficiaryActions } from "../beneficiaries/beneficiary-actions";
+import { updateCollectionPointVerification, updateReliefHubVerification } from "@/actions/points";
+import { updateBeneficiaryVerification } from "@/actions/beneficiaries";
 import type { Database } from "@/types/database";
 
 type Point = Database["public"]["Tables"]["collection_points"]["Row"];
@@ -13,6 +16,17 @@ type Hub = Database["public"]["Tables"]["relief_hubs"]["Row"];
 type Request = Database["public"]["Tables"]["beneficiary_requests"]["Row"];
 
 export function PointsVerificationList({ points }: { points: Point[] }) {
+  const bulkActions: AdminBulkAction<Point>[] = [
+    { label: "توثيق", icon: Check, run: (p) => updateCollectionPointVerification(p.id, "verified") },
+    {
+      label: "رفض",
+      icon: XIcon,
+      variant: "destructive",
+      confirmMessage: "رفض توثيق النقاط المحدَّدة؟",
+      run: (p) => updateCollectionPointVerification(p.id, "unverified"),
+    },
+  ];
+
   return (
     <AdminListFilter
       rows={points}
@@ -22,6 +36,8 @@ export function PointsVerificationList({ points }: { points: Point[] }) {
       }
       emptyTitle="لا توجد نقاط بانتظار التحقق"
       listClassName="space-y-2"
+      getRowId={(p) => p.id}
+      bulkActions={bulkActions}
       renderRow={(p) => (
         <Card key={p.id}>
           <CardContent className="flex flex-wrap items-center justify-between gap-3 px-5">
@@ -43,6 +59,17 @@ export function PointsVerificationList({ points }: { points: Point[] }) {
 }
 
 export function HubsVerificationList({ hubs }: { hubs: Hub[] }) {
+  const bulkActions: AdminBulkAction<Hub>[] = [
+    { label: "توثيق", icon: Check, run: (h) => updateReliefHubVerification(h.id, "verified") },
+    {
+      label: "رفض",
+      icon: XIcon,
+      variant: "destructive",
+      confirmMessage: "رفض توثيق المراكز المحدَّدة؟",
+      run: (h) => updateReliefHubVerification(h.id, "unverified"),
+    },
+  ];
+
   return (
     <AdminListFilter
       rows={hubs}
@@ -52,6 +79,8 @@ export function HubsVerificationList({ hubs }: { hubs: Hub[] }) {
       }
       emptyTitle="لا توجد مراكز بانتظار التحقق"
       listClassName="space-y-2"
+      getRowId={(h) => h.id}
+      bulkActions={bulkActions}
       renderRow={(h) => (
         <Card key={h.id}>
           <CardContent className="flex flex-wrap items-center justify-between gap-3 px-5">
@@ -73,6 +102,17 @@ export function HubsVerificationList({ hubs }: { hubs: Hub[] }) {
 }
 
 export function RequestsVerificationList({ requests }: { requests: Request[] }) {
+  const bulkActions: AdminBulkAction<Request>[] = [
+    { label: "توثيق", icon: Check, run: (r) => updateBeneficiaryVerification(r.id, "verified") },
+    {
+      label: "رفض",
+      icon: XIcon,
+      variant: "destructive",
+      confirmMessage: "رفض توثيق الطلبات المحدَّدة؟",
+      run: (r) => updateBeneficiaryVerification(r.id, "unverified"),
+    },
+  ];
+
   return (
     <AdminListFilter
       rows={requests}
@@ -82,6 +122,8 @@ export function RequestsVerificationList({ requests }: { requests: Request[] }) 
       }
       emptyTitle="لا توجد طلبات بانتظار التحقق"
       listClassName="space-y-2"
+      getRowId={(r) => r.id}
+      bulkActions={bulkActions}
       renderRow={(r) => (
         <Card key={r.id}>
           <CardContent className="flex flex-wrap items-center justify-between gap-3 px-5">
