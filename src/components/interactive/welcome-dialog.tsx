@@ -1,8 +1,8 @@
-﻿"use client";
+"use client";
 
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
-import { HeartHandshake, Gift, Truck, Stethoscope, MapPin, Eye, LifeBuoy } from "lucide-react";
+import { HeartHandshake, Gift, Truck, Stethoscope, MapPin, LifeBuoy } from "lucide-react";
 import {
   Dialog,
   DialogContent,

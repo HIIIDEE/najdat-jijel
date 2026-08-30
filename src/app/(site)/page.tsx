@@ -11,7 +11,6 @@ import {
   Gift,
   CheckCircle2,
   Radio,
-  LifeBuoy,
   Hammer,
 } from "lucide-react";
 import { LinkButton } from "@/components/shared/link-button";
@@ -30,13 +29,16 @@ import {
 import { getDictionary } from "@/i18n/dictionaries";
 import { getLocale } from "@/i18n/server";
 
-const severityConfig: Record<string, { label: string; tone: string }> = {
-  burning: { label: "حريق نشط", tone: "bg-priority-critical/15 text-priority-critical border-priority-critical/30" },
-  evacuated: { label: "إجلاء سكان", tone: "bg-priority-critical/15 text-priority-critical border-priority-critical/30" },
-  threatened: { label: "مهددة بالخطر", tone: "bg-priority-high/15 text-priority-high border-priority-high/30" },
-  ravaged: { label: "أضرار جسيمة", tone: "bg-priority-critical/15 text-priority-critical border-priority-critical/30" },
-  contained: { label: "تحت السيطرة", tone: "bg-algeria-green/15 text-algeria-green border-algeria-green/30" },
-};
+interface MedicalVolunteer {
+  id: string;
+  full_name: string;
+  specialty: string;
+  commune_id: string;
+  current_workplace?: string | null;
+  can_field_intervene?: boolean;
+  can_teleconsult?: boolean;
+  phone?: string;
+}
 
 export default async function HomePage() {
   const locale = await getLocale();
@@ -433,7 +435,7 @@ export default async function HomePage() {
 
         {medicalVolunteers && medicalVolunteers.length > 0 ? (
           <div className="grid gap-3 sm:gap-4 sm:grid-cols-2 lg:grid-cols-3">
-            {medicalVolunteers.slice(0, 6).map((doc: any) => (
+            {(medicalVolunteers as MedicalVolunteer[]).slice(0, 6).map((doc) => (
               <div key={doc.id} className="flex flex-col justify-between rounded-2xl border border-border bg-card p-4 sm:p-6 transition-all hover:shadow-sm">
                 <div className="space-y-2.5 sm:space-y-3">
                   <div className="flex items-start justify-between gap-2">

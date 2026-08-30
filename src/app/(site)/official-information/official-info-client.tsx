@@ -279,8 +279,12 @@ export function OfficialInfoClient({ initialUpdates }: { initialUpdates: Officia
       {/* Cards Feed */}
       {filtered.length === 0 ? (
         <EmptyState
-          title="لا توجد بيانات مطابقة لخيارات البحث"
-          description="جرّب تغيير كلمات البحث أو إعادة تعيين فلاتر الجهات الرسمية."
+          title={initialUpdates.length === 0 ? "لا توجد بيانات أو بلاغات رسمية مسجلة حالياً" : "لا توجد بيانات مطابقة لخيارات البحث"}
+          description={
+            initialUpdates.length === 0
+              ? "يتم نشر وتحديث البيانات فور صدورها من مصالح الحماية المدنية، الدرك الوطني، ومحافظات الغابات."
+              : "جرّب تغيير كلمات البحث أو إعادة تعيين فلاتر الجهات الرسمية."
+          }
         />
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-5 items-stretch">

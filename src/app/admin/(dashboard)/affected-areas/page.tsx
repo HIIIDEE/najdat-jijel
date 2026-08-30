@@ -5,6 +5,8 @@ import { EmptyState } from "@/components/shared/empty-state";
 import { SeverityBadge } from "@/components/shared/severity-badge";
 import { severityRank } from "@/lib/constants";
 import { SeveritySelect } from "./severity-select";
+import { CreateAreaDialog } from "./create-area-dialog";
+import { AreaActions } from "./area-actions";
 
 export const metadata: Metadata = { title: "المناطق المتضررة", robots: { index: false } };
 
@@ -21,15 +23,18 @@ export default async function AdminAffectedAreasPage() {
 
   return (
     <div className="space-y-6">
-      <div>
-        <h1 className="text-2xl font-bold">المناطق المتضررة</h1>
-        <p className="text-sm text-muted-foreground">
-          حدّث حالة كل منطقة مع تطور الوضع الميداني. البلاغات غير المؤكدة تُعرض للعامة بوسم واضح.
-        </p>
+      <div className="flex flex-wrap items-center justify-between gap-3">
+        <div>
+          <h1 className="text-2xl font-bold">المناطق المتضررة</h1>
+          <p className="text-sm text-muted-foreground">
+            إضافة وتحديث حالة كل منطقة وبؤرة متضررة في الميدان.
+          </p>
+        </div>
+        <CreateAreaDialog />
       </div>
 
       {rows.length === 0 ? (
-        <EmptyState title="لا توجد مناطق مسجَّلة بعد" />
+        <EmptyState title="لا توجد مناطق مسجَّلة بعد" description="أضف أول بؤرة متضررة لتظهر في الخريطة وقائمة المناطق العامة." />
       ) : (
         <div className="space-y-2">
           {rows.map((a) => (
@@ -45,10 +50,16 @@ export default async function AdminAffectedAreasPage() {
                       {a.status_raw}
                     </p>
                   )}
+                  {a.source && (
+                    <p className="text-[11px] text-muted-foreground/70 mt-0.5">
+                      المصدر: {a.source}
+                    </p>
+                  )}
                 </div>
                 <div className="flex items-center gap-2">
                   <SeverityBadge severity={a.severity} />
                   <SeveritySelect id={a.id} severity={a.severity} />
+                  <AreaActions id={a.id} spot={a.spot || a.commune} />
                 </div>
               </CardContent>
             </Card>
