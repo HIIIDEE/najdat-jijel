@@ -323,6 +323,35 @@ export const categoryIcon: Record<string, LucideIcon> = {
   other: Tag,
 };
 
+export const categoryNamesFr: Record<string, string> = {
+  water: "Eau potable",
+  food: "Denrées alimentaires",
+  clothing: "Vêtements",
+  blankets: "Couvertures",
+  baby_supplies: "Besoins pour bébés",
+  hygiene: "Produits d'hygiène",
+  medical: "Médicaments & Soins",
+  kitchenware: "Ustensiles de cuisine",
+  relief_materials: "Matériel de secours",
+  shelter: "Abris d'urgence",
+  construction_materials: "Matériaux de construction",
+  cooking_gas: "Gaz butane",
+  manpower: "Bénévolat & Main d'œuvre",
+  other: "Autres matériels",
+};
+
+export function getCategoryName(
+  slug?: string | null,
+  fallbackAr?: string | null,
+  locale: AvailableLocale = "ar",
+): string {
+  if (!slug) return fallbackAr || "";
+  if (locale === "fr") {
+    return categoryNamesFr[slug] || fallbackAr || slug;
+  }
+  return fallbackAr || slug;
+}
+
 export function relativeTimeAr(dateString: string | null | undefined): string {
   return formatRelativeTime(dateString, "ar");
 }

@@ -6,20 +6,20 @@ export const metadata: Metadata = { title: "الأخبار", robots: { index: fa
 
 export default async function AdminNewsPage() {
   const supabase = await createClient();
-  const { data } = await supabase
-    .from("posts")
-    .select("*")
-    .order("created_at", { ascending: false });
+  const [{ data: posts }, { data: officialUpdates }] = await Promise.all([
+    supabase.from("posts").select("*").order("created_at", { ascending: false }),
+    supabase.from("official_updates").select("*").order("published_at", { ascending: false }),
+  ]);
 
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="text-2xl font-bold">مدونة الأخبار</h1>
+        <h1 className="text-2xl font-bold">الأخبار والبيانات الرسمية</h1>
         <p className="text-sm text-muted-foreground">
-          مستجدات وتقارير ميدانية ينشرها فريق التنسيق على صفحة الأخبار العامة.
+          إدارة البيانات والمستجدات الميدانية الرسمية الموثقة، ومقالات وتقارير الميدان.
         </p>
       </div>
-      <NewsManager posts={data ?? []} />
+      <NewsManager posts={posts ?? []} officialUpdates={officialUpdates ?? []} />
     </div>
   );
 }

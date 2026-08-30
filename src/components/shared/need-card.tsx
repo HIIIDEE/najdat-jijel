@@ -13,7 +13,7 @@ import {
   DialogTitle,
   DialogDescription,
 } from "@/components/ui/dialog";
-import { formatQuantity, formatRelativeTime, getUnitLabel } from "@/lib/constants";
+import { formatQuantity, formatRelativeTime, getCategoryName, getUnitLabel } from "@/lib/constants";
 import { CategoryIcon } from "@/components/shared/category-icon";
 import { splitNeedNotes } from "@/lib/notes";
 import { cn } from "@/lib/utils";
@@ -42,7 +42,9 @@ export function NeedCard({
 
   const isFr = locale === "fr";
   const unit = getUnitLabel(need.unit, locale);
-  const title = need.title || need.categories?.name_ar || (isFr ? "Besoin" : "احتياج");
+  const title =
+    need.title ||
+    (need.categories ? getCategoryName(need.categories.slug, need.categories.name_ar, locale) : (isFr ? "Besoin" : "احتياج"));
   const { detail, source } = splitNeedNotes(need.notes);
   const wilayaText = isFr ? `Wilaya de ${need.wilaya}` : `ولاية ${need.wilaya}`;
 

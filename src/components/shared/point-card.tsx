@@ -15,7 +15,7 @@ import {
 } from "@/components/ui/dialog";
 import { CategoryIcon } from "@/components/shared/category-icon";
 import { splitNeedNotes } from "@/lib/notes";
-import type { PointStatus, VerificationLevel } from "@/lib/constants";
+import { getCategoryName, type PointStatus, type VerificationLevel } from "@/lib/constants";
 import type { AvailableLocale } from "@/i18n/locales";
 
 export interface PointCardData {
@@ -91,7 +91,7 @@ export function PointCard({
               </p>
               <p className="mt-0.5 font-bold leading-tight">{point.name}</p>
             </div>
-            <PointStatusBadge status={point.status} />
+            <PointStatusBadge status={point.status} locale={locale} />
           </div>
 
           <p className="flex items-start gap-1.5 text-sm text-muted-foreground">
@@ -108,7 +108,7 @@ export function PointCard({
           {point.acceptedCategories && point.acceptedCategories.length > 0 && (
             <p className="flex flex-wrap gap-1 text-base" aria-label={isFr ? "Articles acceptés" : "المواد المقبولة"}>
               {point.acceptedCategories.map((slug) => (
-                <span key={slug} title={slug}>
+                <span key={slug} title={getCategoryName(slug, slug, locale)}>
                   <CategoryIcon slug={slug} className="size-4" />
                 </span>
               ))}
@@ -150,7 +150,7 @@ export function PointCard({
           </DialogHeader>
 
           <div className="flex flex-wrap items-center gap-2">
-            <PointStatusBadge status={point.status} />
+            <PointStatusBadge status={point.status} locale={locale} />
             <VerificationBadge level={point.verificationLevel} locale={locale} />
           </div>
 
@@ -178,7 +178,7 @@ export function PointCard({
                     key={slug}
                     className="inline-flex items-center gap-1 rounded-full bg-muted px-2.5 py-1 text-xs"
                   >
-                    <CategoryIcon slug={slug} className="size-3.5" /> {slug}
+                    <CategoryIcon slug={slug} className="size-3.5" /> {getCategoryName(slug, slug, locale)}
                   </span>
                 ))}
               </div>

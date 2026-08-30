@@ -3,7 +3,7 @@
 import { useRouter, useSearchParams, usePathname } from "next/navigation";
 import { X } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { categoryIcon, getPriorityLabel, priorityIcon, type PriorityLevel } from "@/lib/constants";
+import { categoryIcon, getCategoryLabel, getPriorityLabel, priorityIcon, type PriorityLevel } from "@/lib/constants";
 import { Package } from "lucide-react";
 import { cn } from "@/lib/utils";
 import type { Database } from "@/types/database";

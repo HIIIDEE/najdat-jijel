@@ -60,9 +60,13 @@ export function EmergencyFab({ locale = "ar" }: { locale?: AvailableLocale }) {
                       <c.icon className="size-4" aria-hidden />
                     </span>
                     <span>
-                      <span className="block font-medium leading-tight">{c.label}</span>
-                      {c.hint && (
-                        <span className="block text-xs text-muted-foreground">{c.hint}</span>
+                      <span className="block font-medium leading-tight">
+                        {isFr && c.label_fr ? c.label_fr : c.label}
+                      </span>
+                      {(isFr ? c.hint_fr || c.hint : c.hint) && (
+                        <span className="block text-xs text-muted-foreground">
+                          {isFr ? c.hint_fr || c.hint : c.hint}
+                        </span>
                       )}
                     </span>
                   </span>

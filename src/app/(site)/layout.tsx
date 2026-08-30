@@ -1,4 +1,5 @@
 import { GoogleAnalytics } from "@/components/analytics/google-analytics";
+import { NewsTicker } from "@/components/shared/news-ticker";
 import { SiteHeader } from "@/components/layout/site-header";
 import { SiteFooter } from "@/components/layout/site-footer";
 import { MobileBottomNav } from "@/components/layout/mobile-bottom-nav";
@@ -13,16 +14,17 @@ export default async function SiteLayout({ children }: { children: React.ReactNo
 
   return (
     <div className="flex min-h-screen flex-col">
+      <NewsTicker />
       <SiteHeader />
       <main className="flex-1 pb-16 md:pb-0">{children}</main>
       <SiteFooter />
       <MobileBottomNav
         labels={{
           home: t.nav.home,
-          needs: t.nav.needs,
-          haveAid: t.cta.haveAid,
+          officialInfo: locale === "fr" ? "Bulletins" : "البيانات",
+          haveAid: locale === "fr" ? "Donner" : "تقديم عون",
           map: t.nav.map,
-          needHelp: t.cta.needHelp,
+          medical: locale === "fr" ? "Médecins" : "الأطباء",
         }}
       />
       <EmergencyFab locale={locale} />
