@@ -1,4 +1,4 @@
-﻿import Link from "next/link";
+import Link from "next/link";
 import { HeartHandshake, LifeBuoy, Gift } from "lucide-react";
 import { siteConfig } from "@/config/site";
 import { LinkButton } from "@/components/shared/link-button";
@@ -44,6 +44,9 @@ export async function SiteHeader() {
 
         <div className="flex items-center gap-2">
           <LanguageSwitcher current={locale} label={t.language.change} />
+          <LinkButton href="/help" size="sm" variant="outline" className="hidden sm:inline-flex">
+            <LifeBuoy className="size-4" /> {t.cta.needHelp}
+          </LinkButton>
           <LinkButton href="/donate" size="sm">
             <Gift className="size-4" /> {t.cta.haveAid}
           </LinkButton>

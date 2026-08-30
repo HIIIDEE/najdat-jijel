@@ -49,7 +49,7 @@ export default async function HomePage() {
       icon: Gift,
       title: t.home.actions.donate.title,
       desc: t.home.actions.donate.desc,
-      badge: "إغاثة",
+      badge: isFr ? "Dons" : "إغاثة",
       accent: "border-algeria-green/40 bg-algeria-green/5 hover:border-algeria-green hover:bg-algeria-green/10 shadow-sm",
       iconBg: "bg-algeria-green/15 text-algeria-green",
       badgeColor: "bg-algeria-green/15 text-algeria-green",
@@ -69,6 +69,14 @@ export default async function HomePage() {
       desc: t.home.actions.medical.desc,
       accent: "hover:border-emerald-500 hover:shadow-md",
       iconBg: "bg-emerald-500/10 text-emerald-600 dark:text-emerald-400",
+    },
+    {
+      href: "/help/damage-assessment",
+      icon: Hammer,
+      title: isFr ? "Dégâts & Artisans" : "أضرار وترميم السكن",
+      desc: isFr ? "Déclaration des dégâts et artisans." : "تصريح الأضرار وتطوع الحرفيين.",
+      accent: "hover:border-amber-500 hover:shadow-md",
+      iconBg: "bg-amber-500/10 text-amber-600 dark:text-amber-400",
     },
     {
       href: "/map",
@@ -153,25 +161,25 @@ export default async function HomePage() {
             </p>
           </div>
 
-          {/* Quick Action Cards Deck (2x2 on phone, 4-across on desktop) */}
-          <div className="mt-6 sm:mt-12 grid grid-cols-2 gap-3 sm:gap-4 lg:grid-cols-4">
+          {/* Quick Action Cards Deck (2-col on phone, 3 on tablet, 5-across on desktop) */}
+          <div className="mt-6 sm:mt-12 grid grid-cols-2 gap-3 sm:gap-4 sm:grid-cols-3 lg:grid-cols-5">
             {quickActions.map((a) => (
               <Link key={a.href} href={a.href} className="group">
                 <div
-                  className={`relative flex h-full flex-col items-center justify-between rounded-2xl border border-border bg-card/95 p-3.5 sm:p-6 text-center shadow-sm backdrop-blur-sm transition-all duration-200 hover:-translate-y-1 hover:shadow-md ${a.accent}`}
+                  className={`relative flex h-full flex-col items-center justify-between rounded-2xl border border-border bg-card/95 p-3.5 sm:p-5 text-center shadow-sm backdrop-blur-sm transition-all duration-200 hover:-translate-y-1 hover:shadow-md ${a.accent}`}
                 >
                   {a.badge && (
-                    <span className={`absolute end-2.5 top-2.5 sm:end-3.5 sm:top-3.5 rounded-full px-2 py-0.5 text-[9px] sm:text-[10px] font-extrabold tracking-wide ${a.badgeColor}`}>
+                    <span className={`absolute end-2.5 top-2.5 sm:end-3 sm:top-3 rounded-full px-2 py-0.5 text-[9px] sm:text-[10px] font-extrabold tracking-wide ${a.badgeColor}`}>
                       {a.badge}
                     </span>
                   )}
                   <div className="flex flex-col items-center gap-2 sm:gap-3">
-                    <span className={`flex size-11 sm:size-14 items-center justify-center rounded-xl sm:rounded-2xl transition-transform duration-200 group-hover:scale-110 ${a.iconBg}`}>
-                      <a.icon className="size-5 sm:size-7" aria-hidden />
+                    <span className={`flex size-10 sm:size-12 items-center justify-center rounded-xl sm:rounded-2xl transition-transform duration-200 group-hover:scale-110 ${a.iconBg}`}>
+                      <a.icon className="size-5 sm:size-6" aria-hidden />
                     </span>
                     <div>
-                      <p className="text-xs sm:text-base font-bold leading-snug">{a.title}</p>
-                      <p className="mt-0.5 sm:mt-1.5 text-[10px] sm:text-xs leading-normal text-muted-foreground line-clamp-2">{a.desc}</p>
+                      <p className="text-xs sm:text-sm font-bold leading-snug">{a.title}</p>
+                      <p className="mt-0.5 sm:mt-1 text-[10px] sm:text-xs leading-normal text-muted-foreground line-clamp-2">{a.desc}</p>
                     </div>
                   </div>
                 </div>
@@ -432,31 +440,82 @@ export default async function HomePage() {
         </LinkButton>
       </section>
 
-      {/* ————————————————————————————————— ترميم المنازل */}
-      <section className="border-y border-border bg-secondary/30">
-        <div className="mx-auto max-w-6xl px-4 py-14">
-          <div className="flex items-end justify-between gap-3">
-            <div>
-              <h2 className="flex items-center gap-2 text-2xl font-bold">
-                <Hammer className="size-5 text-algeria-green" /> {t.home.reconstruction.title}
-              </h2>
-              <p className="mt-1 text-sm text-muted-foreground">{t.home.reconstruction.desc}</p>
+      {/* ————————————————————————————————— ترميم المنازل وإعادة التأهيل */}
+      <section className="border-y border-border bg-gradient-to-b from-secondary/40 via-background to-secondary/20 py-12 sm:py-16">
+        <div className="mx-auto max-w-6xl px-4">
+          <div className="mb-8 text-center sm:text-start">
+            <div className="inline-flex items-center gap-2 rounded-full border border-algeria-green/30 bg-algeria-green/10 px-3.5 py-1 text-xs font-bold text-algeria-green mb-2.5">
+              <Hammer className="size-3.5" />
+              <span>{isFr ? "Programme de réhabilitation et reconstruction" : "برنامج ترميم المنازل وإعادة التأهيل"}</span>
             </div>
-            <div className="hidden shrink-0 gap-2 sm:flex">
-              <LinkButton href="/help/damage-assessment">{t.home.reconstruction.damageBtn}</LinkButton>
-              <LinkButton href="/artisans" variant="outline">
-                {t.home.reconstruction.artisanBtn}
-              </LinkButton>
-            </div>
+            <h2 className="text-2xl sm:text-3xl font-extrabold tracking-tight text-foreground">
+              {t.home.reconstruction.title}
+            </h2>
+            <p className="mt-1.5 text-xs sm:text-sm text-muted-foreground max-w-2xl">
+              {t.home.reconstruction.desc}
+            </p>
           </div>
 
-          <div className="mt-5 flex gap-3 sm:hidden">
-            <LinkButton href="/help/damage-assessment" className="flex-1">
-              {t.home.reconstruction.damageBtn}
-            </LinkButton>
-            <LinkButton href="/artisans" variant="outline" className="flex-1">
-              {t.home.reconstruction.artisanBtn}
-            </LinkButton>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6">
+            {/* Card 1: للمتضررين */}
+            <div className="relative flex flex-col justify-between rounded-3xl border border-amber-500/30 bg-card p-6 sm:p-8 shadow-xs hover:shadow-md transition-all">
+              <div>
+                <div className="flex items-center justify-between gap-2">
+                  <span className="inline-flex items-center gap-1.5 rounded-full bg-amber-500/10 px-3 py-1 text-xs font-bold text-amber-700 dark:text-amber-300 border border-amber-500/20">
+                    <Home className="size-3.5" />
+                    <span>{isFr ? "Pour les sinistrés" : "للمتضررين والعائلات"}</span>
+                  </span>
+                  <span className="text-xs font-medium text-muted-foreground">تقدير آلي للمواد</span>
+                </div>
+
+                <h3 className="mt-4 text-xl sm:text-2xl font-black text-foreground">
+                  {isFr ? "Déclarer les dégâts de mon logement" : "تصريح وتقدير أضرار السكن"}
+                </h3>
+
+                <p className="mt-2 text-xs sm:text-sm leading-relaxed text-muted-foreground">
+                  {isFr
+                    ? "Renseignez les pièces et surfaces endommagées (peinture, toiture, plomberie, électricité) avec photos pour estimer les matériaux et mobiliser un artisan."
+                    : "سجّل الأضرار التي لحقت بمنزلك (دهان الجدران، الأسقف، الكهرباء والسباكة) مع الصور ليتم تحويلها لتقدير مواد وتوفير حرفي للمساعدة."}
+                </p>
+              </div>
+
+              <div className="mt-6 pt-5 border-t border-border/60">
+                <LinkButton href="/help/damage-assessment" className="w-full font-bold">
+                  <span>{t.home.reconstruction.damageBtn}</span>
+                  <ArrowLeft className="size-4" />
+                </LinkButton>
+              </div>
+            </div>
+
+            {/* Card 2: للحرفيين */}
+            <div className="relative flex flex-col justify-between rounded-3xl border border-algeria-green/30 bg-card p-6 sm:p-8 shadow-xs hover:shadow-md transition-all">
+              <div>
+                <div className="flex items-center justify-between gap-2">
+                  <span className="inline-flex items-center gap-1.5 rounded-full bg-algeria-green/10 px-3 py-1 text-xs font-bold text-algeria-green border border-algeria-green/20">
+                    <Hammer className="size-3.5" />
+                    <span>{isFr ? "Pour les professionnels" : "للحرفيين والمهنيين"}</span>
+                  </span>
+                  <span className="text-xs font-medium text-muted-foreground">تطوع تخصصي</span>
+                </div>
+
+                <h3 className="mt-4 text-xl sm:text-2xl font-black text-foreground">
+                  {isFr ? "Rejoindre en tant qu'artisan solidaire" : "تطوع الحرفيين والمهنيين"}
+                </h3>
+
+                <p className="mt-2 text-xs sm:text-sm leading-relaxed text-muted-foreground">
+                  {isFr
+                    ? "Peintres, maçons, plombiers, électriciens... Proposez vos compétences et vos outils pour participer aux chantiers de réhabilitation des logements."
+                    : "دهانون، بناؤون، سباكون، وكهربائيون... تطوع بمهنتك أو بأدواتك لدعم العائلات المتضررة في ورشات إعادة تأهيل المنازل."}
+                </p>
+              </div>
+
+              <div className="mt-6 pt-5 border-t border-border/60">
+                <LinkButton href="/artisans" variant="outline" className="w-full font-bold">
+                  <span>{t.home.reconstruction.artisanBtn}</span>
+                  <ArrowLeft className="size-4" />
+                </LinkButton>
+              </div>
+            </div>
           </div>
         </div>
       </section>
