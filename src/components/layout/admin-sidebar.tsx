@@ -20,6 +20,8 @@ import {
   Megaphone,
   Newspaper,
   Stethoscope,
+  Hammer,
+  HardHat,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 
@@ -37,6 +39,8 @@ const sections = [
   { href: "/admin/users", label: "المستخدمون", icon: UserCog },
   { href: "/admin/verification", label: "التحقق", icon: ShieldCheck },
   { href: "/admin/medical", label: "الأطقم الطبية", icon: Stethoscope },
+  { href: "/admin/damage-assessments", label: "تقييمات الأضرار", icon: Hammer },
+  { href: "/admin/artisans", label: "الحرفيون المتطوعون", icon: HardHat },
   { href: "/admin/announcements", label: "شريط الأخبار", icon: Megaphone },
   { href: "/admin/news", label: "مدونة الأخبار", icon: Newspaper },
   { href: "/admin/reports", label: "التقارير", icon: BarChart3 },

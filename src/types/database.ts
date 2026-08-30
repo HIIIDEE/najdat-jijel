@@ -190,6 +190,60 @@ export type Database = {
           },
         ]
       }
+      artisan_volunteers: {
+        Row: {
+          can_travel: boolean
+          commune_id: string
+          created_at: string
+          full_name: string
+          has_own_tools: boolean
+          id: string
+          notes: string | null
+          phone: string
+          show_phone_publicly: boolean
+          specialty: string
+          status: Database["public"]["Enums"]["artisan_verification_status"]
+          updated_at: string
+          verified_at: string | null
+          verified_by: string | null
+          wilaya_code: string
+        }
+        Insert: {
+          can_travel?: boolean
+          commune_id: string
+          created_at?: string
+          full_name: string
+          has_own_tools?: boolean
+          id?: string
+          notes?: string | null
+          phone: string
+          show_phone_publicly?: boolean
+          specialty: string
+          status?: Database["public"]["Enums"]["artisan_verification_status"]
+          updated_at?: string
+          verified_at?: string | null
+          verified_by?: string | null
+          wilaya_code: string
+        }
+        Update: {
+          can_travel?: boolean
+          commune_id?: string
+          created_at?: string
+          full_name?: string
+          has_own_tools?: boolean
+          id?: string
+          notes?: string | null
+          phone?: string
+          show_phone_publicly?: boolean
+          specialty?: string
+          status?: Database["public"]["Enums"]["artisan_verification_status"]
+          updated_at?: string
+          verified_at?: string | null
+          verified_by?: string | null
+          wilaya_code?: string
+        }
+        Relationships: []
+      }
       beneficiary_requests: {
         Row: {
           address_note: string | null
@@ -464,6 +518,112 @@ export type Database = {
             columns: ["verified_by"]
             isOneToOne: false
             referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      damage_assessments: {
+        Row: {
+          address_note: string | null
+          assigned_artisan_id: string | null
+          beneficiary_request_id: string | null
+          commune: string
+          created_at: string
+          estimated_paint_cans: number | null
+          estimated_paint_liters: number | null
+          finishing_notes: string | null
+          full_name: string
+          id: string
+          linked_need_id: string | null
+          needs_electrical: boolean
+          needs_flooring: boolean
+          needs_paint: boolean
+          needs_plumbing: boolean
+          needs_roofing: boolean
+          paint_area_sqm: number | null
+          phone: string
+          photo_paths: string[]
+          required_specialties: string[]
+          status: Database["public"]["Enums"]["damage_assessment_status"]
+          updated_at: string
+          verified_at: string | null
+          verified_by: string | null
+          wilaya: string
+        }
+        Insert: {
+          address_note?: string | null
+          assigned_artisan_id?: string | null
+          beneficiary_request_id?: string | null
+          commune: string
+          created_at?: string
+          estimated_paint_cans?: number | null
+          estimated_paint_liters?: number | null
+          finishing_notes?: string | null
+          full_name: string
+          id?: string
+          linked_need_id?: string | null
+          needs_electrical?: boolean
+          needs_flooring?: boolean
+          needs_paint?: boolean
+          needs_plumbing?: boolean
+          needs_roofing?: boolean
+          paint_area_sqm?: number | null
+          phone: string
+          photo_paths?: string[]
+          required_specialties?: string[]
+          status?: Database["public"]["Enums"]["damage_assessment_status"]
+          updated_at?: string
+          verified_at?: string | null
+          verified_by?: string | null
+          wilaya: string
+        }
+        Update: {
+          address_note?: string | null
+          assigned_artisan_id?: string | null
+          beneficiary_request_id?: string | null
+          commune?: string
+          created_at?: string
+          estimated_paint_cans?: number | null
+          estimated_paint_liters?: number | null
+          finishing_notes?: string | null
+          full_name?: string
+          id?: string
+          linked_need_id?: string | null
+          needs_electrical?: boolean
+          needs_flooring?: boolean
+          needs_paint?: boolean
+          needs_plumbing?: boolean
+          needs_roofing?: boolean
+          paint_area_sqm?: number | null
+          phone?: string
+          photo_paths?: string[]
+          required_specialties?: string[]
+          status?: Database["public"]["Enums"]["damage_assessment_status"]
+          updated_at?: string
+          verified_at?: string | null
+          verified_by?: string | null
+          wilaya?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "damage_assessments_assigned_artisan_id_fkey"
+            columns: ["assigned_artisan_id"]
+            isOneToOne: false
+            referencedRelation: "artisan_volunteers"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "damage_assessments_beneficiary_request_id_fkey"
+            columns: ["beneficiary_request_id"]
+            isOneToOne: false
+            referencedRelation: "beneficiary_requests"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "damage_assessments_linked_need_id_fkey"
+            columns: ["linked_need_id"]
+            isOneToOne: false
+            referencedRelation: "needs"
             referencedColumns: ["id"]
           },
         ]
@@ -1601,6 +1761,19 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      get_public_artisan_volunteers: {
+        Args: never
+        Returns: {
+          can_travel: boolean
+          commune_id: string
+          full_name: string
+          has_own_tools: boolean
+          id: string
+          phone: string
+          specialty: string
+          wilaya_code: string
+        }[]
+      }
       get_public_collection_points: {
         Args: never
         Returns: {
@@ -1724,6 +1897,14 @@ export type Database = {
         | "donor"
         | "driver"
         | "beneficiary"
+      artisan_verification_status: "pending" | "verified" | "rejected"
+      damage_assessment_status:
+        | "pending"
+        | "estimated"
+        | "matched"
+        | "in_progress"
+        | "completed"
+        | "rejected"
       donation_status: "registered" | "matched" | "delivered" | "cancelled"
       inventory_txn_type: "in" | "out" | "adjustment" | "transfer"
       medical_verification_status: "pending" | "verified" | "rejected"
@@ -1916,6 +2097,15 @@ export const Constants = {
         "donor",
         "driver",
         "beneficiary",
+      ],
+      artisan_verification_status: ["pending", "verified", "rejected"],
+      damage_assessment_status: [
+        "pending",
+        "estimated",
+        "matched",
+        "in_progress",
+        "completed",
+        "rejected",
       ],
       donation_status: ["registered", "matched", "delivered", "cancelled"],
       inventory_txn_type: ["in", "out", "adjustment", "transfer"],
