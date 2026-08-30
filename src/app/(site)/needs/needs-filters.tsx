@@ -123,7 +123,7 @@ export function NeedsFilters({
                 active={current.category === c.slug}
                 onClick={() => toggle("category", c.slug)}
               >
-                <Icon className="size-3.5" aria-hidden /> {c.name_ar}
+                <Icon className="size-3.5" aria-hidden /> {getCategoryLabel(c.slug, c.name_ar, locale)}
               </Chip>
             );
           })}
