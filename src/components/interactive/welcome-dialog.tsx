@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
-import { HeartHandshake, LifeBuoy, Gift, Truck, Eye } from "lucide-react";
+import { HeartHandshake, Gift, Truck, Stethoscope, MapPin, LifeBuoy } from "lucide-react";
 import {
   Dialog,
   DialogContent,
@@ -17,17 +17,17 @@ import type { AvailableLocale } from "@/i18n/locales";
 const STORAGE_KEY = "haba_welcome_seen_v1";
 
 const rolesAr = [
-  { href: "/help", icon: LifeBuoy, title: "أنا متضرر", desc: "أحتاج مساعدة عاجلة لي أو لعائلتي" },
   { href: "/donate", icon: Gift, title: "لدي مساعدات", desc: "أملك مواد وأريد إيصالها لمن يحتاجها" },
   { href: "/transport", icon: Truck, title: "أستطيع النقل", desc: "لدي مركبة ومساحة فارغة على الطريق" },
-  { href: "/needs", icon: Eye, title: "أتصفّح فقط", desc: "أريد الاطلاع على الاحتياجات الحالية" },
+  { href: "/medical", icon: Stethoscope, title: "أنا طبيب / بيطري", desc: "تقديم الرعاية والاستشارات الميدانية" },
+  { href: "/map", icon: MapPin, title: "خريطة الإغاثة", desc: "مراكز التجميع ونقاط الاستقبال" },
 ];
 
 const rolesFr = [
   { href: "/help", icon: LifeBuoy, title: "J'ai besoin d'aide", desc: "Aide urgente pour moi ou ma famille" },
   { href: "/donate", icon: Gift, title: "J'ai des dons", desc: "Fournir des dons matériels utiles" },
   { href: "/transport", icon: Truck, title: "Je peux transporter", desc: "Véhicule disponible pour acheminer" },
-  { href: "/needs", icon: Eye, title: "Je consulte", desc: "Consulter les besoins actifs" },
+  { href: "/map", icon: MapPin, title: "Carte des secours", desc: "Consulter les points de collecte" },
 ];
 
 export function WelcomeDialog({ locale = "ar" }: { locale?: AvailableLocale }) {
@@ -80,7 +80,7 @@ export function WelcomeDialog({ locale = "ar" }: { locale?: AvailableLocale }) {
               key={r.href}
               type="button"
               onClick={() => choose(r.href)}
-              className="flex flex-col items-center gap-1 rounded-xl border border-border p-4 text-center transition-all hover:-translate-y-0.5 hover:border-algeria-green hover:bg-algeria-green/5"
+              className="flex flex-col items-center gap-1 rounded-xl border border-border p-4 text-center transition-all hover:-translate-y-0.5 hover:border-algeria-green hover:bg-algeria-green/5 cursor-pointer"
             >
               <span className="flex size-11 items-center justify-center rounded-full bg-algeria-green/10 text-algeria-green">
                 <r.icon className="size-5" aria-hidden />

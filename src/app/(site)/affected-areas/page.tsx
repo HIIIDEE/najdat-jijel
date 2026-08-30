@@ -1,5 +1,5 @@
-import type { Metadata } from "next";
-import { MapPin, TriangleAlert, Info, LifeBuoy } from "lucide-react";
+﻿import type { Metadata } from "next";
+import { MapPin, TriangleAlert, Info, Gift, Truck } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
 import { EmptyState } from "@/components/shared/empty-state";
 import { SeverityBadge } from "@/components/shared/severity-badge";
@@ -164,19 +164,19 @@ export default async function AffectedAreasPage({
 
       <div className="mt-10 flex flex-col items-center gap-3 rounded-2xl border border-border bg-secondary/30 p-8 text-center">
         <h2 className="text-xl font-bold">
-          {isFr ? "Êtes-vous originaire d'une de ces zones ?" : "هل أنت من إحدى هذه المناطق؟"}
+          {isFr ? "Voulez-vous contribuer aux secours dans ces zones ?" : "هل ترغب في المساهمة في إغاثة هذه المناطق؟"}
         </h2>
-        <p className="max-w-lg text-sm text-muted-foreground">
+        <p className="max-w-lg text-sm text-muted-foreground leading-relaxed">
           {isFr
-            ? "Signalez le besoin de votre famille pour alerter l'équipe de coordination, ou consultez la liste des besoins actifs."
-            : "سجّل احتياج عائلتك ليصل إلى فرق التنسيق مباشرة، أو تصفّح الاحتياجات إن كنت تريد المساعدة."}
+            ? "Enregistrez vos dons matériels disponibles ou proposez votre véhicule pour acheminer les secours directement vers les points de collecte."
+            : "سجّل ما يتوفر لديك من قوافل ومواد إغاثية أو تطوع بمركبتك لنقل المساعدات مباشرة إلى مراكز التجميع."}
         </p>
         <div className="flex flex-wrap justify-center gap-2">
-          <LinkButton href="/help">
-            <LifeBuoy className="size-4" /> {t.cta.needHelp}
+          <LinkButton href="/donate">
+            <Gift className="size-4" /> {t.cta.haveAid}
           </LinkButton>
-          <LinkButton href="/needs" variant="outline">
-            {t.nav.needs}
+          <LinkButton href="/transport" variant="outline">
+            <Truck className="size-4" /> {t.cta.canTransport}
           </LinkButton>
         </div>
       </div>
