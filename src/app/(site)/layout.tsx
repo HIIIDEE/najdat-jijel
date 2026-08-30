@@ -8,7 +8,8 @@ import { getDictionary } from "@/i18n/dictionaries";
 import { getLocale } from "@/i18n/server";
 
 export default async function SiteLayout({ children }: { children: React.ReactNode }) {
-  const t = await getDictionary(await getLocale());
+  const locale = await getLocale();
+  const t = await getDictionary(locale);
 
   return (
     <div className="flex min-h-screen flex-col">
@@ -24,9 +25,9 @@ export default async function SiteLayout({ children }: { children: React.ReactNo
           needHelp: t.cta.needHelp,
         }}
       />
-      <EmergencyFab />
+      <EmergencyFab locale={locale} />
       <GoogleAnalytics />
-      <WelcomeDialog />
+      <WelcomeDialog locale={locale} />
     </div>
   );
 }

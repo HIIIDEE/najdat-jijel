@@ -1,11 +1,14 @@
 import { Megaphone } from "lucide-react";
 import { createClient } from "@/lib/supabase/server";
+import { getLocale } from "@/i18n/server";
 
 /**
  * شريط الأخبار العاجلة — خلفية حمراء وخط أبيض، يديره الطاقم من لوحة الإدارة.
  * إن لم توجد رسائل مفعّلة يظهر التنبيه الثابت الافتراضي.
  */
 export async function NewsTicker() {
+  const locale = await getLocale();
+  const isFr = locale === "fr";
   const supabase = await createClient();
   const { data } = await supabase
     .from("announcements")
@@ -22,15 +25,22 @@ export async function NewsTicker() {
         <div className="mx-auto flex max-w-6xl items-center gap-2 px-4 py-2.5 text-sm">
           <Megaphone className="size-4 shrink-0" />
           <p>
-            <strong>قبل إرسال أي مساعدات:</strong> تحقق من الاحتياجات الحالية ونقاط الاستقبال. لا
-            ترسل مساعدات عشوائيًا حتى لا تتكدس المواد في نقطة واحدة.
+            {isFr ? (
+              <>
+                <strong>Avant d&apos;envoyer toute aide :</strong> vérifiez les besoins réels et les points de collecte recommandés.
+              </>
+            ) : (
+              <>
+                <strong>قبل إرسال أي مساعدات:</strong> تحقق من الاحتياجات الحالية ونقاط الاستقبال. لا
+                ترسل مساعدات عشوائيًا حتى لا تتكدس المواد في نقطة واحدة.
+              </>
+            )}
           </p>
         </div>
       </div>
     );
   }
 
-  // مدة الحركة تتناسب مع طول النص حتى تبقى سرعة القراءة ثابتة
   const totalChars = messages.reduce((n, m) => n + m.message.length, 0);
   const duration = Math.max(25, Math.min(120, Math.round(totalChars / 4)));
 
@@ -39,7 +49,7 @@ export async function NewsTicker() {
       <div className="mx-auto flex max-w-6xl items-center gap-3 px-4 py-2.5">
         <span className="flex shrink-0 items-center gap-1.5 text-sm font-bold">
           <Megaphone className="size-4" />
-          <span className="hidden sm:inline">عاجل</span>
+          <span className="hidden sm:inline">{isFr ? "Urgent" : "عاجل"}</span>
         </span>
 
         <div className="ticker-viewport relative flex-1 overflow-hidden">
@@ -57,7 +67,6 @@ export async function NewsTicker() {
         </div>
       </div>
 
-      {/* نسخة ثابتة لقارئات الشاشة ولمن عطّل الحركة */}
       <div className="sr-only">
         {messages.map((m) => (
           <p key={m.id}>{m.message}</p>

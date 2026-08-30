@@ -12,7 +12,7 @@ import { Label } from "@/components/ui/label";
 import { Checkbox } from "@/components/ui/checkbox";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Card, CardContent } from "@/components/ui/card";
-import { Alert, AlertTitle, AlertDescription } from "@/components/ui/alert";
+import { Alert, AlertDescription } from "@/components/ui/alert";
 import {
   beneficiaryRequestSchema,
   needCategoryOptions,
@@ -21,8 +21,28 @@ import {
 import { SuccessPanel } from "@/components/shared/success-panel";
 import { submitBeneficiaryRequest } from "@/actions/beneficiary-requests";
 import { campaignWilayas } from "@/config/site";
+import type { AvailableLocale } from "@/i18n/locales";
 
-export function HelpRequestForm() {
+const categoryLabelsFr: Record<string, string> = {
+  water: "Eau potable",
+  food: "Nourriture",
+  clothing: "Vêtements",
+  blankets: "Couvertures",
+  baby_supplies: "Articles pour bébés",
+  medical: "Médicaments / Soins",
+  hygiene: "Produits d'hygiène",
+  kitchenware: "Ustensiles de cuisine",
+  shelter: "Hébergement d'urgence",
+  construction_materials: "Matériaux de construction",
+  other: "Autre",
+};
+
+export function HelpRequestForm({
+  locale = "ar",
+}: {
+  locale?: AvailableLocale;
+}) {
+  const isFr = locale === "fr";
   const [submitted, setSubmitted] = useState(false);
   const [submitting, setSubmitting] = useState(false);
   const [submitError, setSubmitError] = useState<string | null>(null);
@@ -75,12 +95,21 @@ export function HelpRequestForm() {
     try {
       const res = await submitBeneficiaryRequest(values);
       if (!res.success) {
-        setSubmitError(res.error ?? "حدث خطأ أثناء تسجيل طلبك. حاول مرة أخرى.");
+        setSubmitError(
+          res.error ??
+            (isFr
+              ? "Une erreur est survenue lors de l'enregistrement de votre demande. Veuillez réessayer."
+              : "حدث خطأ أثناء تسجيل طلبك. حاول مرة أخرى."),
+        );
         return;
       }
       setSubmitted(true);
     } catch {
-      setSubmitError("حدث خطأ أثناء تسجيل طلبك. حاول مرة أخرى.");
+      setSubmitError(
+        isFr
+          ? "Une erreur est survenue lors de l'enregistrement de votre demande. Veuillez réessayer."
+          : "حدث خطأ أثناء تسجيل طلبك. حاول مرة أخرى.",
+      );
     } finally {
       setSubmitting(false);
     }
@@ -89,18 +118,35 @@ export function HelpRequestForm() {
   if (submitted) {
     return (
       <SuccessPanel
-        title="تم استلام طلبك بنجاح"
-        description="سيراجع فريق التنسيق طلبك ويتواصل معك في أقرب وقت ممكن. بياناتك محمية ولا تُعرض للعامة إطلاقًا."
+        title={isFr ? "Demande d'aide reçue avec succès" : "تم استلام طلبك بنجاح"}
+        description={
+          isFr
+            ? "L'équipe de coordination examinera votre demande et vous contactera dans les plus brefs délais. Vos données sont protégées et restent strictement confidentielles."
+            : "سيراجع فريق التنسيق طلبك ويتواصل معك في أقرب وقت ممكن. بياناتك محمية ولا تُعرض للعامة إطلاقًا."
+        }
         primaryHref="/map"
-        primaryLabel="مراكز الإيواء القريبة"
+        primaryLabel={isFr ? "Centres d'hébergement proches" : "مراكز الإيواء القريبة"}
       >
         {watch("is_housing_habitable") !== "yes" && (
           <div className="rounded-xl border border-border bg-muted/40 p-4 text-center text-sm">
-            هل تضرر السكن نفسه؟{" "}
-            <Link href="/help/damage-assessment" className="font-medium text-algeria-green hover:underline">
-              قدّم تقييمًا تفصيليًا للأضرار
-            </Link>{" "}
-            (مع صور) لنقدّر مواد الترميم اللازمة ونربطك بمتبرعين وحرفيين.
+            {isFr ? (
+              <>
+                Le logement lui-même a-t-il été endommagé ?{" "}
+                <Link href="/help/damage-assessment" className="font-medium text-algeria-green hover:underline">
+                  Soumettez une évaluation détaillée des dégâts
+                </Link>{" "}
+                (avec photos) pour estimer les matériaux de réparation nécessaires et vous mettre en relation
+                avec des donateurs et artisans.
+              </>
+            ) : (
+              <>
+                هل تضرر السكن نفسه؟{" "}
+                <Link href="/help/damage-assessment" className="font-medium text-algeria-green hover:underline">
+                  قدّم تقييمًا تفصيليًا للأضرار
+                </Link>{" "}
+                (مع صور) لنقدّر مواد الترميم اللازمة ونربطك بمتبرعين وحرفيين.
+              </>
+            )}
           </div>
         )}
       </SuccessPanel>
@@ -111,21 +157,21 @@ export function HelpRequestForm() {
     <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
       <Card>
         <CardContent className="space-y-4 px-5">
-          <h2 className="font-bold">بياناتك</h2>
+          <h2 className="font-bold">{isFr ? "Vos coordonnées" : "بياناتك"}</h2>
           <div>
-            <Label className="mb-1.5">الاسم الكامل</Label>
+            <Label className="mb-1.5">{isFr ? "Nom complet ou représentant" : "الاسم الكامل"}</Label>
             <Input {...register("full_name")} />
             {errors.full_name && (
               <p className="mt-1 text-sm text-destructive">{errors.full_name.message}</p>
             )}
           </div>
           <div>
-            <Label className="mb-1.5">رقم الهاتف</Label>
+            <Label className="mb-1.5">{isFr ? "Numéro de téléphone" : "رقم الهاتف"}</Label>
             <Input dir="ltr" placeholder="0555xxxxxx" {...register("phone")} />
             {errors.phone && <p className="mt-1 text-sm text-destructive">{errors.phone.message}</p>}
           </div>
           <div>
-            <Label className="mb-2">الولاية</Label>
+            <Label className="mb-2">{isFr ? "Wilaya" : "الولاية"}</Label>
             <div className="flex flex-wrap gap-2">
               {campaignWilayas.map((w) => {
                 const active = watch("wilaya") === w;
@@ -141,7 +187,7 @@ export function HelpRequestForm() {
                         : "rounded-full border border-border bg-card px-4 py-1.5 text-sm hover:border-algeria-green/50 hover:bg-muted"
                     }
                   >
-                    {w}
+                    {isFr ? `Wilaya de ${w}` : w}
                   </button>
                 );
               })}
@@ -152,14 +198,14 @@ export function HelpRequestForm() {
           </div>
 
           <div>
-            <Label className="mb-1.5">البلدية</Label>
+            <Label className="mb-1.5">{isFr ? "Commune" : "البلدية"}</Label>
             <Input {...register("commune")} />
             {errors.commune && (
               <p className="mt-1 text-sm text-destructive">{errors.commune.message}</p>
             )}
           </div>
           <div>
-            <Label className="mb-1.5">الحي / أقرب معلم (اختياري)</Label>
+            <Label className="mb-1.5">{isFr ? "Adresse / Village / Repère (facultatif)" : "الحي / أقرب معلم (اختياري)"}</Label>
             <Input {...register("address_note")} />
           </div>
         </CardContent>
@@ -167,10 +213,10 @@ export function HelpRequestForm() {
 
       <Card>
         <CardContent className="space-y-4 px-5">
-          <h2 className="font-bold">وضع الأسرة</h2>
+          <h2 className="font-bold">{isFr ? "Situation de la famille" : "وضع الأسرة"}</h2>
           <div className="grid grid-cols-2 gap-3">
             <div>
-              <Label className="mb-1.5">عدد أفراد الأسرة</Label>
+              <Label className="mb-1.5">{isFr ? "Nombre de membres" : "عدد أفراد الأسرة"}</Label>
               <Input
                 type="number"
                 min={1}
@@ -178,7 +224,7 @@ export function HelpRequestForm() {
               />
             </div>
             <div>
-              <Label className="mb-1.5">عدد الأطفال</Label>
+              <Label className="mb-1.5">{isFr ? "Nombre d'enfants" : "عدد الأطفال"}</Label>
               <Input
                 type="number"
                 min={0}
@@ -188,12 +234,15 @@ export function HelpRequestForm() {
           </div>
 
           <div>
-            <Label className="mb-1.5">حالة السكن (اختياري)</Label>
-            <Input placeholder="مثال: متضرر جزئيًا، محترق كليًا..." {...register("housing_status")} />
+            <Label className="mb-1.5">{isFr ? "État du logement (facultatif)" : "حالة السكن (اختياري)"}</Label>
+            <Input
+              placeholder={isFr ? "Ex: Partiellement endommagé, détruit..." : "مثال: متضرر جزئيًا، محترق كليًا..."}
+              {...register("housing_status")}
+            />
           </div>
 
           <div>
-            <Label className="mb-2">هل السكن صالح للسكن؟</Label>
+            <Label className="mb-2">{isFr ? "Le logement est-il habitable ?" : "هل السكن صالح للسكن؟"}</Label>
             <RadioGroup
               value={watch("is_housing_habitable")}
               onValueChange={(v: string | null) =>
@@ -202,13 +251,13 @@ export function HelpRequestForm() {
               className="flex gap-4"
             >
               <label className="flex items-center gap-1.5 text-sm">
-                <RadioGroupItem value="yes" /> نعم
+                <RadioGroupItem value="yes" /> {isFr ? "Oui" : "نعم"}
               </label>
               <label className="flex items-center gap-1.5 text-sm">
-                <RadioGroupItem value="no" /> لا
+                <RadioGroupItem value="no" /> {isFr ? "Non" : "لا"}
               </label>
               <label className="flex items-center gap-1.5 text-sm">
-                <RadioGroupItem value="unknown" /> غير متأكد
+                <RadioGroupItem value="unknown" /> {isFr ? "Incertain" : "غير متأكد"}
               </label>
             </RadioGroup>
           </div>
@@ -218,10 +267,13 @@ export function HelpRequestForm() {
               checked={hasInjuries}
               onCheckedChange={(v) => setValue("has_injuries", Boolean(v))}
             />
-            توجد إصابات في الأسرة
+            {isFr ? "Blessures constatées dans la famille" : "توجد إصابات في الأسرة"}
           </label>
           {hasInjuries && (
-            <Input placeholder="تفاصيل مختصرة (اختياري)" {...register("injuries_note")} />
+            <Input
+              placeholder={isFr ? "Détails des blessures (facultatif)" : "تفاصيل مختصرة (اختياري)"}
+              {...register("injuries_note")}
+            />
           )}
 
           <label className="flex items-center gap-2 text-sm">
@@ -229,10 +281,13 @@ export function HelpRequestForm() {
               checked={needsMedical}
               onCheckedChange={(v) => setValue("needs_medical", Boolean(v))}
             />
-            توجد حاجة طبية
+            {isFr ? "Besoin de soins médicaux d'urgence" : "توجد حاجة طبية"}
           </label>
           {needsMedical && (
-            <Input placeholder="تفاصيل مختصرة (اختياري)" {...register("medical_note")} />
+            <Input
+              placeholder={isFr ? "Détails des besoins médicaux (facultatif)" : "تفاصيل مختصرة (اختياري)"}
+              {...register("medical_note")}
+            />
           )}
 
           <label className="flex items-center gap-2 text-sm">
@@ -240,7 +295,7 @@ export function HelpRequestForm() {
               checked={watch("lost_livestock")}
               onCheckedChange={(v) => setValue("lost_livestock", Boolean(v))}
             />
-            فقدت الأسرة الماشية
+            {isFr ? "Perte de bétail / animaux" : "فقدت الأسرة الماشية"}
           </label>
 
           <label className="flex items-center gap-2 text-sm">
@@ -248,14 +303,14 @@ export function HelpRequestForm() {
               checked={watch("lost_income")}
               onCheckedChange={(v) => setValue("lost_income", Boolean(v))}
             />
-            فقدت الأسرة مصدر الدخل
+            {isFr ? "Perte de la source de revenu" : "فقدت الأسرة مصدر الدخل"}
           </label>
         </CardContent>
       </Card>
 
       <Card>
         <CardContent className="space-y-4 px-5">
-          <h2 className="font-bold">ما الذي تحتاجه الأسرة؟</h2>
+          <h2 className="font-bold">{isFr ? "De quoi la famille a-t-elle besoin ?" : "ما الذي تحتاجه الأسرة؟"}</h2>
           <div className="grid grid-cols-2 gap-2 sm:grid-cols-3">
             {needCategoryOptions.map((opt) => (
               <label key={opt.value} className="flex items-center gap-2 text-sm">
@@ -263,7 +318,7 @@ export function HelpRequestForm() {
                   checked={neededCategories?.includes(opt.value)}
                   onCheckedChange={() => toggleCategory(opt.value)}
                 />
-                {opt.label}
+                {isFr ? (categoryLabelsFr[opt.value] ?? opt.label) : opt.label}
               </label>
             ))}
           </div>
@@ -271,7 +326,7 @@ export function HelpRequestForm() {
             <p className="text-sm text-destructive">{errors.needed_categories.message}</p>
           )}
           <div>
-            <Label className="mb-1.5">تفاصيل إضافية (اختياري)</Label>
+            <Label className="mb-1.5">{isFr ? "Précisions ou besoins spécifiques (facultatif)" : "تفاصيل إضافية (اختياري)"}</Label>
             <Textarea {...register("other_needs_note")} />
           </div>
         </CardContent>
@@ -285,7 +340,7 @@ export function HelpRequestForm() {
 
       <Button type="submit" size="lg" className="w-full" disabled={submitting}>
         {submitting && <Loader2 className="size-4 animate-spin" />}
-        إرسال الطلب
+        {isFr ? "Envoyer la demande" : "إرسال الطلب"}
       </Button>
     </form>
   );

@@ -16,6 +16,7 @@ import {
 import { CategoryIcon } from "@/components/shared/category-icon";
 import { splitNeedNotes } from "@/lib/notes";
 import type { PointStatus, VerificationLevel } from "@/lib/constants";
+import type { AvailableLocale } from "@/i18n/locales";
 
 export interface PointCardData {
   id: string;
@@ -35,10 +36,17 @@ export interface PointCardData {
   notes: string | null;
 }
 
-const kindLabel: Record<PointCardData["kind"], string> = {
-  collection_point: "نقطة تجميع",
-  relief_hub: "مركز استقبال",
-  shelter: "مركز إيواء",
+const kindLabelsByLocale: Record<AvailableLocale, Record<PointCardData["kind"], string>> = {
+  ar: {
+    collection_point: "نقطة تجميع",
+    relief_hub: "مركز استقبال",
+    shelter: "مركز إيواء",
+  },
+  fr: {
+    collection_point: "Point de collecte",
+    relief_hub: "Centre d'accueil",
+    shelter: "Centre d'hébergement",
+  },
 };
 
 const kindDot: Record<PointCardData["kind"], string> = {
@@ -47,9 +55,16 @@ const kindDot: Record<PointCardData["kind"], string> = {
   shelter: "bg-[#7c3aed]",
 };
 
-export function PointCard({ point }: { point: PointCardData }) {
+export function PointCard({
+  point,
+  locale = "ar",
+}: {
+  point: PointCardData;
+  locale?: AvailableLocale;
+}) {
   const [open, setOpen] = useState(false);
   const { detail, source } = splitNeedNotes(point.notes);
+  const isFr = locale === "fr";
 
   const directionsUrl =
     point.lat != null && point.lng != null
@@ -57,6 +72,9 @@ export function PointCard({ point }: { point: PointCardData }) {
       : `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(
           `${point.name} ${point.commune} ${point.wilaya}`,
         )}`;
+
+  const kindLabel = kindLabelsByLocale[locale]?.[point.kind] ?? kindLabelsByLocale.ar[point.kind];
+  const wilayaText = isFr ? `Wilaya de ${point.wilaya}` : `ولاية ${point.wilaya}`;
 
   return (
     <>
@@ -69,7 +87,7 @@ export function PointCard({ point }: { point: PointCardData }) {
             <div className="min-w-0">
               <p className="flex items-center gap-1.5 text-xs font-semibold text-muted-foreground">
                 <span className={`size-2 rounded-full ${kindDot[point.kind]}`} aria-hidden />
-                {kindLabel[point.kind]}
+                {kindLabel}
               </p>
               <p className="mt-0.5 font-bold leading-tight">{point.name}</p>
             </div>
@@ -78,7 +96,7 @@ export function PointCard({ point }: { point: PointCardData }) {
 
           <p className="flex items-start gap-1.5 text-sm text-muted-foreground">
             <MapPin className="mt-0.5 size-3.5 shrink-0" />
-            {point.address ?? `${point.commune}، ولاية ${point.wilaya}`}
+            {point.address ?? `${point.commune}، ${wilayaText}`}
           </p>
 
           {point.openingHours && (
@@ -88,7 +106,7 @@ export function PointCard({ point }: { point: PointCardData }) {
           )}
 
           {point.acceptedCategories && point.acceptedCategories.length > 0 && (
-            <p className="flex flex-wrap gap-1 text-base" aria-label="المواد المقبولة">
+            <p className="flex flex-wrap gap-1 text-base" aria-label={isFr ? "Articles acceptés" : "المواد المقبولة"}>
               {point.acceptedCategories.map((slug) => (
                 <span key={slug} title={slug}>
                   <CategoryIcon slug={slug} className="size-4" />
@@ -98,7 +116,7 @@ export function PointCard({ point }: { point: PointCardData }) {
           )}
 
           <div className="flex items-center justify-between gap-2 pt-1">
-            <VerificationBadge level={point.verificationLevel} />
+            <VerificationBadge level={point.verificationLevel} locale={locale} />
             {point.phone && (
               <a
                 href={`tel:${point.phone.replace(/\s/g, "")}`}
@@ -119,7 +137,7 @@ export function PointCard({ point }: { point: PointCardData }) {
           <DialogHeader>
             <p className="flex items-center gap-1.5 text-xs font-medium text-muted-foreground">
               <span className={`size-2 rounded-full ${kindDot[point.kind]}`} aria-hidden />
-              {kindLabel[point.kind]}
+              {kindLabel}
             </p>
             <DialogTitle className="flex items-center gap-2">
               {point.kind === "shelter" && <Home className="size-4 text-[#7c3aed]" />}
@@ -127,13 +145,13 @@ export function PointCard({ point }: { point: PointCardData }) {
             </DialogTitle>
             <DialogDescription className="flex items-start gap-1">
               <MapPin className="mt-0.5 size-3.5 shrink-0" />
-              {point.address ?? `${point.commune}، ولاية ${point.wilaya}`}
+              {point.address ?? `${point.commune}، ${wilayaText}`}
             </DialogDescription>
           </DialogHeader>
 
           <div className="flex flex-wrap items-center gap-2">
             <PointStatusBadge status={point.status} />
-            <VerificationBadge level={point.verificationLevel} />
+            <VerificationBadge level={point.verificationLevel} locale={locale} />
           </div>
 
           {point.openingHours && (
@@ -151,7 +169,9 @@ export function PointCard({ point }: { point: PointCardData }) {
 
           {point.acceptedCategories && point.acceptedCategories.length > 0 && (
             <div>
-              <p className="mb-1.5 text-xs font-semibold text-muted-foreground">المواد المقبولة</p>
+              <p className="mb-1.5 text-xs font-semibold text-muted-foreground">
+                {isFr ? "Articles acceptés" : "المواد المقبولة"}
+              </p>
               <div className="flex flex-wrap gap-1.5">
                 {point.acceptedCategories.map((slug) => (
                   <span
@@ -166,7 +186,11 @@ export function PointCard({ point }: { point: PointCardData }) {
           )}
 
           {detail && <p className="text-sm leading-relaxed text-muted-foreground">{detail}</p>}
-          {source && <p className="text-xs text-muted-foreground">{source}</p>}
+          {source && (
+            <p className="text-xs text-muted-foreground">
+              {isFr ? `Source : ${source}` : `المصدر: ${source}`}
+            </p>
+          )}
 
           <div className="flex gap-2">
             {point.phone ? (
@@ -175,7 +199,7 @@ export function PointCard({ point }: { point: PointCardData }) {
                 className="flex-1"
                 render={<a href={`tel:${point.phone.replace(/\s/g, "")}`} />}
               >
-                <Phone className="size-4" /> اتصال
+                <Phone className="size-4" /> {isFr ? "Appeler" : "اتصال"}
               </Button>
             ) : null}
             <Button
@@ -184,7 +208,7 @@ export function PointCard({ point }: { point: PointCardData }) {
               className="flex-1"
               render={<a href={directionsUrl} target="_blank" rel="noopener noreferrer" />}
             >
-              <Navigation className="size-4" /> الاتجاهات
+              <Navigation className="size-4" /> {isFr ? "Itinéraire" : "الاتجاهات"}
             </Button>
           </div>
         </DialogContent>
