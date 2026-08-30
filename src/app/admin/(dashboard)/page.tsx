@@ -1,16 +1,30 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import { Users, Gift, Truck, Warehouse, TriangleAlert, UserX } from "lucide-react";
+import { Users, Gift, Truck, Warehouse, TriangleAlert, UserX, Activity } from "lucide-react";
 import { StatCard } from "@/components/shared/stat-card";
 import { Card, CardContent } from "@/components/ui/card";
 import { EmptyState } from "@/components/shared/empty-state";
 import { relativeTimeAr } from "@/lib/constants";
-import { getAdminDashboardStats, getRecentActivity } from "@/lib/data/admin";
+import {
+  getAdminDashboardStats,
+  getRecentActivity,
+  getActivityTrend,
+  getNeedsByPriority,
+  getWeekOverWeekDelta,
+} from "@/lib/data/admin";
+import { ActivityTrendChart } from "@/components/admin/charts/activity-trend-chart";
+import { PriorityBarChart } from "@/components/admin/charts/priority-bar-chart";
 
 export const metadata: Metadata = { title: "نظرة عامة", robots: { index: false } };
 
 export default async function AdminOverviewPage() {
-  const [stats, activity] = await Promise.all([getAdminDashboardStats(), getRecentActivity(8)]);
+  const [stats, activity, trend, priorityCounts, weekDelta] = await Promise.all([
+    getAdminDashboardStats(),
+    getRecentActivity(8),
+    getActivityTrend(14),
+    getNeedsByPriority(),
+    getWeekOverWeekDelta(),
+  ]);
 
   return (
     <div className="space-y-6">
@@ -27,7 +41,12 @@ export default async function AdminOverviewPage() {
           icon={UserX}
           tone="critical"
         />
-        <StatCard label="المساعدات المسجَّلة" value={stats.donationsCount} icon={Gift} />
+        <StatCard
+          label="المساعدات المسجَّلة"
+          value={stats.donationsCount}
+          icon={Gift}
+          trend={{ delta: weekDelta.donationsDeltaPct, label: "هذا الأسبوع" }}
+        />
         <StatCard label="الشحنات النشطة" value={stats.activeShipments} icon={Truck} />
         <StatCard label="نقاط الاستقبال المفتوحة" value={stats.activePoints} icon={Warehouse} />
         <StatCard
@@ -35,7 +54,26 @@ export default async function AdminOverviewPage() {
           value={stats.criticalNeeds}
           icon={TriangleAlert}
           tone="critical"
+          trend={{ delta: weekDelta.needsDeltaPct, label: "احتياجات جديدة هذا الأسبوع" }}
         />
+      </div>
+
+      <div className="grid gap-4 lg:grid-cols-3">
+        <Card className="lg:col-span-2">
+          <CardContent className="px-5">
+            <div className="mb-3 flex items-center gap-2">
+              <Activity className="size-4 text-muted-foreground" />
+              <h2 className="font-bold">وتيرة النشاط — آخر 14 يومًا</h2>
+            </div>
+            <ActivityTrendChart data={trend} />
+          </CardContent>
+        </Card>
+        <Card>
+          <CardContent className="px-5">
+            <h2 className="mb-3 font-bold">الاحتياجات النشطة حسب الأولوية</h2>
+            <PriorityBarChart counts={priorityCounts} />
+          </CardContent>
+        </Card>
       </div>
 
       <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
