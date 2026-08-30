@@ -2,10 +2,12 @@ import { Megaphone } from "lucide-react";
 import { createClient } from "@/lib/supabase/server";
 
 /**
- * شريط الأخبار العاجلة — خلفية حمراء وخط أبيض، يديره الطاقم من لوحة الإدارة.
- * إن لم توجد رسائل مفعّلة يظهر التنبيه الثابت الافتراضي.
+ * شريط الأخبار والتنبيهات العاجلة — يظهر في أعلى الموقع.
+ * نمط ذكي: يظهر في جميع الصفحات فور تفعيل أي خبر عاجل من لوحة الإدارة.
+ * إذا لم توجد رسائل عاجلة:
+ * - يختفي تماماً (return null) للحفاظ على مساحة القراءة ونظافة الاستمارات.
  */
-export async function NewsTicker() {
+export async function NewsTicker({ showFallback = false }: { showFallback?: boolean } = {}) {
   const supabase = await createClient();
   const { data } = await supabase
     .from("announcements")
@@ -17,6 +19,8 @@ export async function NewsTicker() {
   const messages = data ?? [];
 
   if (messages.length === 0) {
+    if (!showFallback) return null;
+
     return (
       <div className="bg-priority-critical text-white">
         <div className="mx-auto flex max-w-6xl items-center justify-center gap-2 px-4 py-2 text-center text-xs sm:text-sm font-medium">
@@ -34,7 +38,7 @@ export async function NewsTicker() {
   const duration = Math.max(25, Math.min(120, Math.round(totalChars / 4)));
 
   return (
-    <div className="bg-priority-critical text-white">
+    <div className="bg-priority-critical text-white border-b border-priority-critical/30">
       <div className="mx-auto flex max-w-6xl items-center justify-center gap-3 px-4 py-2">
         <span className="flex shrink-0 items-center gap-1.5 text-xs sm:text-sm font-bold">
           <Megaphone className="size-4 animate-pulse" />

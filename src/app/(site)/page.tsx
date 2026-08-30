@@ -14,7 +14,6 @@ import {
 } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
 import { LinkButton } from "@/components/shared/link-button";
-import { NewsTicker } from "@/components/shared/news-ticker";
 import { PlatformNotice } from "@/components/shared/platform-notice";
 import { AnimatedCounter } from "@/components/interactive/animated-counter";
 import { siteConfig } from "@/config/site";
@@ -99,8 +98,6 @@ export default async function HomePage() {
 
   return (
     <>
-      <NewsTicker />
-
       {/* ————————————————————————————————— Hero */}
       <section className="relative overflow-hidden border-b border-border bg-gradient-to-b from-algeria-green/10 via-secondary/20 to-background pt-16 pb-20 sm:pt-20 sm:pb-24">
         {/* Ambient Top Glows */}
