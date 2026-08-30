@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { getAllCategories, getAllCollectionPoints } from "@/lib/data/admin";
 import { CreatePointDialog } from "./create-point-dialog";
+import { ExportCollectionPointsCsvButton } from "./export-csv-button";
 import { CollectionPointsList } from "./collection-points-list";
 
 export const metadata: Metadata = { title: "نقاط التجميع", robots: { index: false } };
@@ -17,7 +18,10 @@ export default async function AdminCollectionPointsPage() {
             حيث يسلّم المتبرعون مساعداتهم قبل نقلها إلى ولايات الحملة.
           </p>
         </div>
-        <CreatePointDialog categories={categories} />
+        <div className="flex items-center gap-2">
+          <ExportCollectionPointsCsvButton rows={points} />
+          <CreatePointDialog categories={categories} />
+        </div>
       </div>
 
       <CollectionPointsList points={points} />

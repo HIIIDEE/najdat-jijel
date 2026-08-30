@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { createClient } from "@/lib/supabase/server";
 import { getAllCategories, getAllReliefHubs } from "@/lib/data/admin";
 import { CreateDistributionDialog } from "./create-distribution-dialog";
+import { ExportDistributionsCsvButton } from "./export-csv-button";
 import { DistributionsList } from "./distributions-list";
 
 export const metadata: Metadata = { title: "عمليات التوزيع", robots: { index: false } };
@@ -26,7 +27,10 @@ export default async function AdminDistributionsPage() {
           <h1 className="text-2xl font-bold">عمليات التوزيع</h1>
           <p className="text-sm text-muted-foreground">كل توزيع يخصم تلقائيًا من مخزون المركز.</p>
         </div>
-        <CreateDistributionDialog hubs={hubs} categories={categories} />
+        <div className="flex items-center gap-2">
+          <ExportDistributionsCsvButton rows={rows} />
+          <CreateDistributionDialog hubs={hubs} categories={categories} />
+        </div>
       </div>
 
       <DistributionsList rows={rows} hubs={hubs} />

@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { createClient } from "@/lib/supabase/server";
+import { ExportMedicalCsvButton } from "./export-csv-button";
 import { MedicalList } from "./medical-list";
 
 export const metadata: Metadata = { title: "الأطقم الطبية والبيطرية", robots: { index: false } };
@@ -18,13 +19,16 @@ export default async function AdminMedicalPage() {
 
   return (
     <div className="space-y-6">
-      <div>
-        <h1 className="text-2xl font-bold">الأطقم الطبية والبيطرية</h1>
-        <p className="text-sm text-muted-foreground">
-          {pendingCount === 0
-            ? "لا يوجد متطوعون بانتظار التحقق حاليًا."
-            : `${pendingCount} متطوعًا بانتظار المراجعة والتحقق.`}
-        </p>
+      <div className="flex flex-wrap items-center justify-between gap-3">
+        <div>
+          <h1 className="text-2xl font-bold">الأطقم الطبية والبيطرية</h1>
+          <p className="text-sm text-muted-foreground">
+            {pendingCount === 0
+              ? "لا يوجد متطوعون بانتظار التحقق حاليًا."
+              : `${pendingCount} متطوعًا بانتظار المراجعة والتحقق.`}
+          </p>
+        </div>
+        <ExportMedicalCsvButton rows={rows} />
       </div>
 
       <MedicalList rows={rows} />

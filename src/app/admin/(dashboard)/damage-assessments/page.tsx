@@ -3,6 +3,7 @@ import { createClient } from "@/lib/supabase/server";
 import { findWilayaByName, haversineDistanceKm } from "@/lib/wilayas";
 import { getSignedDamagePhotoUrl } from "@/actions/damage-assessments";
 import { type ArtisanCandidate } from "./assign-artisan-select";
+import { ExportDamageAssessmentsCsvButton } from "./export-csv-button";
 import { DamageAssessmentsList } from "./damage-assessments-list";
 
 export const metadata: Metadata = { title: "تقييمات الأضرار", robots: { index: false } };
@@ -66,13 +67,16 @@ export default async function AdminDamageAssessmentsPage() {
 
   return (
     <div className="space-y-6">
-      <div>
-        <h1 className="text-2xl font-bold">تقييمات الأضرار</h1>
-        <p className="text-sm text-muted-foreground">
-          {pendingCount === 0
-            ? "لا توجد تقييمات بانتظار المراجعة حاليًا."
-            : `${pendingCount} تقييمًا بانتظار المراجعة.`}
-        </p>
+      <div className="flex flex-wrap items-center justify-between gap-3">
+        <div>
+          <h1 className="text-2xl font-bold">تقييمات الأضرار</h1>
+          <p className="text-sm text-muted-foreground">
+            {pendingCount === 0
+              ? "لا توجد تقييمات بانتظار المراجعة حاليًا."
+              : `${pendingCount} تقييمًا بانتظار المراجعة.`}
+          </p>
+        </div>
+        <ExportDamageAssessmentsCsvButton rows={enriched} />
       </div>
 
       <DamageAssessmentsList rows={enriched} />

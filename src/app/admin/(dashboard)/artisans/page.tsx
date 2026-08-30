@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { createClient } from "@/lib/supabase/server";
+import { ExportArtisansCsvButton } from "./export-csv-button";
 import { ArtisansList } from "./artisans-list";
 
 export const metadata: Metadata = { title: "الحرفيون المتطوعون", robots: { index: false } };
@@ -18,13 +19,16 @@ export default async function AdminArtisansPage() {
 
   return (
     <div className="space-y-6">
-      <div>
-        <h1 className="text-2xl font-bold">الحرفيون المتطوعون</h1>
-        <p className="text-sm text-muted-foreground">
-          {pendingCount === 0
-            ? "لا يوجد حرفيون بانتظار التحقق حاليًا."
-            : `${pendingCount} حرفيًا بانتظار المراجعة والتحقق.`}
-        </p>
+      <div className="flex flex-wrap items-center justify-between gap-3">
+        <div>
+          <h1 className="text-2xl font-bold">الحرفيون المتطوعون</h1>
+          <p className="text-sm text-muted-foreground">
+            {pendingCount === 0
+              ? "لا يوجد حرفيون بانتظار التحقق حاليًا."
+              : `${pendingCount} حرفيًا بانتظار المراجعة والتحقق.`}
+          </p>
+        </div>
+        <ExportArtisansCsvButton rows={rows} />
       </div>
 
       <ArtisansList rows={rows} />

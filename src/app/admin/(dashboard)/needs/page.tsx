@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { createClient } from "@/lib/supabase/server";
 import { getAllCategories } from "@/lib/data/admin";
 import { CreateNeedDialog } from "./create-need-dialog";
+import { ExportNeedsCsvButton } from "./export-csv-button";
 import { NeedsList } from "./needs-list";
 
 export const metadata: Metadata = { title: "الاحتياجات", robots: { index: false } };
@@ -27,7 +28,10 @@ export default async function AdminNeedsPage() {
             الاحتياجات المُعلَّمة (auto) أُنشئت تلقائيًا من انخفاض المخزون تحت الحد الأدنى.
           </p>
         </div>
-        <CreateNeedDialog categories={categories} />
+        <div className="flex items-center gap-2">
+          <ExportNeedsCsvButton rows={rows} />
+          <CreateNeedDialog categories={categories} />
+        </div>
       </div>
 
       <NeedsList rows={rows} />
