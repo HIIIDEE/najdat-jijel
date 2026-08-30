@@ -1,5 +1,6 @@
 import { cn } from "@/lib/utils";
-import { pointStatusLabels, type PointStatus } from "@/lib/constants";
+import { getPointStatusLabel, type PointStatus } from "@/lib/constants";
+import type { AvailableLocale } from "@/i18n/locales";
 
 const styles: Record<PointStatus, string> = {
   open: "bg-status-open/10 text-status-open border-status-open/30",
@@ -15,7 +16,15 @@ const dotStyles: Record<PointStatus, string> = {
   closed: "bg-status-closed",
 };
 
-export function PointStatusBadge({ status, className }: { status: PointStatus; className?: string }) {
+export function PointStatusBadge({
+  status,
+  locale = "ar",
+  className,
+}: {
+  status: PointStatus;
+  locale?: AvailableLocale;
+  className?: string;
+}) {
   return (
     <span
       className={cn(
@@ -25,7 +34,7 @@ export function PointStatusBadge({ status, className }: { status: PointStatus; c
       )}
     >
       <span className={cn("size-1.5 rounded-full", dotStyles[status])} aria-hidden />
-      {pointStatusLabels[status]}
+      {getPointStatusLabel(status, locale)}
     </span>
   );
 }

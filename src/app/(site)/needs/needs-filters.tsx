@@ -3,7 +3,7 @@
 import { useRouter, useSearchParams, usePathname } from "next/navigation";
 import { X } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { categoryIcon, getPriorityLabel, priorityIcon, type PriorityLevel } from "@/lib/constants";
+import { categoryIcon, getCategoryName, getPriorityLabel, priorityIcon, type PriorityLevel } from "@/lib/constants";
 import { Package } from "lucide-react";
 import { cn } from "@/lib/utils";
 import type { Database } from "@/types/database";
@@ -117,13 +117,14 @@ export function NeedsFilters({
         <div className="flex flex-wrap gap-2">
           {categories.map((c) => {
             const Icon = categoryIcon[c.slug] ?? Package;
+            const catName = getCategoryName(c.slug, c.name_ar, locale);
             return (
               <Chip
                 key={c.id}
                 active={current.category === c.slug}
                 onClick={() => toggle("category", c.slug)}
               >
-                <Icon className="size-3.5" aria-hidden /> {c.name_ar}
+                <Icon className="size-3.5" aria-hidden /> {catName}
               </Chip>
             );
           })}

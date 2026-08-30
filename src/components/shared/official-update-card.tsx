@@ -20,7 +20,8 @@ import {
   ChevronUp,
   FileText,
 } from "lucide-react";
-import { relativeTimeAr } from "@/lib/constants";
+import { formatRelativeTime } from "@/lib/constants";
+import type { AvailableLocale } from "@/i18n/locales";
 
 export interface OfficialUpdateItem {
   id?: string;
@@ -36,6 +37,7 @@ const authorityStyles: Record<
   string,
   {
     name: string;
+    name_fr: string;
     icon: typeof Flame;
     badgeBg: string;
     border: string;
@@ -44,6 +46,7 @@ const authorityStyles: Record<
 > = {
   protection_civile_jijel: {
     name: "الحماية المدنية - جيجل",
+    name_fr: "Protection Civile - Jijel",
     icon: Flame,
     badgeBg: "bg-red-500/10 text-red-600 dark:text-red-400 border-red-500/20",
     border: "border-red-500/30 hover:border-red-500/60",
@@ -51,6 +54,7 @@ const authorityStyles: Record<
   },
   protection_civile: {
     name: "الحماية المدنية (الوطنية)",
+    name_fr: "Protection Civile (Nationale)",
     icon: Flame,
     badgeBg: "bg-red-500/10 text-red-600 dark:text-red-400 border-red-500/20",
     border: "border-red-500/30 hover:border-red-500/60",
@@ -58,6 +62,7 @@ const authorityStyles: Record<
   },
   gendarmerie: {
     name: "الدرك الوطني / طريقي",
+    name_fr: "Gendarmerie / Tariki",
     icon: Truck,
     badgeBg: "bg-emerald-500/10 text-emerald-700 dark:text-emerald-300 border-emerald-500/20",
     border: "border-emerald-500/30 hover:border-emerald-500/60",
@@ -65,6 +70,7 @@ const authorityStyles: Record<
   },
   forets: {
     name: "محافظة الغابات",
+    name_fr: "Conservation des Forêts",
     icon: Trees,
     badgeBg: "bg-green-600/10 text-green-800 dark:text-green-300 border-green-600/20",
     border: "border-green-600/30 hover:border-green-600/60",
@@ -72,6 +78,7 @@ const authorityStyles: Record<
   },
   police: {
     name: "الأمن الوطني",
+    name_fr: "Sûreté Nationale",
     icon: ShieldAlert,
     badgeBg: "bg-blue-600/10 text-blue-700 dark:text-blue-300 border-blue-600/20",
     border: "border-blue-600/30 hover:border-blue-600/60",
@@ -79,6 +86,7 @@ const authorityStyles: Record<
   },
   wilaya: {
     name: "خلية الأزمة الولائية",
+    name_fr: "Cellule de Crise de la Wilaya",
     icon: Building2,
     badgeBg: "bg-amber-500/10 text-amber-800 dark:text-amber-300 border-amber-500/20",
     border: "border-amber-500/30 hover:border-amber-500/60",
@@ -86,34 +94,40 @@ const authorityStyles: Record<
   },
 };
 
-const categoryTags: Record<string, { label: string; icon: typeof Flame; style: string }> = {
+const categoryTags: Record<string, { label: string; label_fr: string; icon: typeof Flame; style: string }> = {
   fire_alert: {
     label: "بلاغ حرائق وإخماد",
+    label_fr: "Incendies & Extinction",
     icon: Flame,
     style: "bg-priority-critical/15 text-priority-critical border-priority-critical/30",
   },
   road_status: {
     label: "حالة الطرقات والمعابر",
+    label_fr: "État des routes & accès",
     icon: Truck,
     style: "bg-blue-500/15 text-blue-700 dark:text-blue-300 border-blue-500/30",
   },
   weather_warning: {
     label: "إنذار جوي ونشرية خاصة",
+    label_fr: "Alerte météo (BMS)",
     icon: CloudAlert,
     style: "bg-amber-500/15 text-amber-800 dark:text-amber-300 border-amber-500/30",
   },
   safety_guidelines: {
     label: "توجيهات السلامة والإجلاء",
+    label_fr: "Consignes de sécurité",
     icon: Megaphone,
     style: "bg-teal-500/15 text-teal-700 dark:text-teal-300 border-teal-500/30",
   },
   statement: {
     label: "بيان رسمي موثّق",
+    label_fr: "Communiqué officiel vérifié",
     icon: ShieldCheck,
     style: "bg-algeria-green/15 text-algeria-green border-algeria-green/30",
   },
   news: {
     label: "خبر ميداني",
+    label_fr: "Actualité terrain",
     icon: Radio,
     style: "bg-secondary text-secondary-foreground border-border",
   },
@@ -129,17 +143,24 @@ function inferAuthority(sourceName: string, titleText = ""): string {
   return "wilaya";
 }
 
-function inferWilaya(text: string): string | null {
-  if (text.includes("جيجل") || text.includes("العوانة") || text.includes("الميلية") || text.includes("زيامة")) return "ولاية جيجل";
-  if (text.includes("بجاية") || text.includes("تيشي") || text.includes("أوقاس")) return "ولاية بجاية";
-  if (text.includes("سكيكدة") || text.includes("القل")) return "ولاية سكيكدة";
-  if (text.includes("ميلة") || text.includes("فرجيوة")) return "ولاية ميلة";
+function inferWilaya(text: string, isFr = false): string | null {
+  if (text.includes("جيجل") || text.includes("العوانة") || text.includes("الميلية") || text.includes("زيامة")) return isFr ? "Wilaya de Jijel" : "ولاية جيجل";
+  if (text.includes("بجاية") || text.includes("تيشي") || text.includes("أوقاس")) return isFr ? "Wilaya de Béjaïa" : "ولاية بجاية";
+  if (text.includes("سكيكدة") || text.includes("القل")) return isFr ? "Wilaya de Skikda" : "ولاية سكيكدة";
+  if (text.includes("ميلة") || text.includes("فرجيوة")) return isFr ? "Wilaya de Mila" : "ولاية ميلة";
   return null;
 }
 
-export function OfficialUpdateCard({ update }: { update: OfficialUpdateItem }) {
+export function OfficialUpdateCard({
+  update,
+  locale = "ar",
+}: {
+  update: OfficialUpdateItem;
+  locale?: AvailableLocale;
+}) {
   const [copied, setCopied] = useState(false);
   const [isExpanded, setIsExpanded] = useState(false);
+  const isFr = locale === "fr";
 
   const fullText = `${update.title} ${update.body || ""}`;
   const authorityKey = inferAuthority(update.source || "", update.title);
@@ -147,7 +168,7 @@ export function OfficialUpdateCard({ update }: { update: OfficialUpdateItem }) {
   const AuthIcon = auth.icon;
   const tag = categoryTags[update.update_type || "statement"] || categoryTags.statement;
   const TagIcon = tag.icon;
-  const wilaya = inferWilaya(fullText);
+  const wilaya = inferWilaya(fullText, isFr);
 
   const isUrgent =
     update.title.includes("عاجل") ||
@@ -155,7 +176,7 @@ export function OfficialUpdateCard({ update }: { update: OfficialUpdateItem }) {
     update.update_type === "fire_alert";
 
   const handleShare = async () => {
-    const textToShare = `🚨 *${update.title}*\n\n${update.body || ""}\n\n🏛️ المصدر: ${update.source}\n🔗 منصة هبة الجزائر: https://habadz.life`;
+    const textToShare = `🚨 *${update.title}*\n\n${update.body || ""}\n\n🏛️ ${isFr ? "Source" : "المصدر"}: ${update.source}\n🔗 ${isFr ? "Plateforme Hiba Algérie" : "منصة هبة الجزائر"}: https://habadz.life`;
     if (navigator.share) {
       try {
         await navigator.share({
@@ -195,14 +216,14 @@ export function OfficialUpdateCard({ update }: { update: OfficialUpdateItem }) {
             {/* Authority Badge */}
             <span className={`inline-flex items-center gap-1.5 rounded-full border px-3 py-1 text-xs font-bold ${auth.badgeBg}`}>
               <AuthIcon className="size-3.5" />
-              <span>{auth.name}</span>
+              <span>{isFr ? auth.name_fr : auth.name}</span>
               <ShieldCheck className="size-3 text-algeria-green" />
             </span>
 
             {/* Category Tag */}
             <span className={`inline-flex items-center gap-1 rounded-full border px-2.5 py-0.5 text-[11px] font-semibold ${tag.style}`}>
               <TagIcon className="size-3" />
-              <span>{tag.label}</span>
+              <span>{isFr ? tag.label_fr : tag.label}</span>
             </span>
 
             {/* Wilaya Tag */}
@@ -215,13 +236,13 @@ export function OfficialUpdateCard({ update }: { update: OfficialUpdateItem }) {
 
             {isUrgent && (
               <span className="inline-flex items-center gap-1 rounded-full bg-priority-critical px-2 py-0.5 text-[10px] font-bold text-white shadow-xs animate-pulse">
-                عاجل
+                {isFr ? "URGENT" : "عاجل"}
               </span>
             )}
           </div>
 
           <time dateTime={update.published_at} className="text-xs font-medium text-muted-foreground whitespace-nowrap">
-            {relativeTimeAr(update.published_at)}
+            {formatRelativeTime(update.published_at, locale)}
           </time>
         </div>
 
@@ -253,7 +274,7 @@ export function OfficialUpdateCard({ update }: { update: OfficialUpdateItem }) {
                 onClick={() => setIsExpanded(!isExpanded)}
                 className="mt-1.5 inline-flex items-center gap-1 text-[11px] font-bold text-primary hover:underline cursor-pointer"
               >
-                <span>{isExpanded ? "عرض أقل" : "قراءة كامل البلاغ"}</span>
+                <span>{isExpanded ? (isFr ? "Réduire" : "عرض أقل") : (isFr ? "Lire la suite" : "قراءة كامل البلاغ")}</span>
                 {isExpanded ? <ChevronUp className="size-3" /> : <ChevronDown className="size-3" />}
               </button>
             )}
@@ -264,7 +285,7 @@ export function OfficialUpdateCard({ update }: { update: OfficialUpdateItem }) {
       {/* Footer Actions & Source Link pinned to bottom */}
       <div className="mt-auto pt-4 border-t border-border/40 flex flex-wrap items-center justify-between gap-3 text-xs">
         <span className="text-muted-foreground font-medium flex items-center gap-1.5">
-          <span className="text-[11px] text-muted-foreground/70">المصدر:</span>
+          <span className="text-[11px] text-muted-foreground/70">{isFr ? "Source :" : "المصدر:"}</span>
           <strong className="text-foreground truncate max-w-[200px]">{update.source}</strong>
         </span>
 
@@ -276,7 +297,7 @@ export function OfficialUpdateCard({ update }: { update: OfficialUpdateItem }) {
               className="inline-flex items-center gap-1 rounded-lg border border-border/80 bg-secondary/60 px-2.5 py-1.5 text-xs font-bold text-foreground hover:bg-secondary transition-colors"
             >
               <FileText className="size-3.5 text-algeria-green" />
-              <span className="hidden sm:inline">تفاصيل البيان</span>
+              <span className="hidden sm:inline">{isFr ? "Détails" : "تفاصيل البيان"}</span>
             </Link>
           )}
 
@@ -285,17 +306,17 @@ export function OfficialUpdateCard({ update }: { update: OfficialUpdateItem }) {
             type="button"
             onClick={handleShare}
             className="inline-flex items-center gap-1 rounded-lg border border-border/80 bg-secondary/60 px-2.5 py-1.5 text-xs font-bold text-foreground hover:bg-secondary transition-colors cursor-pointer"
-            title="مشاركة البلاغ الموثق"
+            title={isFr ? "Partager le communiqué vérifié" : "مشاركة البلاغ الموثق"}
           >
             {copied ? (
               <>
                 <Check className="size-3.5 text-algeria-green" />
-                <span className="text-algeria-green">تم النسخ</span>
+                <span className="text-algeria-green">{isFr ? "Copié" : "تم النسخ"}</span>
               </>
             ) : (
               <>
                 <Share2 className="size-3.5" />
-                <span>مشاركة</span>
+                <span>{isFr ? "Partager" : "مشاركة"}</span>
               </>
             )}
           </button>
@@ -308,7 +329,7 @@ export function OfficialUpdateCard({ update }: { update: OfficialUpdateItem }) {
               rel="noopener noreferrer"
               className="inline-flex items-center gap-1 rounded-lg bg-primary/10 px-3 py-1.5 text-xs font-bold text-primary hover:bg-primary/20 transition-colors"
             >
-              <span>المنشور الأصلي</span>
+              <span>{isFr ? "Lien officiel" : "المنشور الأصلي"}</span>
               <ExternalLink className="size-3" />
             </a>
           )}

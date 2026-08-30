@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import { StatCard } from "@/components/shared/stat-card";
 import { EmptyState } from "@/components/shared/empty-state";
 import { Card, CardContent } from "@/components/ui/card";
-import { formatQuantity, getUnitLabel } from "@/lib/constants";
+import { formatQuantity, getCategoryName, getUnitLabel } from "@/lib/constants";
 import { CategoryIcon } from "@/components/shared/category-icon";
 import {
   getStatDistributionsByCategory,
@@ -65,7 +65,7 @@ export default async function TransparencyPage() {
               <CardContent className="flex items-center justify-between px-5">
                 <span className="flex items-center gap-2 font-medium">
                   <CategoryIcon slug={row.slug} className="size-4" />
-                  {row.name_ar}
+                  {getCategoryName(row.slug, row.name_ar, locale)}
                 </span>
                 <span className="font-bold tabular-nums">
                   {formatQuantity(Number(row.total_quantity), locale)} {getUnitLabel(row.unit, locale)}
@@ -97,7 +97,7 @@ export default async function TransparencyPage() {
                 <div className="flex items-center justify-between">
                   <span className="flex items-center gap-2 font-medium">
                     <CategoryIcon slug={row.slug} className="size-4" />
-                    {row.name_ar}
+                    {getCategoryName(row.slug, row.name_ar, locale)}
                   </span>
                   <span className="font-bold tabular-nums">
                     {formatQuantity(Number(row.total_quantity), locale)} {getUnitLabel(row.unit, locale)}

@@ -40,6 +40,16 @@ interface MedicalVolunteer {
   phone?: string;
 }
 
+function wilayaFr(w: string): string {
+  const map: Record<string, string> = {
+    "جيجل": "Jijel",
+    "بجاية": "Béjaïa",
+    "سكيكدة": "Skikda",
+    "ميلة": "Mila",
+  };
+  return map[w] || w;
+}
+
 export default async function HomePage() {
   const locale = await getLocale();
   const t = await getDictionary(locale);
@@ -154,21 +164,21 @@ export default async function HomePage() {
               >
                 <Phone className="size-3 animate-pulse" />
                 <span>14</span>
-                <span className="font-semibold text-[10px]">الحماية</span>
+                <span className="font-semibold text-[10px]">{isFr ? "Protection" : "الحماية"}</span>
               </a>
               <a
                 href="tel:1021"
                 className="inline-flex items-center gap-1 rounded-full border border-green-600/30 bg-green-600/10 px-2.5 py-1 text-[11px] font-extrabold text-green-700 dark:text-green-300 shadow-xs hover:bg-green-600/20 active:scale-95 transition-all"
               >
                 <span>1021</span>
-                <span className="font-semibold text-[10px]">الغابات</span>
+                <span className="font-semibold text-[10px]">{isFr ? "Forêts" : "الغابات"}</span>
               </a>
               <a
                 href="tel:1055"
                 className="inline-flex items-center gap-1 rounded-full border border-blue-600/30 bg-blue-600/10 px-2.5 py-1 text-[11px] font-extrabold text-blue-700 dark:text-blue-300 shadow-xs hover:bg-blue-600/20 active:scale-95 transition-all"
               >
                 <span>1055</span>
-                <span className="font-semibold text-[10px]">الدرك</span>
+                <span className="font-semibold text-[10px]">{isFr ? "Gendarmerie" : "الدرك"}</span>
               </a>
             </div>
           </div>
@@ -272,7 +282,7 @@ export default async function HomePage() {
             <div className="grid grid-cols-1 gap-3.5 sm:gap-4 md:grid-cols-2 items-stretch">
               {updates.slice(0, 4).map((u, i) => (
                 <div key={u.id} className={`h-full ${i >= 2 ? "hidden md:flex flex-col" : "flex flex-col"}`}>
-                  <OfficialUpdateCard update={u} />
+                  <OfficialUpdateCard update={u} locale={locale} />
                 </div>
               ))}
             </div>
@@ -297,7 +307,7 @@ export default async function HomePage() {
                   {t.home.affectedAreas.title}
                 </h2>
                 <p className="mt-1 text-xs sm:text-sm text-muted-foreground leading-relaxed">
-                  {areas.length} {t.home.affectedAreas.subtitleCount} {areaWilayas.length} {t.home.affectedAreas.subtitleWilayas} — اضغط على ولاية أو بلدية لعرض تفاصيلها.
+                  {areas.length} {t.home.affectedAreas.subtitleCount} {areaWilayas.length} {t.home.affectedAreas.subtitleWilayas} {isFr ? "— Cliquez sur une wilaya ou commune pour les détails." : "— اضغط على ولاية أو بلدية لعرض تفاصيلها."}
                 </p>
               </div>
               <LinkButton href="/affected-areas" variant="outline" size="sm" className="hidden sm:inline-flex">
@@ -319,11 +329,11 @@ export default async function HomePage() {
                     className="group flex items-center justify-between rounded-2xl border border-border bg-card p-4 sm:p-5 transition-all hover:-translate-y-0.5 hover:border-priority-critical hover:shadow-md"
                   >
                     <div className="text-start">
-                      <p className="text-sm sm:text-base font-extrabold text-foreground">{t.home.affectedAreas.wilayaPrefix} {w}</p>
+                      <p className="text-sm sm:text-base font-extrabold text-foreground">{t.home.affectedAreas.wilayaPrefix} {isFr ? wilayaFr(w) : w}</p>
                       <p className="mt-0.5 text-[11px] sm:text-xs text-muted-foreground">
                         {severe > 0
-                          ? `${severe} منها أضرار جسيمة أو إجلاء`
-                          : `${items.length} بؤر مرصودة`}
+                          ? (isFr ? `${severe} avec dégâts majeurs ou évacuation` : `${severe} منها أضرار جسيمة أو إجلاء`)
+                          : (isFr ? `${items.length} zones répertoriées` : `${items.length} بؤر مرصودة`)}
                       </p>
                     </div>
                     <span className="text-2xl sm:text-3xl font-black tabular-nums text-priority-critical ms-2">
@@ -394,7 +404,7 @@ export default async function HomePage() {
                   <p className="font-bold text-sm sm:text-base leading-snug">{s.name}</p>
                   <p className="flex items-start gap-1.5 text-xs text-muted-foreground">
                     <MapPin className="mt-0.5 size-3.5 shrink-0 text-muted-foreground/70" />
-                    {s.address ?? `${s.commune}، ولاية ${s.wilaya}`}
+                    {s.address ?? (isFr ? `${s.commune}, Wilaya de ${s.wilaya}` : `${s.commune}، ولاية ${s.wilaya}`)}
                   </p>
                   {s.capacity_note && (
                     <p className="text-[11px] sm:text-xs text-muted-foreground/90 leading-relaxed pt-0.5">{s.capacity_note}</p>
@@ -487,12 +497,16 @@ export default async function HomePage() {
             <span className="flex size-12 sm:size-14 items-center justify-center rounded-full bg-algeria-green/10 text-algeria-green">
               <Stethoscope className="size-6 sm:size-7" />
             </span>
-            <h3 className="mt-3 sm:mt-4 text-base sm:text-lg font-bold">نداء للأطباء والكوادر الصحية والبياطرة</h3>
+            <h3 className="mt-3 sm:mt-4 text-base sm:text-lg font-bold">
+              {isFr ? "Appel aux médecins, soignants et vétérinaires" : "نداء للأطباء والكوادر الصحية والبياطرة"}
+            </h3>
             <p className="mx-auto mt-1.5 sm:mt-2 max-w-lg text-xs sm:text-sm leading-relaxed text-muted-foreground">
-              تطوعكم يساهم في رعاية الأسر المتضررة في مراكز الإيواء وتقديم الاستشارات الطبية والبيطرية المستعجلة.
+              {isFr
+                ? "Votre engagement permet de soigner les familles sinistrées dans les centres d'hébergement et d'assurer les téléconsultations d'urgence."
+                : "تطوعكم يساهم في رعاية الأسر المتضررة في مراكز الإيواء وتقديم الاستشارات الطبية والبيطرية المستعجلة."}
             </p>
             <LinkButton href="/medical" size="lg" className="mt-4 sm:mt-5">
-              انضم إلى الفريق الطبي المتطوع
+              {isFr ? "Rejoindre l'équipe médicale bénévole" : "انضم إلى الفريق الطبي المتطوع"}
             </LinkButton>
           </div>
         )}
@@ -527,7 +541,7 @@ export default async function HomePage() {
                     <Home className="size-3.5" />
                     <span>{isFr ? "Pour les sinistrés" : "للمتضررين والعائلات"}</span>
                   </span>
-                  <span className="text-xs font-medium text-muted-foreground">تقدير آلي للمواد</span>
+                  <span className="text-xs font-medium text-muted-foreground">{isFr ? "Estimation automatique" : "تقدير آلي للمواد"}</span>
                 </div>
 
                 <h3 className="mt-4 text-xl sm:text-2xl font-black text-foreground">
@@ -557,7 +571,7 @@ export default async function HomePage() {
                     <Hammer className="size-3.5" />
                     <span>{isFr ? "Pour les professionnels" : "للحرفيين والمهنيين"}</span>
                   </span>
-                  <span className="text-xs font-medium text-muted-foreground">تطوع تخصصي</span>
+                  <span className="text-xs font-medium text-muted-foreground">{isFr ? "Bénévolat qualifié" : "تطوع تخصصي"}</span>
                 </div>
 
                 <h3 className="mt-4 text-xl sm:text-2xl font-black text-foreground">
@@ -604,8 +618,10 @@ export default async function HomePage() {
                 >
                   {c.number}
                 </a>
-                <span className="text-xs sm:text-sm font-semibold">{c.label}</span>
-                {c.hint && <span className="text-[10px] sm:text-xs text-muted-foreground">{c.hint}</span>}
+                <span className="text-xs sm:text-sm font-semibold">{isFr && c.label_fr ? c.label_fr : c.label}</span>
+                {(isFr ? c.hint_fr || c.hint : c.hint) && (
+                  <span className="text-[10px] sm:text-xs text-muted-foreground">{isFr ? c.hint_fr || c.hint : c.hint}</span>
+                )}
                 {c.greenNumber && (
                   <a
                     href={`tel:${c.greenNumber}`}

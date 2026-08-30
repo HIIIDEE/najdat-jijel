@@ -7,10 +7,10 @@ import { cn } from "@/lib/utils";
 
 export interface MobileBottomNavLabels {
   home: string;
-  needs: string;
+  officialInfo?: string;
   haveAid: string;
   map: string;
-  needHelp: string;
+  medical?: string;
 }
 
 export function MobileBottomNav({ labels }: { labels?: MobileBottomNavLabels }) {
@@ -18,10 +18,10 @@ export function MobileBottomNav({ labels }: { labels?: MobileBottomNavLabels }) 
 
   const items = [
     { href: "/", label: labels?.home || "الرئيسية", icon: Home },
-    { href: "/official-information", label: "البيانات", icon: TriangleAlert },
+    { href: "/official-information", label: labels?.officialInfo || "البيانات", icon: TriangleAlert },
     { href: "/donate", label: labels?.haveAid || "تقديم عون", icon: Gift, isPrimary: true },
     { href: "/map", label: labels?.map || "الخريطة", icon: MapPin },
-    { href: "/medical", label: "الأطباء", icon: Stethoscope },
+    { href: "/medical", label: labels?.medical || "الأطباء", icon: Stethoscope },
   ];
 
   if (pathname?.startsWith("/admin")) return null;
