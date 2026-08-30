@@ -10,6 +10,7 @@ export async function SiteFooter() {
     {
       title: t.footer.platformColumn,
       links: [
+        { href: "/needs", label: t.nav.needs },
         { href: "/affected-areas", label: t.nav.affectedAreas },
         { href: "/medical", label: t.nav.medical },
         { href: "/map", label: t.footer.reliefMap },
