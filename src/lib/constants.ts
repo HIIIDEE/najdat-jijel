@@ -17,6 +17,7 @@ import {
   type LucideIcon,
 } from "lucide-react";
 import type { Database } from "@/types/database";
+import type { AvailableLocale } from "@/i18n/locales";
 
 export type AppRole = Database["public"]["Enums"]["app_role"];
 export type VerificationLevel = Database["public"]["Enums"]["verification_level"];
@@ -30,6 +31,8 @@ export type UnitType = Database["public"]["Enums"]["unit_type"];
 export type VehicleType = Database["public"]["Enums"]["vehicle_type"];
 export type DonationStatus = Database["public"]["Enums"]["donation_status"];
 export type NeedStatus = Database["public"]["Enums"]["need_status"];
+export type AffectedSeverity = Database["public"]["Enums"]["affected_severity"];
+export type MedicalVerificationStatus = Database["public"]["Enums"]["medical_verification_status"];
 
 export const priorityLabels: Record<PriorityLevel, string> = {
   critical: "حرج",
@@ -37,6 +40,15 @@ export const priorityLabels: Record<PriorityLevel, string> = {
   medium: "متوسط",
   low: "منخفض",
 };
+
+export const localizedPriorityLabels: Record<AvailableLocale, Record<PriorityLevel, string>> = {
+  ar: { critical: "حرج", high: "عالٍ", medium: "متوسط", low: "منخفض" },
+  fr: { critical: "Critique", high: "Élevé", medium: "Moyen", low: "Faible" },
+};
+
+export function getPriorityLabel(priority: PriorityLevel, locale: AvailableLocale = "ar"): string {
+  return localizedPriorityLabels[locale]?.[priority] ?? priorityLabels[priority];
+}
 
 /** أيقونة موحّدة (نقطة ملوّنة) — اللون يأتي من text-priority-* في المكوّن. */
 export const priorityIcon: Record<PriorityLevel, LucideIcon> = {
@@ -52,6 +64,28 @@ export const verificationLabels: Record<VerificationLevel, string> = {
   verified: "موثق",
   field_verified: "موثق ميدانيًا",
 };
+
+export const localizedVerificationLabels: Record<AvailableLocale, Record<VerificationLevel, string>> = {
+  ar: {
+    unverified: "غير موثق",
+    pending: "قيد التحقق",
+    verified: "موثق",
+    field_verified: "موثق ميدانيًا",
+  },
+  fr: {
+    unverified: "Non vérifié",
+    pending: "En cours",
+    verified: "Vérifié",
+    field_verified: "Vérifié sur le terrain",
+  },
+};
+
+export function getVerificationLabel(
+  level: VerificationLevel,
+  locale: AvailableLocale = "ar",
+): string {
+  return localizedVerificationLabels[locale]?.[level] ?? verificationLabels[level];
+}
 
 /** أيقونة موحّدة (نقطة ملوّنة) — اللون يأتي من text-verify-* في المكوّن. */
 export const verificationIcon: Record<VerificationLevel, LucideIcon> = {
@@ -71,12 +105,59 @@ export const requestStatusLabels: Record<RequestStatus, string> = {
   rejected: "مرفوض",
 };
 
+export const localizedRequestStatusLabels: Record<AvailableLocale, Record<RequestStatus, string>> = {
+  ar: {
+    pending: "قيد الانتظار",
+    under_review: "قيد المراجعة",
+    verified: "تم التحقق",
+    partially_helped: "مساعدة جزئية",
+    helped: "تمت المساعدة",
+    closed: "مغلق",
+    rejected: "مرفوض",
+  },
+  fr: {
+    pending: "En attente",
+    under_review: "En révision",
+    verified: "Vérifié",
+    partially_helped: "Aide partielle",
+    helped: "Aidé",
+    closed: "Fermé",
+    rejected: "Rejeté",
+  },
+};
+
+export function getRequestStatusLabel(
+  status: RequestStatus,
+  locale: AvailableLocale = "ar",
+): string {
+  return localizedRequestStatusLabels[locale]?.[status] ?? requestStatusLabels[status];
+}
+
 export const pointStatusLabels: Record<PointStatus, string> = {
   open: "مفتوحة",
   full: "ممتلئة",
   paused: "متوقفة مؤقتًا",
   closed: "مغلقة",
 };
+
+export const localizedPointStatusLabels: Record<AvailableLocale, Record<PointStatus, string>> = {
+  ar: {
+    open: "مفتوحة",
+    full: "ممتلئة",
+    paused: "متوقفة مؤقتًا",
+    closed: "مغلقة",
+  },
+  fr: {
+    open: "Ouvert",
+    full: "Complet",
+    paused: "En pause",
+    closed: "Fermé",
+  },
+};
+
+export function getPointStatusLabel(status: PointStatus, locale: AvailableLocale = "ar"): string {
+  return localizedPointStatusLabels[locale]?.[status] ?? pointStatusLabels[status];
+}
 
 export const transportStatusLabels: Record<TransportStatus, string> = {
   requested: "مطلوب",
@@ -86,6 +167,32 @@ export const transportStatusLabels: Record<TransportStatus, string> = {
   delivered: "تم التسليم",
   cancelled: "ملغى",
 };
+
+export const localizedTransportStatusLabels: Record<AvailableLocale, Record<TransportStatus, string>> = {
+  ar: {
+    requested: "مطلوب",
+    matched: "تمت المطابقة",
+    confirmed: "مؤكَّد",
+    in_transit: "في الطريق",
+    delivered: "تم التسليم",
+    cancelled: "ملغى",
+  },
+  fr: {
+    requested: "Demandé",
+    matched: "Attribué",
+    confirmed: "Confirmé",
+    in_transit: "En route",
+    delivered: "Livré",
+    cancelled: "Annulé",
+  },
+};
+
+export function getTransportStatusLabel(
+  status: TransportStatus,
+  locale: AvailableLocale = "ar",
+): string {
+  return localizedTransportStatusLabels[locale]?.[status] ?? transportStatusLabels[status];
+}
 
 export const sourceTypeLabels: Record<SourceType, string> = {
   field_team: "فريق ميداني",
@@ -108,6 +215,39 @@ export const unitLabels: Record<UnitType, string> = {
   person: "شخص",
 };
 
+export const localizedUnitLabels: Record<AvailableLocale, Record<UnitType, string>> = {
+  ar: {
+    piece: "قطعة",
+    box: "صندوق",
+    portion: "حصة",
+    carton: "كرتون",
+    liter: "لتر",
+    kg: "كيلوغرام",
+    ton: "طن",
+    bundle: "طرد",
+    person: "شخص",
+  },
+  fr: {
+    piece: "pièce",
+    box: "boîte",
+    portion: "portion",
+    carton: "carton",
+    liter: "litre",
+    kg: "kg",
+    ton: "tonne",
+    bundle: "colis",
+    person: "personne",
+  },
+};
+
+export function getUnitLabel(unit: UnitType | string | null | undefined, locale: AvailableLocale = "ar"): string {
+  if (!unit) return "";
+  if (unit in (localizedUnitLabels[locale] || {})) {
+    return localizedUnitLabels[locale][unit as UnitType];
+  }
+  return unitLabels[unit as UnitType] ?? unit;
+}
+
 export const vehicleLabels: Record<VehicleType, string> = {
   car: "سيارة",
   van: "فان",
@@ -116,6 +256,29 @@ export const vehicleLabels: Record<VehicleType, string> = {
   large_truck: "شاحنة كبيرة",
   trailer: "مقطورة",
 };
+
+export const localizedVehicleLabels: Record<AvailableLocale, Record<VehicleType, string>> = {
+  ar: {
+    car: "سيارة",
+    van: "فان",
+    small_truck: "شاحنة صغيرة",
+    medium_truck: "شاحنة متوسطة",
+    large_truck: "شاحنة كبيرة",
+    trailer: "مقطورة",
+  },
+  fr: {
+    car: "Voiture",
+    van: "Fourgonnette",
+    small_truck: "Petit camion",
+    medium_truck: "Camion moyen",
+    large_truck: "Grand camion",
+    trailer: "Semi-remorque",
+  },
+};
+
+export function getVehicleLabel(type: VehicleType, locale: AvailableLocale = "ar"): string {
+  return localizedVehicleLabels[locale]?.[type] ?? vehicleLabels[type];
+}
 
 export const donationStatusLabels: Record<DonationStatus, string> = {
   registered: "مسجَّلة",
@@ -159,10 +322,28 @@ export const categoryIcon: Record<string, LucideIcon> = {
 };
 
 export function relativeTimeAr(dateString: string | null | undefined): string {
+  return formatRelativeTime(dateString, "ar");
+}
+
+export function formatRelativeTime(
+  dateString: string | null | undefined,
+  locale: AvailableLocale = "ar",
+): string {
   if (!dateString) return "—";
   const date = new Date(dateString);
   const diffMs = Date.now() - date.getTime();
   const diffMin = Math.round(diffMs / 60000);
+
+  if (locale === "fr") {
+    if (diffMin < 1) return "À l'instant";
+    if (diffMin < 60) return `Il y a ${diffMin} min`;
+    const diffHours = Math.round(diffMin / 60);
+    if (diffHours < 24) return `Il y a ${diffHours} h`;
+    const diffDays = Math.round(diffHours / 24);
+    if (diffDays < 30) return `Il y a ${diffDays} j`;
+    const diffMonths = Math.round(diffDays / 30);
+    return `Il y a ${diffMonths} mois`;
+  }
 
   if (diffMin < 1) return "الآن";
   if (diffMin < 60) return `منذ ${diffMin} دقيقة`;
@@ -174,11 +355,10 @@ export function relativeTimeAr(dateString: string | null | undefined): string {
   return `منذ ${diffMonths} شهر`;
 }
 
-export function formatQuantity(value: number): string {
-  return new Intl.NumberFormat("ar-DZ").format(value);
+export function formatQuantity(value: number, locale: AvailableLocale = "ar"): string {
+  const langTag = locale === "fr" ? "fr-DZ" : "ar-DZ";
+  return new Intl.NumberFormat(langTag).format(value);
 }
-
-export type AffectedSeverity = Database["public"]["Enums"]["affected_severity"];
 
 export const severityLabels: Record<AffectedSeverity, string> = {
   ravaged: "أضرار جسيمة",
@@ -187,6 +367,30 @@ export const severityLabels: Record<AffectedSeverity, string> = {
   burning: "منطقة متضررة",
   unconfirmed: "بلاغ غير مؤكد",
 };
+
+export const localizedSeverityLabels: Record<AvailableLocale, Record<AffectedSeverity, string>> = {
+  ar: {
+    ravaged: "أضرار جسيمة",
+    evacuated: "تم الإجلاء",
+    threatened: "منازل مهددة",
+    burning: "منطقة متضررة",
+    unconfirmed: "بلاغ غير مؤكد",
+  },
+  fr: {
+    ravaged: "Dégâts majeurs",
+    evacuated: "Évacué",
+    threatened: "Menacé",
+    burning: "Zone touchée",
+    unconfirmed: "Non confirmé",
+  },
+};
+
+export function getSeverityLabel(
+  severity: AffectedSeverity,
+  locale: AvailableLocale = "ar",
+): string {
+  return localizedSeverityLabels[locale]?.[severity] ?? severityLabels[severity];
+}
 
 export const severityIcon: Record<AffectedSeverity, LucideIcon> = {
   ravaged: Circle,
@@ -205,10 +409,31 @@ export const severityRank: Record<AffectedSeverity, number> = {
   unconfirmed: 4,
 };
 
-export type MedicalVerificationStatus = Database["public"]["Enums"]["medical_verification_status"];
-
 export const medicalVerificationStatusLabels: Record<MedicalVerificationStatus, string> = {
   pending: "قيد التحقق",
   verified: "موثّق",
   rejected: "مرفوض",
 };
+
+export const localizedMedicalVerificationStatusLabels: Record<
+  AvailableLocale,
+  Record<MedicalVerificationStatus, string>
+> = {
+  ar: {
+    pending: "قيد التحقق",
+    verified: "موثّق",
+    rejected: "مرفوض",
+  },
+  fr: {
+    pending: "En attente",
+    verified: "Vérifié",
+    rejected: "Rejeté",
+  },
+};
+
+export function getMedicalVerificationStatusLabel(
+  status: MedicalVerificationStatus,
+  locale: AvailableLocale = "ar",
+): string {
+  return localizedMedicalVerificationStatusLabels[locale]?.[status] ?? medicalVerificationStatusLabels[status];
+}

@@ -1,5 +1,6 @@
 import { cn } from "@/lib/utils";
-import { severityIcon, severityLabels, type AffectedSeverity } from "@/lib/constants";
+import { severityIcon, getSeverityLabel, type AffectedSeverity } from "@/lib/constants";
+import type { AvailableLocale } from "@/i18n/locales";
 
 const styles: Record<AffectedSeverity, string> = {
   ravaged: "bg-priority-critical/10 text-priority-critical border-priority-critical/30",
@@ -11,12 +12,17 @@ const styles: Record<AffectedSeverity, string> = {
 
 export function SeverityBadge({
   severity,
+  locale = "ar",
+  label,
   className,
 }: {
   severity: AffectedSeverity;
+  locale?: AvailableLocale;
+  label?: string;
   className?: string;
 }) {
   const Icon = severityIcon[severity];
+  const displayLabel = label ?? getSeverityLabel(severity, locale);
   return (
     <span
       className={cn(
@@ -26,7 +32,7 @@ export function SeverityBadge({
       )}
     >
       <Icon className="size-2.5" fill="currentColor" aria-hidden />
-      {severityLabels[severity]}
+      {displayLabel}
     </span>
   );
 }

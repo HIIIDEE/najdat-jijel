@@ -1,21 +1,31 @@
 import type { Metadata } from "next";
 import { TransportForm } from "./transport-form";
+import { getDictionary } from "@/i18n/dictionaries";
+import { getLocale } from "@/i18n/server";
 
-export const metadata: Metadata = {
-  title: "أستطيع النقل",
-  description: "سجّل سيارتك أو شاحنتك لنقل المساعدات، وسنعرض عليك ما يمكن تحميله على مسارك.",
-};
+export async function generateMetadata(): Promise<Metadata> {
+  const locale = await getLocale();
+  const t = await getDictionary(locale);
+  return {
+    title: t.cta.canTransport,
+    description: t.transport.pageSubtitle,
+  };
+}
 
-export default function TransportPage() {
+export default async function TransportPage() {
+  const locale = await getLocale();
+  const t = await getDictionary(locale);
+
   return (
     <div className="mx-auto max-w-2xl px-4 py-10">
       <div className="mb-6 text-center">
-        <h1 className="text-3xl font-extrabold">هل تستطيع نقل المساعدات؟</h1>
+        <h1 className="text-3xl font-extrabold">{t.transport.pageTitle}</h1>
         <p className="mt-2 text-muted-foreground">
-          سجّل بيانات مركبتك ومسارك، وسنعرض عليك المساعدات المسجَّلة القريبة من طريقك.
+          {t.transport.pageSubtitle}
         </p>
       </div>
-      <TransportForm />
+
+      <TransportForm locale={locale} />
     </div>
   );
 }

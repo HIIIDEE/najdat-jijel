@@ -21,22 +21,26 @@ import { Alert, AlertTitle, AlertDescription } from "@/components/ui/alert";
 import { PriorityBadge } from "@/components/shared/priority-badge";
 import { PointStatusBadge } from "@/components/shared/status-badge";
 import { donationSchema, unitOptions, type DonationInput } from "@/schemas/donation";
-import { formatQuantity, unitLabels } from "@/lib/constants";
+import { formatQuantity, getUnitLabel } from "@/lib/constants";
 import { CategoryIcon } from "@/components/shared/category-icon";
 import { wilayaNames } from "@/lib/wilayas";
 import { SuccessPanel } from "@/components/shared/success-panel";
 import { submitDonation, type SubmitDonationResult } from "@/actions/donations";
 import type { Database } from "@/types/database";
+import type { AvailableLocale } from "@/i18n/locales";
 
 type Category = Database["public"]["Tables"]["categories"]["Row"];
 
 export function DonationForm({
   categories,
   defaultCategorySlug,
+  locale = "ar",
 }: {
   categories: Category[];
   defaultCategorySlug?: string;
+  locale?: AvailableLocale;
 }) {
+  const isFr = locale === "fr";
   const [result, setResult] = useState<SubmitDonationResult | null>(null);
   const [submitting, setSubmitting] = useState(false);
   const [submitError, setSubmitError] = useState<string | null>(null);
@@ -86,12 +90,21 @@ export function DonationForm({
       }));
       const res = await submitDonation({ ...values, items: itemsWithSlug });
       if (!res.success) {
-        setSubmitError(res.error ?? "حدث خطأ أثناء تسجيل المساعدة. حاول مرة أخرى.");
+        setSubmitError(
+          res.error ??
+            (isFr
+              ? "Une erreur est survenue lors de l'enregistrement. Veuillez réessayer."
+              : "حدث خطأ أثناء تسجيل المساعدة. حاول مرة أخرى."),
+        );
         return;
       }
       setResult(res);
     } catch {
-      setSubmitError("حدث خطأ أثناء تسجيل المساعدة. حاول مرة أخرى.");
+      setSubmitError(
+        isFr
+          ? "Une erreur est survenue lors de l'enregistrement. Veuillez réessayer."
+          : "حدث خطأ أثناء تسجيل المساعدة. حاول مرة أخرى.",
+      );
     } finally {
       setSubmitting(false);
     }
@@ -101,15 +114,21 @@ export function DonationForm({
     return (
       <div className="animate-rise space-y-5">
         <SuccessPanel
-          title="تم تسجيل مساعدتك بنجاح"
-          description="شكرًا لك. سيتواصل فريق التنسيق معك قريبًا لتأكيد التفاصيل. في الأسفل أقرب احتياج مطابق ونقطة التسليم المقترحة."
+          title={isFr ? "Votre don a été enregistré avec succès" : "تم تسجيل مساعدتك بنجاح"}
+          description={
+            isFr
+              ? "Merci pour votre contribution. L'équipe de coordination vous contactera bientôt. Ci-dessous, le besoin correspondant et le point de collecte recommandé."
+              : "شكرًا لك. سيتواصل فريق التنسيق معك قريبًا لتأكيد التفاصيل. في الأسفل أقرب احتياج مطابق ونقطة التسليم المقترحة."
+          }
           primaryHref="/map"
-          primaryLabel="عرض نقاط التسليم"
+          primaryLabel={isFr ? "Voir les points de dépôt" : "عرض نقاط التسليم"}
         />
 
         {result.matches && result.matches.length > 0 && (
           <div>
-            <h2 className="mb-2 font-bold">أفضل تطابق لمساعدتك</h2>
+            <h2 className="mb-2 font-bold">
+              {isFr ? "Meilleures correspondances pour vos dons" : "أفضل تطابق لمساعدتك"}
+            </h2>
             <div className="space-y-3">
               {result.matches.map((m) => (
                 <Card key={m.need.id}>
@@ -120,16 +139,16 @@ export function DonationForm({
                         {m.need.title ?? categories.find((c) => c.slug === m.categorySlug)?.name_ar ?? m.categorySlug}
                       </p>
                       <p className="text-sm text-muted-foreground">
-                        {m.need.commune}، ولاية {m.need.wilaya}
+                        {m.need.commune}، {isFr ? `Wilaya de ${m.need.wilaya}` : `ولاية ${m.need.wilaya}`}
                       </p>
                       <p className="mt-1 text-sm">
-                        النقص:{" "}
+                        {isFr ? "Manque : " : "النقص: "}
                         <strong className="text-priority-critical">
-                          {formatQuantity(m.deficit)} {unitLabels[m.need.unit]}
+                          {formatQuantity(m.deficit, locale)} {getUnitLabel(m.need.unit, locale)}
                         </strong>
                       </p>
                     </div>
-                    <PriorityBadge priority={m.need.priority} />
+                    <PriorityBadge priority={m.need.priority} locale={locale} />
                   </CardContent>
                 </Card>
               ))}
@@ -139,7 +158,9 @@ export function DonationForm({
 
         {result.suggestedPoints && result.suggestedPoints.length > 0 && (
           <div>
-            <h2 className="mb-2 font-bold">نقطة التسليم المقترحة</h2>
+            <h2 className="mb-2 font-bold">
+              {isFr ? "Point de dépôt recommandé" : "نقطة التسليم المقترحة"}
+            </h2>
             <div className="space-y-3">
               {result.suggestedPoints.map((p) => (
                 <Card key={p.id}>
@@ -150,8 +171,12 @@ export function DonationForm({
                     </div>
                     <p className="flex items-center gap-1.5 text-sm text-muted-foreground">
                       <MapPin className="size-3.5" />
-                      {p.address ?? `${p.commune}، ولاية ${p.wilaya}`}
-                      {p.distanceKm !== null ? ` — على بعد ${formatQuantity(p.distanceKm)} كم تقريبًا` : ""}
+                      {p.address ?? `${p.commune}، ${isFr ? `Wilaya de ${p.wilaya}` : `ولاية ${p.wilaya}`}`}
+                      {p.distanceKm !== null
+                        ? isFr
+                          ? ` — à environ ${formatQuantity(p.distanceKm, locale)} km`
+                          : ` — على بعد ${formatQuantity(p.distanceKm, locale)} كم تقريبًا`
+                        : ""}
                     </p>
                     {p.openingHours ? (
                       <p className="flex items-center gap-1.5 text-sm text-muted-foreground">
@@ -169,11 +194,13 @@ export function DonationForm({
         {(!result.matches || result.matches.length === 0) && (
           <Alert>
             <AlertTitle className="flex items-center gap-1.5">
-              <CircleCheck className="size-4 text-algeria-green" /> هذه المادة متوفرة حاليًا بشكل جيد
+              <CircleCheck className="size-4 text-algeria-green" />{" "}
+              {isFr ? "Cet article est actuellement bien approvisionné" : "هذه المادة متوفرة حاليًا بشكل جيد"}
             </AlertTitle>
             <AlertDescription>
-              لم نجد نقصًا حرجًا في هذه المادة حاليًا. سيراجع فريق التنسيق تسجيلك ويوجّهه لأقرب نقطة
-              مناسبة، أو يمكنك مراجعة صفحة الاحتياجات لرؤية ما هو أكثر إلحاحًا الآن.
+              {isFr
+                ? "Nous n'avons pas constaté de manque critique pour cet article. L'équipe de coordination orientera votre don vers le point le plus approprié."
+                : "لم نجد نقصًا حرجًا في هذه المادة حاليًا. سيراجع فريق التنسيق تسجيلك ويوجّهه لأقرب نقطة مناسبة، أو يمكنك مراجعة صفحة الاحتياجات لرؤية ما هو أكثر إلحاحًا الآن."}
             </AlertDescription>
           </Alert>
         )}
@@ -185,20 +212,20 @@ export function DonationForm({
     <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
       <Card>
         <CardContent className="space-y-4 px-5">
-          <h2 className="font-bold">المواد التي تملكها</h2>
+          <h2 className="font-bold">{isFr ? "Articles disponibles" : "المواد التي تملكها"}</h2>
           {fields.map((field, index) => {
             const categoryId = watch(`items.${index}.category_id`);
             return (
               <div key={field.id} className="space-y-3 rounded-lg border border-border p-3">
                 <div className="flex items-center justify-between">
-                  <Label>المادة {index + 1}</Label>
+                  <Label>{isFr ? `Article ${index + 1}` : `المادة ${index + 1}`}</Label>
                   {fields.length > 1 && (
                     <Button
                       type="button"
                       variant="ghost"
                       size="icon-sm"
                       onClick={() => remove(index)}
-                      aria-label="حذف هذه المادة"
+                      aria-label={isFr ? "Supprimer cet article" : "حذف هذه المادة"}
                     >
                       <Trash2 className="size-4 text-destructive" />
                     </Button>
@@ -215,7 +242,7 @@ export function DonationForm({
                   }}
                 >
                   <SelectTrigger className="w-full">
-                    <SelectValue placeholder="نوع المساعدة">
+                    <SelectValue placeholder={isFr ? "Catégorie" : "نوع المساعدة"}>
                       {(value: string) => {
                         const c = categories.find((cat) => cat.id === value);
                         return c ? (
@@ -223,7 +250,7 @@ export function DonationForm({
                             <CategoryIcon slug={c.slug} className="inline size-3.5" /> {c.name_ar}
                           </>
                         ) : (
-                          "نوع المساعدة"
+                          isFr ? "Catégorie" : "نوع المساعدة"
                         );
                       }}
                     </SelectValue>
@@ -239,7 +266,7 @@ export function DonationForm({
 
                 <div className="grid grid-cols-2 gap-3">
                   <div>
-                    <Label className="mb-1.5">الكمية</Label>
+                    <Label className="mb-1.5">{isFr ? "Quantité" : "الكمية"}</Label>
                     <Input
                       type="number"
                       step="any"
@@ -248,7 +275,7 @@ export function DonationForm({
                     />
                   </div>
                   <div>
-                    <Label className="mb-1.5">الوحدة</Label>
+                    <Label className="mb-1.5">{isFr ? "Unité" : "الوحدة"}</Label>
                     <Select
                       value={watch(`items.${index}.unit`)}
                       onValueChange={(v: string | null) =>
@@ -257,13 +284,13 @@ export function DonationForm({
                     >
                       <SelectTrigger className="w-full">
                         <SelectValue>
-                          {(value: string) => unitOptions.find((u) => u.value === value)?.label ?? value}
+                          {(value: string) => getUnitLabel(value, locale)}
                         </SelectValue>
                       </SelectTrigger>
                       <SelectContent>
                         {unitOptions.map((u) => (
                           <SelectItem key={u.value} value={u.value}>
-                            {u.label}
+                            {getUnitLabel(u.value, locale)}
                           </SelectItem>
                         ))}
                       </SelectContent>
@@ -271,7 +298,10 @@ export function DonationForm({
                   </div>
                 </div>
 
-                <Input placeholder="وصف مختصر (اختياري)" {...register(`items.${index}.description`)} />
+                <Input
+                  placeholder={isFr ? "Description courte (facultatif)" : "وصف مختصر (اختياري)"}
+                  {...register(`items.${index}.description`)}
+                />
               </div>
             );
           })}
@@ -293,23 +323,23 @@ export function DonationForm({
               })
             }
           >
-            <Plus className="size-4" /> إضافة مادة أخرى
+            <Plus className="size-4" /> {isFr ? "Ajouter un autre article" : "إضافة مادة أخرى"}
           </Button>
         </CardContent>
       </Card>
 
       <Card>
         <CardContent className="space-y-4 px-5">
-          <h2 className="font-bold">موقعك وطريقة التسليم</h2>
+          <h2 className="font-bold">{isFr ? "Localisation et acheminement" : "موقعك وطريقة التسليم"}</h2>
 
           <div>
-            <Label className="mb-1.5">الولاية الحالية</Label>
+            <Label className="mb-1.5">{isFr ? "Wilaya actuelle" : "الولاية الحالية"}</Label>
             <Select
               value={watch("current_wilaya")}
               onValueChange={(v: string | null) => v && setValue("current_wilaya", v)}
             >
               <SelectTrigger className="w-full">
-                <SelectValue placeholder="اختر الولاية" />
+                <SelectValue placeholder={isFr ? "Sélectionnez la wilaya" : "اختر الولاية"} />
               </SelectTrigger>
               <SelectContent className="max-h-72">
                 {wilayaNames.map((w) => (
@@ -325,7 +355,7 @@ export function DonationForm({
           </div>
 
           <div>
-            <Label className="mb-1.5">البلدية / الحي (اختياري)</Label>
+            <Label className="mb-1.5">{isFr ? "Commune / Quartier (facultatif)" : "البلدية / الحي (اختياري)"}</Label>
             <Input {...register("current_commune")} />
           </div>
 
@@ -334,7 +364,7 @@ export function DonationForm({
               checked={watch("needs_transport")}
               onCheckedChange={(v) => setValue("needs_transport", Boolean(v))}
             />
-            أحتاج مساعدة في النقل
+            {isFr ? "J'ai besoin d'une aide pour le transport" : "أحتاج مساعدة في النقل"}
           </label>
 
           <label className="flex items-center gap-2 text-sm">
@@ -342,11 +372,11 @@ export function DonationForm({
               checked={watch("can_deliver_self")}
               onCheckedChange={(v) => setValue("can_deliver_self", Boolean(v))}
             />
-            أستطيع توصيلها بنفسي
+            {isFr ? "Je peux déposer les dons moi-même" : "أستطيع توصيلها بنفسي"}
           </label>
 
           <div>
-            <Label className="mb-1.5">متى ستكون جاهزة؟ (اختياري)</Label>
+            <Label className="mb-1.5">{isFr ? "Disponibilité (facultatif)" : "متى ستكون جاهزة؟ (اختياري)"}</Label>
             <Input type="date" {...register("ready_at")} />
           </div>
         </CardContent>
@@ -354,23 +384,23 @@ export function DonationForm({
 
       <Card>
         <CardContent className="space-y-4 px-5">
-          <h2 className="font-bold">بياناتك</h2>
+          <h2 className="font-bold">{isFr ? "Vos coordonnées" : "بياناتك"}</h2>
           <div>
-            <Label className="mb-1.5">الاسم الكامل</Label>
+            <Label className="mb-1.5">{isFr ? "Nom complet ou organisation" : "الاسم الكامل"}</Label>
             <Input {...register("donor_name")} />
             {errors.donor_name && (
               <p className="mt-1 text-sm text-destructive">{errors.donor_name.message}</p>
             )}
           </div>
           <div>
-            <Label className="mb-1.5">رقم الهاتف</Label>
+            <Label className="mb-1.5">{isFr ? "Numéro de téléphone" : "رقم الهاتف"}</Label>
             <Input dir="ltr" placeholder="0555xxxxxx" {...register("donor_phone")} />
             {errors.donor_phone && (
               <p className="mt-1 text-sm text-destructive">{errors.donor_phone.message}</p>
             )}
           </div>
           <div>
-            <Label className="mb-1.5">ملاحظات (اختياري)</Label>
+            <Label className="mb-1.5">{isFr ? "Remarques (facultatif)" : "ملاحظات (اختياري)"}</Label>
             <Textarea {...register("notes")} />
           </div>
         </CardContent>
@@ -384,7 +414,7 @@ export function DonationForm({
 
       <Button type="submit" size="lg" className="w-full" disabled={submitting}>
         {submitting && <Loader2 className="size-4 animate-spin" />}
-        إرسال
+        {isFr ? "Envoyer le don" : "إرسال"}
       </Button>
     </form>
   );

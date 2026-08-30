@@ -5,6 +5,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
 import { Phone, MapPin, Stethoscope, Briefcase, Search, PawPrint } from "lucide-react";
+import type { AvailableLocale } from "@/i18n/locales";
 
 export interface Volunteer {
   id: string;
@@ -16,7 +17,14 @@ export interface Volunteer {
   can_teleconsult?: boolean;
 }
 
-export function MedicalVolunteersList({ volunteers }: { volunteers: Volunteer[] }) {
+export function MedicalVolunteersList({
+  volunteers,
+  locale = "ar",
+}: {
+  volunteers: Volunteer[];
+  locale?: AvailableLocale;
+}) {
+  const isFr = locale === "fr";
   const [search, setSearch] = useState("");
   const [filterType, setFilterType] = useState<"all" | "human" | "vet">("all");
 
@@ -32,7 +40,7 @@ export function MedicalVolunteersList({ volunteers }: { volunteers: Volunteer[] 
       v.commune_id.toLowerCase().includes(term);
 
     const isVet = v.specialty.includes("بيطر") || v.specialty.toLowerCase().includes("vet");
-    
+
     if (filterType === "vet") return matchesSearch && isVet;
     if (filterType === "human") return matchesSearch && !isVet;
     return matchesSearch;
@@ -41,18 +49,22 @@ export function MedicalVolunteersList({ volunteers }: { volunteers: Volunteer[] 
   return (
     <div className="space-y-6 pt-10">
       <div className="text-center space-y-1">
-        <h2 className="text-2xl font-bold">الأطقم الطبية والبيطرية المتطوعة</h2>
+        <h2 className="text-2xl font-bold">
+          {isFr ? "Personnel médical et vétérinaire bénévole" : "الأطقم الطبية والبيطرية المتطوعة"}
+        </h2>
         <p className="text-sm text-muted-foreground">
-          قائمة الكوادر المسجلة للتدخل السريع وتقديم الاستشارات
+          {isFr
+            ? "Annuaire des professionnels inscrits pour les interventions d'urgence et les téléconsultations"
+            : "قائمة الكوادر المسجلة للتدخل السريع وتقديم الاستشارات"}
         </p>
       </div>
 
-      {/* Barre de recherche et filtres */}
+      {/* Search bar and filters */}
       <div className="space-y-3">
         <div className="relative">
           <Search className="absolute right-3 top-2.5 h-4 w-4 text-muted-foreground" />
           <Input
-            placeholder="ابحث بالاسم، التخصص أو البلدية..."
+            placeholder={isFr ? "Rechercher par nom, spécialité ou commune..." : "ابحث بالاسم، التخصص أو البلدية..."}
             value={search}
             onChange={(e) => setSearch(e.target.value)}
             className="pr-9"
@@ -69,7 +81,7 @@ export function MedicalVolunteersList({ volunteers }: { volunteers: Volunteer[] 
                 : "bg-background hover:bg-muted text-muted-foreground"
             }`}
           >
-            الكل ({volunteers.length})
+            {isFr ? `Tous (${volunteers.length})` : `الكل (${volunteers.length})`}
           </button>
           <button
             type="button"
@@ -81,7 +93,7 @@ export function MedicalVolunteersList({ volunteers }: { volunteers: Volunteer[] 
             }`}
           >
             <span className="inline-flex items-center gap-1">
-              <Stethoscope className="size-3.5" /> طب بشري
+              <Stethoscope className="size-3.5" /> {isFr ? "Médecine humaine" : "طب بشري"}
             </span>
           </button>
           <button
@@ -94,13 +106,13 @@ export function MedicalVolunteersList({ volunteers }: { volunteers: Volunteer[] 
             }`}
           >
             <span className="inline-flex items-center gap-1">
-              <PawPrint className="size-3.5" /> طب بيطري
+              <PawPrint className="size-3.5" /> {isFr ? "Médecine vétérinaire" : "طب بيطري"}
             </span>
           </button>
         </div>
       </div>
 
-      {/* Liste des cartes */}
+      {/* Cards list */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         {filtered.map((v) => (
           <Card key={v.id} className="border-border/70 shadow-sm">
@@ -134,7 +146,7 @@ export function MedicalVolunteersList({ volunteers }: { volunteers: Volunteer[] 
               )}
               {v.can_teleconsult && (
                 <Badge variant="outline" className="bg-emerald-50 text-emerald-700 dark:bg-emerald-950 dark:text-emerald-300 text-xs mt-1">
-                  متاح للاستشارة الهاتفية
+                  {isFr ? "Téléconsultation disponible" : "متاح للاستشارة الهاتفية"}
                 </Badge>
               )}
             </CardContent>
@@ -144,7 +156,7 @@ export function MedicalVolunteersList({ volunteers }: { volunteers: Volunteer[] 
 
       {filtered.length === 0 && (
         <p className="text-center text-sm text-muted-foreground py-6">
-          لا توجد نتائج مطابقة لبحثك.
+          {isFr ? "Aucun résultat ne correspond à votre recherche." : "لا توجد نتائج مطابقة لبحثك."}
         </p>
       )}
     </div>
