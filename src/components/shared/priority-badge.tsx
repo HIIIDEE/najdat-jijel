@@ -1,5 +1,6 @@
 import { cn } from "@/lib/utils";
-import { priorityIcon, priorityLabels, type PriorityLevel } from "@/lib/constants";
+import { priorityIcon, getPriorityLabel, type PriorityLevel } from "@/lib/constants";
+import type { AvailableLocale } from "@/i18n/locales";
 
 const styles: Record<PriorityLevel, string> = {
   critical: "bg-priority-critical/10 text-priority-critical border-priority-critical/30",
@@ -10,12 +11,17 @@ const styles: Record<PriorityLevel, string> = {
 
 export function PriorityBadge({
   priority,
+  locale = "ar",
+  label,
   className,
 }: {
   priority: PriorityLevel;
+  locale?: AvailableLocale;
+  label?: string;
   className?: string;
 }) {
   const Icon = priorityIcon[priority];
+  const displayLabel = label ?? getPriorityLabel(priority, locale);
   return (
     <span
       className={cn(
@@ -25,7 +31,7 @@ export function PriorityBadge({
       )}
     >
       <Icon className="size-2.5" fill="currentColor" aria-hidden />
-      {priorityLabels[priority]}
+      {displayLabel}
     </span>
   );
 }

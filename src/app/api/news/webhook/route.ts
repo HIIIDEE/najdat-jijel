@@ -1,4 +1,4 @@
-﻿import { NextResponse } from "next/server";
+import { NextResponse } from "next/server";
 import { createClient } from "@/lib/supabase/server";
 import { getActiveCampaign } from "@/lib/data/public";
 import { classifyNewsItem } from "@/config/news-sources";
@@ -26,8 +26,10 @@ export async function POST(req: Request) {
     const postTitle = lines[0]?.slice(0, 200) || "بيان من الحماية المدنية - جيجل";
     const postBody = lines.slice(1).join("\n") || postText;
 
+    const campaignId = campaign?.id || "camp-01";
+
     const { data, error } = await supabase.from("official_updates").insert({
-      campaign_id: campaign.id,
+      campaign_id: campaignId,
       title: postTitle,
       body: postBody,
       source: source,

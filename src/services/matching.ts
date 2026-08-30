@@ -1,5 +1,6 @@
 import type { SupabaseClient } from "@supabase/supabase-js";
 import type { Database } from "@/types/database";
+import type { PointStatus } from "@/lib/constants";
 import { findWilayaByName, haversineDistanceKm } from "@/lib/wilayas";
 
 type Need = Database["public"]["Tables"]["needs"]["Row"];
@@ -12,7 +13,7 @@ type PublicPoint = {
   lat: number | null;
   lng: number | null;
   opening_hours: string | null;
-  status: string;
+  status: PointStatus;
   verification_level: string;
   accepted_categories?: string[];
 };
@@ -73,7 +74,7 @@ export interface DeliveryPointSuggestion {
   lat: number | null;
   lng: number | null;
   openingHours: string | null;
-  status: string;
+  status: PointStatus;
   verificationLevel: string;
   distanceKm: number | null;
   sameWilaya: boolean;

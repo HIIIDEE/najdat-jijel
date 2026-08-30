@@ -1,5 +1,6 @@
-import { Megaphone } from "lucide-react";
+﻿import { Megaphone } from "lucide-react";
 import { createClient } from "@/lib/supabase/server";
+import { getLocale } from "@/i18n/server";
 
 /**
  * شريط الأخبار والتنبيهات العاجلة — يظهر في أعلى الموقع.
@@ -8,6 +9,8 @@ import { createClient } from "@/lib/supabase/server";
  * - يختفي تماماً (return null) للحفاظ على مساحة القراءة ونظافة الاستمارات.
  */
 export async function NewsTicker({ showFallback = false }: { showFallback?: boolean } = {}) {
+  const locale = await getLocale();
+  const isFr = locale === "fr";
   const supabase = await createClient();
   const { data } = await supabase
     .from("announcements")
@@ -26,14 +29,21 @@ export async function NewsTicker({ showFallback = false }: { showFallback?: bool
         <div className="mx-auto flex max-w-6xl items-center justify-center gap-2 px-4 py-2 text-center text-xs sm:text-sm font-medium">
           <Megaphone className="size-4 shrink-0" />
           <p>
-            <strong>تنبيه هام:</strong> يُرجى التنسيق المسبق مع نقاط التجميع ومراكز الإيواء قبل توجيه القوافل لضمان وصول المساعدات مباشرة للمتضررين.
+            {isFr ? (
+              <>
+                <strong>Alerte importante :</strong> Veuillez coordonner avec les points de collecte et les centres d&apos;hébergement avant d&apos;acheminer les convois d&apos;aide.
+              </>
+            ) : (
+              <>
+                <strong>تنبيه هام:</strong> يُرجى التنسيق المسبق مع نقاط التجميع ومراكز الإيواء قبل توجيه القوافل لضمان وصول المساعدات مباشرة للمتضررين.
+              </>
+            )}
           </p>
         </div>
       </div>
     );
   }
 
-  // مدة الحركة تتناسب مع طول النص حتى تبقى سرعة القراءة ثابتة
   const totalChars = messages.reduce((n, m) => n + m.message.length, 0);
   const duration = Math.max(25, Math.min(120, Math.round(totalChars / 4)));
 
@@ -42,7 +52,7 @@ export async function NewsTicker({ showFallback = false }: { showFallback?: bool
       <div className="mx-auto flex max-w-6xl items-center justify-center gap-3 px-4 py-2">
         <span className="flex shrink-0 items-center gap-1.5 text-xs sm:text-sm font-bold">
           <Megaphone className="size-4 animate-pulse" />
-          <span className="hidden sm:inline">عاجل</span>
+          <span className="hidden sm:inline">{isFr ? "Urgent" : "عاجل"}</span>
         </span>
 
         <div className="ticker-viewport relative flex-1 overflow-hidden">
@@ -60,7 +70,6 @@ export async function NewsTicker({ showFallback = false }: { showFallback?: bool
         </div>
       </div>
 
-      {/* نسخة ثابتة لقارئات الشاشة ولمن عطّل الحركة */}
       <div className="sr-only">
         {messages.map((m) => (
           <p key={m.id}>{m.message}</p>

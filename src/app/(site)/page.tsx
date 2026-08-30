@@ -1,4 +1,4 @@
-import Link from "next/link";
+﻿import Link from "next/link";
 import {
   MapPin,
   Truck,
@@ -11,14 +11,13 @@ import {
   Gift,
   CheckCircle2,
   Radio,
+  LifeBuoy,
 } from "lucide-react";
-import { Card, CardContent } from "@/components/ui/card";
 import { LinkButton } from "@/components/shared/link-button";
 import { PlatformNotice } from "@/components/shared/platform-notice";
 import { OfficialUpdateCard } from "@/components/shared/official-update-card";
 import { AnimatedCounter } from "@/components/interactive/animated-counter";
 import { siteConfig } from "@/config/site";
-import { relativeTimeAr } from "@/lib/constants";
 import { emergencyContacts } from "@/lib/emergency";
 import {
   getAffectedAreas,
@@ -27,50 +26,8 @@ import {
   getShelters,
   getStatOverview,
 } from "@/lib/data/public";
-
-const quickActions = [
-  {
-    href: "/donate",
-    icon: Gift,
-    title: "لدي مساعدات",
-    desc: "تسجيل المساعدات والقوافل.",
-    badge: "إغاثة",
-    accent: "border-algeria-green/40 bg-algeria-green/5 hover:border-algeria-green hover:bg-algeria-green/10 shadow-sm",
-    iconBg: "bg-algeria-green/15 text-algeria-green",
-    badgeColor: "bg-algeria-green/15 text-algeria-green",
-  },
-  {
-    href: "/transport",
-    icon: Truck,
-    title: "أستطيع النقل",
-    desc: "تسجيل شاحنة أو مركبة.",
-    accent: "hover:border-blue-500 hover:shadow-md",
-    iconBg: "bg-blue-500/10 text-blue-600 dark:text-blue-400",
-  },
-  {
-    href: "/medical",
-    icon: Stethoscope,
-    title: "أنا طبيب / بيطري",
-    desc: "التطوع الطبي والاستشارات.",
-    accent: "hover:border-emerald-500 hover:shadow-md",
-    iconBg: "bg-emerald-500/10 text-emerald-600 dark:text-emerald-400",
-  },
-  {
-    href: "/map",
-    icon: MapPin,
-    title: "أين أسلّم؟",
-    desc: "مراكز التجميع والاستقبال.",
-    accent: "hover:border-purple-500 hover:shadow-md",
-    iconBg: "bg-purple-500/10 text-purple-600 dark:text-purple-400",
-  },
-];
-
-const howItWorks = [
-  { n: 1, title: "رصد المناطق", desc: "حصر وتوثيق بؤر الحرائق ومراكز الإيواء المفتوحة.", icon: TriangleAlert },
-  { n: 2, title: "جمع المساعدات", desc: "المتبرعون والجمعيات يسجلون المساعدات والقوافل.", icon: Gift },
-  { n: 3, title: "تنسيق النقل", desc: "ربط الشاحنات والمركبات بنقاط التجميع ومراكز الإيواء.", icon: Truck },
-  { n: 4, title: "تتبع الإغاثة", desc: "توثيق استلام المساعدات بشفافية تامة للجميع.", icon: ShieldCheck },
-];
+import { getDictionary } from "@/i18n/dictionaries";
+import { getLocale } from "@/i18n/server";
 
 const severityConfig: Record<string, { label: string; tone: string }> = {
   burning: { label: "حريق نشط", tone: "bg-priority-critical/15 text-priority-critical border-priority-critical/30" },
@@ -81,6 +38,54 @@ const severityConfig: Record<string, { label: string; tone: string }> = {
 };
 
 export default async function HomePage() {
+  const locale = await getLocale();
+  const t = await getDictionary(locale);
+  const isFr = locale === "fr";
+
+  const quickActions = [
+    {
+      href: "/donate",
+      icon: Gift,
+      title: t.home.actions.donate.title,
+      desc: t.home.actions.donate.desc,
+      badge: "إغاثة",
+      accent: "border-algeria-green/40 bg-algeria-green/5 hover:border-algeria-green hover:bg-algeria-green/10 shadow-sm",
+      iconBg: "bg-algeria-green/15 text-algeria-green",
+      badgeColor: "bg-algeria-green/15 text-algeria-green",
+    },
+    {
+      href: "/transport",
+      icon: Truck,
+      title: t.home.actions.transport.title,
+      desc: t.home.actions.transport.desc,
+      accent: "hover:border-blue-500 hover:shadow-md",
+      iconBg: "bg-blue-500/10 text-blue-600 dark:text-blue-400",
+    },
+    {
+      href: "/medical",
+      icon: Stethoscope,
+      title: t.home.actions.medical.title,
+      desc: t.home.actions.medical.desc,
+      accent: "hover:border-emerald-500 hover:shadow-md",
+      iconBg: "bg-emerald-500/10 text-emerald-600 dark:text-emerald-400",
+    },
+    {
+      href: "/map",
+      icon: MapPin,
+      title: t.home.actions.map.title,
+      desc: t.home.actions.map.desc,
+      accent: "hover:border-purple-500 hover:shadow-md",
+      iconBg: "bg-purple-500/10 text-purple-600 dark:text-purple-400",
+    },
+  ];
+
+  const howItWorks = [
+    { n: 1, title: t.home.howItWorks.step1.title, desc: t.home.howItWorks.step1.desc, icon: TriangleAlert },
+    { n: 2, title: t.home.howItWorks.step2.title, desc: t.home.howItWorks.step2.desc, icon: Gift },
+    { n: 3, title: t.home.howItWorks.step3.title, desc: t.home.howItWorks.step3.desc, icon: Truck },
+    { n: 4, title: t.home.howItWorks.step4.title, desc: t.home.howItWorks.step4.desc, icon: ShieldCheck },
+  ];
+
   const [
     stats,
     updates,
@@ -89,7 +94,7 @@ export default async function HomePage() {
     medicalVolunteers,
   ] = await Promise.all([
     getStatOverview(),
-    getOfficialUpdates(3),
+    getOfficialUpdates(4),
     getShelters(),
     getAffectedAreas(),
     getPublicMedicalVolunteers(),
@@ -119,13 +124,13 @@ export default async function HomePage() {
                 <span className="absolute inline-flex size-full animate-ping rounded-full bg-algeria-green opacity-75" />
                 <span className="relative inline-flex size-2 rounded-full bg-algeria-green" />
               </span>
-              استجابة ميدانية نشطة
+              {t.home.heroTag}
             </span>
 
             {/* Quick Emergency Hotlines available on mobile */}
             <div className="inline-flex items-center gap-1.5 rounded-full border border-priority-critical/30 bg-priority-critical/10 px-3 py-1 text-[11px] font-bold text-priority-critical shadow-sm">
               <Phone className="size-3 animate-pulse" />
-              <span>طوارئ:</span>
+              <span>{isFr ? "Urgences :" : "طوارئ:"}</span>
               <a href="tel:14" className="hover:underline">14 الحماية</a>
               <span>·</span>
               <a href="tel:1021" className="hover:underline">1021 الغابات</a>
@@ -140,10 +145,10 @@ export default async function HomePage() {
               {siteConfig.shortName}
             </h1>
             <p className="text-base font-bold text-algeria-green sm:text-2xl lg:text-3xl tracking-tight">
-              {siteConfig.tagline}
+              {t.site.tagline}
             </p>
             <p className="mx-auto max-w-2xl text-xs leading-relaxed text-muted-foreground sm:text-lg px-2">
-              منصة تنسيق أهلية مستقلة توجّه الإعانات، القوافل، والفرق الطبية الميدانية مباشرة إلى مراكز الإيواء ونقاط التوزيع في الوقت والمكان الصحيح.
+              {t.home.heroDesc}
             </p>
           </div>
 
@@ -177,10 +182,10 @@ export default async function HomePage() {
           <div className="mt-6 sm:mt-12 rounded-2xl border border-border/80 bg-card/70 p-2.5 sm:p-3.5 shadow-sm backdrop-blur-md">
             <div className="grid grid-cols-2 gap-2 sm:gap-3 sm:grid-cols-4">
               {[
-                { label: "نقطة تجميع واستقبال", value: Number(stats.active_points ?? 0), tone: "text-algeria-green", icon: MapPin, bg: "bg-algeria-green/10 text-algeria-green" },
-                { label: "منطقة متضررة مسجّلة", value: areas.length, tone: "text-priority-critical", icon: TriangleAlert, bg: "bg-priority-critical/10 text-priority-critical" },
-                { label: "مركز إيواء مفتوح", value: shelters.length, tone: "text-blue-600 dark:text-blue-400", icon: Home, bg: "bg-blue-500/10 text-blue-600 dark:text-blue-400" },
-                { label: "طاقم طبي وبيطري متطوع", value: medicalVolunteers.length, tone: "text-emerald-600 dark:text-emerald-400", icon: Stethoscope, bg: "bg-emerald-500/10 text-emerald-600 dark:text-emerald-400" },
+                { label: t.home.stats.points, value: Number(stats.active_points ?? 0), tone: "text-algeria-green", icon: MapPin, bg: "bg-algeria-green/10 text-algeria-green" },
+                { label: t.home.stats.areas, value: areas.length, tone: "text-priority-critical", icon: TriangleAlert, bg: "bg-priority-critical/10 text-priority-critical" },
+                { label: t.home.stats.shelters, value: shelters.length, tone: "text-blue-600 dark:text-blue-400", icon: Home, bg: "bg-blue-500/10 text-blue-600 dark:text-blue-400" },
+                { label: isFr ? "Personnel médical" : "طاقم طبي وبيطري متطوع", value: medicalVolunteers.length, tone: "text-emerald-600 dark:text-emerald-400", icon: Stethoscope, bg: "bg-emerald-500/10 text-emerald-600 dark:text-emerald-400" },
               ].map((s) => (
                 <div key={s.label} className="flex flex-col items-center justify-center rounded-xl bg-background/60 p-2.5 sm:p-4 transition-all hover:bg-background/90">
                   <div className="flex items-center gap-1.5 sm:gap-2">
@@ -207,14 +212,14 @@ export default async function HomePage() {
               <div>
                 <h2 className="flex items-center gap-2 text-xl sm:text-2xl font-bold">
                   <TriangleAlert className="size-5 sm:size-6 text-priority-critical" />
-                  المناطق المتضررة وبؤر الحرائق
+                  {t.home.affectedAreas.title}
                 </h2>
                 <p className="mt-1 sm:mt-1.5 text-xs sm:text-sm text-muted-foreground leading-relaxed">
-                  {areas.length} بؤرة حريق وتضرر مسجَّلة عبر {areaWilayas.length} ولايات.
+                  {areas.length} {t.home.affectedAreas.subtitleCount} {areaWilayas.length} {t.home.affectedAreas.subtitleWilayas}
                 </p>
               </div>
               <LinkButton href="/affected-areas" variant="outline" size="sm" className="hidden sm:inline-flex">
-                القائمة الكاملة
+                {t.home.affectedAreas.fullList}
               </LinkButton>
             </div>
 
@@ -235,21 +240,21 @@ export default async function HomePage() {
                       <div>
                         <div className="flex items-center justify-between">
                           <span className="rounded-full bg-priority-critical/10 px-2.5 py-0.5 text-xs font-bold text-priority-critical">
-                            بؤرة طوارئ
+                            {isFr ? "Zone d'alerte" : "بؤرة طوارئ"}
                           </span>
                           <span className="text-2xl sm:text-3xl font-extrabold tabular-nums text-priority-critical">
                             {items.length}
                           </span>
                         </div>
-                        <p className="mt-3 sm:mt-4 text-lg sm:text-xl font-bold">ولاية {w}</p>
+                        <p className="mt-3 sm:mt-4 text-lg sm:text-xl font-bold">{t.home.affectedAreas.wilayaPrefix} {w}</p>
                         <p className="mt-1 text-xs text-muted-foreground leading-relaxed">
                           {severe > 0
-                            ? `${severe} بؤر حرائق نشطة أو إجلاء عاجل`
-                            : "مناطق متضررة مسجَّلة ميدانياً"}
+                            ? `${severe} ${t.home.affectedAreas.severeCount}`
+                            : t.home.affectedAreas.recordedCount}
                         </p>
                       </div>
                       <div className="mt-4 sm:mt-6 flex items-center gap-1.5 text-xs sm:text-sm font-bold text-priority-critical transition-colors group-hover:text-priority-critical/80">
-                        <span>عرض كل بؤر ولاية {w}</span>
+                        <span>{isFr ? `Voir tout : ${w}` : `عرض كل بؤر ولاية ${w}`}</span>
                         <ArrowLeft className="size-3.5 sm:size-4" />
                       </div>
                     </Link>
@@ -270,10 +275,10 @@ export default async function HomePage() {
                       >
                         <div className="flex items-start justify-between gap-2">
                           <div>
-                            <p className="font-bold text-sm sm:text-base leading-snug">{a.spot}</p>
+                            <p className="font-bold text-sm sm:text-base leading-snug">{isFr && a.spot_fr ? a.spot_fr : a.spot}</p>
                             <p className="mt-0.5 sm:mt-1 flex items-center gap-1 text-[11px] sm:text-xs text-muted-foreground">
                               <MapPin className="size-3 sm:size-3.5 text-muted-foreground/70" />
-                              بلدية {a.commune} · دائرة {a.daira}
+                              {isFr ? `Commune de ${a.commune_fr || a.commune} · ${a.daira_fr || a.daira}` : `بلدية ${a.commune} · دائرة ${a.daira}`}
                             </p>
                           </div>
                           <span className={`shrink-0 rounded-full border px-2 py-0.5 text-[10px] sm:text-xs font-bold ${sev.tone}`}>
@@ -288,7 +293,7 @@ export default async function HomePage() {
             </div>
 
             <LinkButton href="/affected-areas" variant="outline" className="mt-5 w-full sm:hidden">
-              القائمة الكاملة للمناطق المتضررة
+              {t.home.affectedAreas.fullListMobile}
             </LinkButton>
           </div>
         </section>
@@ -300,14 +305,14 @@ export default async function HomePage() {
           <div className="mb-6 sm:mb-8 flex items-end justify-between gap-3">
             <div>
               <h2 className="flex items-center gap-2 text-xl sm:text-2xl font-bold">
-                <Home className="size-5 sm:size-6 text-blue-600 dark:text-blue-400" /> مراكز الإيواء المفتوحة
+                <Home className="size-5 sm:size-6 text-blue-600 dark:text-blue-400" /> {t.home.shelters.title}
               </h2>
               <p className="mt-1 sm:mt-1.5 text-xs sm:text-sm text-muted-foreground leading-relaxed">
-                مؤسسات عمومية ومراكز مجهزة لاستقبال الأسر التي تم إجلاؤها.
+                {t.home.shelters.subtitle}
               </p>
             </div>
             <LinkButton href="/map" variant="outline" size="sm" className="hidden sm:inline-flex">
-              على الخريطة
+              {t.home.shelters.onMap}
             </LinkButton>
           </div>
 
@@ -346,14 +351,14 @@ export default async function HomePage() {
         <div className="mb-6 sm:mb-8 flex items-end justify-between gap-3">
           <div>
             <h2 className="flex items-center gap-2 text-xl sm:text-2xl font-bold">
-              <Stethoscope className="size-5 sm:size-6 text-algeria-green" /> الأطقم الطبية والبيطرية المتطوعة
+              <Stethoscope className="size-5 sm:size-6 text-algeria-green" /> {t.home.medical.title}
             </h2>
             <p className="mt-1 sm:mt-1.5 text-xs sm:text-sm text-muted-foreground leading-relaxed">
-              أطباء، بياطرة وكوادر صحية متطوعون لتقديم الرعاية والاستشارات الميدانية.
+              {t.home.medical.subtitle}
             </p>
           </div>
           <LinkButton href="/medical" variant="outline" size="sm" className="hidden sm:inline-flex">
-            تسجيل كمتطوع
+            {t.home.medical.registerBtn}
           </LinkButton>
         </div>
 
@@ -381,12 +386,12 @@ export default async function HomePage() {
                   <div className="flex flex-wrap items-center gap-1.5 sm:gap-2 pt-1">
                     {doc.can_teleconsult && (
                       <span className="inline-flex items-center gap-1 rounded-full bg-emerald-500/10 px-2 py-0.5 text-[10px] sm:text-xs font-semibold text-emerald-600 dark:text-emerald-400">
-                        <CheckCircle2 className="size-3 sm:size-3.5" /> استشارة هاتفية
+                        <CheckCircle2 className="size-3 sm:size-3.5" /> {isFr ? "Téléconsultation" : "استشارة هاتفية"}
                       </span>
                     )}
                     {doc.can_field_intervene && (
                       <span className="inline-flex items-center gap-1 rounded-full bg-blue-500/10 px-2 py-0.5 text-[10px] sm:text-xs font-semibold text-blue-600 dark:text-blue-400">
-                        <CheckCircle2 className="size-3 sm:size-3.5" /> تدخل ميداني
+                        <CheckCircle2 className="size-3 sm:size-3.5" /> {isFr ? "Intervention terrain" : "تدخل ميداني"}
                       </span>
                     )}
                   </div>
@@ -422,16 +427,16 @@ export default async function HomePage() {
         )}
 
         <LinkButton href="/medical" variant="outline" className="mt-5 w-full sm:hidden">
-          تسجيل كمتطوع طبي / بيطري
+          {t.home.medical.registerBtnMobile}
         </LinkButton>
       </section>
 
       {/* ————————————————————————————————— أرقام الطوارئ */}
       <section className="border-y border-border bg-priority-critical/5">
         <div className="mx-auto max-w-6xl px-4 py-10 sm:py-12">
-          <h2 className="mb-1 text-center text-xl sm:text-2xl font-bold">أرقام الطوارئ الرسمية</h2>
+          <h2 className="mb-1 text-center text-xl sm:text-2xl font-bold">{t.home.emergency.title}</h2>
           <p className="mb-6 text-center text-xs sm:text-sm text-muted-foreground">
-            أرقام رسمية مجانية تعمل على مدار 24/24 ساعة.
+            {t.home.emergency.subtitle}
           </p>
           <div className="grid grid-cols-2 gap-2.5 sm:gap-3 sm:grid-cols-4">
             {emergencyContacts.map((c) => (
@@ -455,7 +460,7 @@ export default async function HomePage() {
                     href={`tel:${c.greenNumber}`}
                     className="mt-1 rounded-full bg-algeria-green/10 px-2 py-0.5 text-[10px] sm:text-xs font-semibold text-algeria-green hover:underline"
                   >
-                    الرقم الأخضر {c.greenNumber}
+                    {t.home.emergency.greenNumberPrefix} {c.greenNumber}
                   </a>
                 )}
               </div>
@@ -466,14 +471,16 @@ export default async function HomePage() {
 
       {/* ————————————————————————————————— كيف تعمل المنصة */}
       <section className="mx-auto max-w-6xl px-4 py-10 sm:py-14">
-        <h2 className="mb-6 sm:mb-8 text-center text-xl sm:text-2xl font-bold">كيف تعمل المنصة؟</h2>
+        <h2 className="mb-6 sm:mb-8 text-center text-xl sm:text-2xl font-bold">{t.home.howItWorks.title}</h2>
         <div className="grid gap-4 sm:gap-6 grid-cols-2 lg:grid-cols-4">
           {howItWorks.map((step) => (
             <div key={step.n} className="text-center p-3 rounded-xl bg-card border border-border/50 sm:border-0 sm:bg-transparent">
               <div className="mx-auto flex size-11 sm:size-14 items-center justify-center rounded-full bg-algeria-green/10 text-algeria-green">
                 <step.icon className="size-5 sm:size-6" />
               </div>
-              <p className="mt-2.5 sm:mt-3 text-xs sm:text-sm font-bold text-algeria-green">المرحلة {step.n}</p>
+              <p className="mt-2.5 sm:mt-3 text-xs sm:text-sm font-bold text-algeria-green">
+                {isFr ? `Étape ${step.n}` : `المرحلة ${step.n}`}
+              </p>
               <p className="mt-0.5 sm:mt-1 font-bold text-xs sm:text-base">{step.title}</p>
               <p className="mt-0.5 sm:mt-1 text-[11px] sm:text-sm text-muted-foreground leading-relaxed">{step.desc}</p>
             </div>
@@ -488,15 +495,15 @@ export default async function HomePage() {
             <div>
               <div className="inline-flex items-center gap-2 rounded-full border border-algeria-green/30 bg-algeria-green/10 px-3 py-1 text-xs font-bold text-algeria-green mb-2.5">
                 <Radio className="size-3.5 animate-pulse" />
-                <span>متابعة ميدانية حية وموثقة</span>
+                <span>{isFr ? "Couverture vérifiée en direct" : "متابعة ميدانية حية وموثقة"}</span>
               </div>
-              <h2 className="text-2xl sm:text-3xl font-extrabold tracking-tight">آخر البيانات الرسمية وحالة الميدان</h2>
+              <h2 className="text-2xl sm:text-3xl font-extrabold tracking-tight">{t.home.updates.title}</h2>
               <p className="mt-1 text-xs sm:text-sm text-muted-foreground">
-                تحديثات لحظية من مصالح الحماية المدنية، الدرك الوطني (طريقي)، ومحافظات الغابات.
+                {isFr ? "Mises à jour des services de la Protection Civile, de la Gendarmerie (Tariki) et des Forêts." : "تحديثات لحظية من مصالح الحماية المدنية، الدرك الوطني (طريقي)، ومحافظات الغابات."}
               </p>
             </div>
             <LinkButton href="/official-information" variant="outline" size="sm" className="self-start sm:self-auto shrink-0 font-bold">
-              استعراض كل البيانات ({updates.length})
+              {t.home.updates.allInfo}
             </LinkButton>
           </div>
 
@@ -509,7 +516,7 @@ export default async function HomePage() {
           {updates.length > 4 && (
             <div className="mt-6 text-center sm:hidden">
               <LinkButton href="/official-information" variant="outline" className="w-full font-bold">
-                عرض المزيد من المستجدات
+                {isFr ? "Voir plus de communiqués" : "عرض المزيد من المستجدات"}
               </LinkButton>
             </div>
           )}
@@ -520,18 +527,18 @@ export default async function HomePage() {
       <section className="border-t border-border bg-algeria-green/5">
         <div className="mx-auto flex max-w-6xl flex-col items-center gap-3 px-4 py-10 sm:py-14 text-center">
           <ShieldCheck className="size-7 sm:size-8 text-algeria-green" />
-          <h2 className="text-xl sm:text-2xl font-bold">أين ذهبت المساعدات؟</h2>
+          <h2 className="text-xl sm:text-2xl font-bold">{t.home.transparencyCallout.title}</h2>
           <p className="max-w-xl text-xs sm:text-base leading-relaxed text-muted-foreground px-2">
-            نلتزم بعرض أرقام إجمالية واضحة عمّا تم تسجيله وتوزيعه، دون كشف أي بيانات شخصية للأسر.
+            {t.home.transparencyCallout.desc}
           </p>
           <LinkButton href="/transparency" size="lg" variant="outline" className="w-full sm:w-auto">
-            صفحة الشفافية وتتبع القوافل
+            {t.home.transparencyCallout.btn}
           </LinkButton>
         </div>
       </section>
 
       {/* ————————————————————————————————— ملاحظة هامة */}
-      <PlatformNotice />
+      <PlatformNotice locale={locale} />
     </>
   );
 }

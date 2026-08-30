@@ -1,4 +1,4 @@
-﻿import "server-only";
+import "server-only";
 import { createClient } from "@/lib/supabase/server";
 import { getActiveCampaign } from "@/lib/data/public";
 import {
@@ -135,10 +135,12 @@ export async function syncOfficialNews(): Promise<{
         .select("title");
       const existingTitles = new Set((existing ?? []).map((e) => e.title));
 
+      const campaignId = campaign?.id || "camp-01";
+
       for (const item of allToSync) {
         if (!existingTitles.has(item.title)) {
           const { error } = await supabase.from("official_updates").insert({
-            campaign_id: campaign.id,
+            campaign_id: campaignId,
             title: item.title,
             body: item.body,
             source: item.source,

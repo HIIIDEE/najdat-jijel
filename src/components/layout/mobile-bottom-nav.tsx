@@ -1,25 +1,33 @@
-"use client";
+﻿"use client";
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { Home, TriangleAlert, MapPin, Gift, Truck, Stethoscope } from "lucide-react";
+import { Home, TriangleAlert, MapPin, Gift, Stethoscope } from "lucide-react";
 import { cn } from "@/lib/utils";
 
-const items = [
-  { href: "/", label: "الرئيسية", icon: Home },
-  { href: "/affected-areas", label: "المناطق", icon: TriangleAlert },
-  { href: "/donate", label: "المساعدات", icon: Gift },
-  { href: "/transport", label: "النقل", icon: Truck },
-  { href: "/medical", label: "الأطقم الطبية", icon: Stethoscope },
-];
+export interface MobileBottomNavLabels {
+  home: string;
+  needs: string;
+  haveAid: string;
+  map: string;
+  needHelp: string;
+}
 
-export function MobileBottomNav() {
+export function MobileBottomNav({ labels }: { labels?: MobileBottomNavLabels }) {
   const pathname = usePathname();
+
+  const items = [
+    { href: "/", label: labels?.home || "الرئيسية", icon: Home },
+    { href: "/affected-areas", label: "المناطق", icon: TriangleAlert },
+    { href: "/donate", label: labels?.haveAid || "المساعدات", icon: Gift },
+    { href: "/map", label: labels?.map || "الخريطة", icon: MapPin },
+    { href: "/medical", label: "الأطقم الطبية", icon: Stethoscope },
+  ];
 
   if (pathname?.startsWith("/admin")) return null;
 
   return (
-    <nav className="fixed inset-x-0 bottom-0 z-40 border-t border-border/80 bg-background/95 pb-[env(safe-area-inset-bottom,0px)] shadow-lg backdrop-blur-md supports-backdrop-filter:bg-background/85 md:hidden">
+    <nav className="fixed inset-x-0 bottom-0 z-40 border-t border-border/80 bg-background/95 pb-[max(env(safe-area-inset-bottom),0.75rem)] shadow-lg backdrop-blur-md supports-backdrop-filter:bg-background/85 md:hidden">
       <div className="grid grid-cols-5 items-center">
         {items.map((item) => {
           const active = pathname === item.href;

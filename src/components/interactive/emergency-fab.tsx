@@ -12,20 +12,18 @@ import {
 } from "@/components/ui/dialog";
 import { emergencyContacts } from "@/lib/emergency";
 import { cn } from "@/lib/utils";
+import type { AvailableLocale } from "@/i18n/locales";
 
-/**
- * زر طوارئ عائم متاح من كل صفحة.
- * أرقام رسمية مجانية — الضغط عليها يفتح تطبيق الهاتف مباشرة (tel:).
- */
-export function EmergencyFab() {
+export function EmergencyFab({ locale = "ar" }: { locale?: AvailableLocale }) {
   const [open, setOpen] = useState(false);
+  const isFr = locale === "fr";
 
   return (
     <>
       <button
         type="button"
         onClick={() => setOpen(true)}
-        aria-label="أرقام الطوارئ"
+        aria-label={isFr ? "Numéros d'urgence" : "أرقام الطوارئ"}
         className={cn(
           "fixed bottom-20 start-4 z-50 flex items-center gap-2 rounded-full bg-priority-critical px-4 py-3",
           "text-sm font-bold text-white shadow-lg shadow-priority-critical/30",
@@ -33,7 +31,7 @@ export function EmergencyFab() {
         )}
       >
         <TriangleAlert className="size-5" />
-        <span className="hidden sm:inline">طوارئ</span>
+        <span className="hidden sm:inline">{isFr ? "Urgences" : "طوارئ"}</span>
       </button>
 
       <Dialog open={open} onOpenChange={setOpen}>
@@ -41,10 +39,12 @@ export function EmergencyFab() {
           <DialogHeader>
             <DialogTitle className="flex items-center gap-2">
               <TriangleAlert className="size-5 text-priority-critical" />
-              أرقام الطوارئ
+              {isFr ? "Numéros d'urgence" : "أرقام الطوارئ"}
             </DialogTitle>
             <DialogDescription>
-              أرقام رسمية مجانية تعمل على مدار الساعة في كامل التراب الوطني.
+              {isFr
+                ? "Numéros officiels gratuits accessibles 24h/24 et 7j/7 sur tout le territoire national."
+                : "أرقام رسمية مجانية تعمل على مدار الساعة في كامل التراب الوطني."}
             </DialogDescription>
           </DialogHeader>
 
@@ -79,7 +79,7 @@ export function EmergencyFab() {
                     href={`tel:${c.greenNumber}`}
                     className="mt-2 flex items-center justify-between rounded-lg bg-algeria-green/10 px-3 py-1.5 text-xs font-semibold text-algeria-green"
                   >
-                    <span>الرقم الأخضر</span>
+                    <span>{isFr ? "Numéro vert" : "الرقم الأخضر"}</span>
                     <span className="tabular-nums">{c.greenNumber}</span>
                   </a>
                 )}
@@ -88,7 +88,7 @@ export function EmergencyFab() {
           </div>
 
           <Button variant="outline" onClick={() => setOpen(false)} className="w-full">
-            إغلاق
+            {isFr ? "Fermer" : "إغلاق"}
           </Button>
         </DialogContent>
       </Dialog>

@@ -1,4 +1,4 @@
-import "server-only";
+﻿import "server-only";
 import { createClient } from "@/lib/supabase/server";
 import { activeCampaignSlug } from "@/config/site";
 import type { Database } from "@/types/database";
@@ -172,9 +172,9 @@ export async function getActiveCampaign() {
       .select("*")
       .eq("slug", activeCampaignSlug)
       .maybeSingle();
-    return data ?? { id: "camp-01", slug: activeCampaignSlug, name: "حرائق الشمال الشرقي 2026", is_active: true };
+    return data;
   } catch {
-    return { id: "camp-01", slug: activeCampaignSlug, name: "حرائق الشمال الشرقي 2026", is_active: true };
+    return null;
   }
 }
 
@@ -182,9 +182,9 @@ export async function getCategories(): Promise<CategoryRow[]> {
   try {
     const supabase = await createClient();
     const { data } = await supabase.from("categories").select("*").order("sort_order");
-    return data && data.length > 0 ? data : fallbackCategories;
+    return data ?? [];
   } catch {
-    return fallbackCategories;
+    return [];
   }
 }
 
@@ -222,29 +222,22 @@ export async function getAllActiveNeeds() {
   }
 }
 
+const emptyStatOverview = {
+  total_families: 0,
+  families_awaiting: 0,
+  areas_reached: 0,
+  active_points: 0,
+  critical_needs: 0,
+  active_shipments: 0,
+};
+
 export async function getStatOverview() {
   try {
     const supabase = await createClient();
     const { data } = await supabase.rpc("get_stat_overview").single();
-    return (
-      data ?? {
-        total_families: 48,
-        families_awaiting: 12,
-        areas_reached: 8,
-        active_points: 6,
-        critical_needs: 7,
-        active_shipments: 4,
-      }
-    );
+    return data ?? emptyStatOverview;
   } catch {
-    return {
-      total_families: 48,
-      families_awaiting: 12,
-      areas_reached: 8,
-      active_points: 6,
-      critical_needs: 7,
-      active_shipments: 4,
-    };
+    return emptyStatOverview;
   }
 }
 
@@ -293,8 +286,8 @@ const fallbackOfficialUpdates = [
     id: "off-1",
     title: "الحماية المدنية: السيطرة التامة على بؤرة غابة العوانة وإخماد ألسنة اللهب بنسبة 95%",
     body: "تعلن مصالح الحماية المدنية لولاية جيجل بالتعاون مع محافظة الغابات عن نجاح عمليات التدخل الجوي والأرتال المتنقلة في إخماد حريق غابة العوانة مع استمرار الحراسة الوقائية لمنع تجدد البؤر.",
-    source: "المديرية العامة للحماية المدنية",
-    url: "https://www.facebook.com/DGPC.Algerie",
+    source: "مديرية الحماية المدنية لولاية جيجل",
+    url: "https://www.facebook.com/DGPC0018",
     update_type: "fire_alert",
     published_at: new Date(Date.now() - 1000 * 60 * 25).toISOString(),
     campaign_id: "camp-01",
@@ -393,9 +386,9 @@ export async function getAffectedAreas(): Promise<AffectedAreaRow[]> {
       .order("wilaya")
       .order("daira")
       .order("commune");
-    return data && data.length > 0 ? (data as AffectedAreaRow[]) : fallbackAffectedAreas;
+    return (data as AffectedAreaRow[] | null) ?? [];
   } catch {
-    return fallbackAffectedAreas;
+    return [];
   }
 }
 

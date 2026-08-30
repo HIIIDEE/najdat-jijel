@@ -3,12 +3,15 @@
 import { useRouter, useSearchParams, usePathname } from "next/navigation";
 import { X } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { categoryIcon, priorityLabels, priorityIcon, type PriorityLevel } from "@/lib/constants";
+import { categoryIcon, getPriorityLabel, priorityIcon, type PriorityLevel } from "@/lib/constants";
 import { Package } from "lucide-react";
 import { cn } from "@/lib/utils";
 import type { Database } from "@/types/database";
+import type { AvailableLocale } from "@/i18n/locales";
 
 type Category = Database["public"]["Tables"]["categories"]["Row"];
+
+const PRIORITY_KEYS: PriorityLevel[] = ["critical", "high", "medium", "low"];
 
 function Chip({
   active,
@@ -39,9 +42,18 @@ function Chip({
 export function NeedsFilters({
   categories,
   communes,
+  locale = "ar",
+  labels,
 }: {
   categories: Category[];
   communes: string[];
+  locale?: AvailableLocale;
+  labels?: {
+    priority: string;
+    commune: string;
+    category: string;
+    clearFilters: string;
+  };
 }) {
   const router = useRouter();
   const pathname = usePathname();
@@ -61,13 +73,19 @@ export function NeedsFilters({
     router.push(params.toString() ? `${pathname}?${params}` : pathname, { scroll: false });
   }
 
+  const priorityHeading = labels?.priority ?? (locale === "fr" ? "Priorité" : "الأولوية");
+  const communeHeading = labels?.commune ?? (locale === "fr" ? "Commune" : "البلدية");
+  const categoryHeading = labels?.category ?? (locale === "fr" ? "Catégorie" : "نوع المادة");
+  const clearFiltersText = labels?.clearFilters ?? (locale === "fr" ? "Effacer les filtres" : "مسح كل الفلاتر");
+
   return (
     <div className="space-y-4">
       <div>
-        <p className="mb-2 text-xs font-semibold text-muted-foreground">الأولوية</p>
+        <p className="mb-2 text-xs font-semibold text-muted-foreground">{priorityHeading}</p>
         <div className="flex flex-wrap gap-2">
-          {Object.entries(priorityLabels).map(([value, label]) => {
-            const Icon = priorityIcon[value as PriorityLevel];
+          {PRIORITY_KEYS.map((value) => {
+            const Icon = priorityIcon[value];
+            const label = getPriorityLabel(value, locale);
             return (
               <Chip
                 key={value}
@@ -83,7 +101,7 @@ export function NeedsFilters({
 
       {communes.length > 0 && (
         <div>
-          <p className="mb-2 text-xs font-semibold text-muted-foreground">البلدية</p>
+          <p className="mb-2 text-xs font-semibold text-muted-foreground">{communeHeading}</p>
           <div className="flex flex-wrap gap-2">
             {communes.map((c) => (
               <Chip key={c} active={current.commune === c} onClick={() => toggle("commune", c)}>
@@ -95,7 +113,7 @@ export function NeedsFilters({
       )}
 
       <div>
-        <p className="mb-2 text-xs font-semibold text-muted-foreground">نوع المادة</p>
+        <p className="mb-2 text-xs font-semibold text-muted-foreground">{categoryHeading}</p>
         <div className="flex flex-wrap gap-2">
           {categories.map((c) => {
             const Icon = categoryIcon[c.slug] ?? Package;
@@ -114,7 +132,7 @@ export function NeedsFilters({
 
       {hasFilters && (
         <Button variant="ghost" size="sm" onClick={() => router.push(pathname, { scroll: false })}>
-          <X className="size-4" /> مسح كل الفلاتر
+          <X className="size-4" /> {clearFiltersText}
         </Button>
       )}
     </div>

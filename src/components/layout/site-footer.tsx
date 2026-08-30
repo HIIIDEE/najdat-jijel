@@ -1,36 +1,40 @@
-import Link from "next/link";
+﻿import Link from "next/link";
 import { siteConfig } from "@/config/site";
+import { getDictionary } from "@/i18n/dictionaries";
+import { getLocale } from "@/i18n/server";
 
-const columns = [
-  {
-    title: "المنصة",
-    links: [
-      { href: "/affected-areas", label: "المناطق المتضررة" },
-      { href: "/medical", label: "الأطقم الطبية" },
-      { href: "/map", label: "خريطة الإغاثة" },
-      { href: "/news", label: "الأخبار" },
-      { href: "/transparency", label: "الشفافية" },
-      { href: "/official-information", label: "معلومات رسمية" },
-    ],
-  },
-  {
-    title: "شارك وتطوع",
-    links: [
-      { href: "/donate", label: "لدي مساعدات" },
-      { href: "/transport", label: "أستطيع النقل" },
-      { href: "/medical", label: "التطوع الطبي" },
-    ],
-  },
-];
+export async function SiteFooter() {
+  const t = await getDictionary(await getLocale());
 
-export function SiteFooter() {
+  const columns = [
+    {
+      title: t.footer.platformColumn,
+      links: [
+        { href: "/affected-areas", label: t.nav.affectedAreas },
+        { href: "/medical", label: "الأطقم الطبية" },
+        { href: "/map", label: t.footer.reliefMap },
+        { href: "/news", label: t.nav.news },
+        { href: "/transparency", label: t.nav.transparency },
+        { href: "/official-information", label: t.nav.officialInformation },
+      ],
+    },
+    {
+      title: t.footer.participateColumn,
+      links: [
+        { href: "/donate", label: t.cta.haveAid },
+        { href: "/transport", label: t.cta.canTransport },
+        { href: "/medical", label: "التطوع الطبي" },
+      ],
+    },
+  ];
+
   return (
     <footer className="mt-16 border-t border-border bg-secondary/40">
       <div className="mx-auto max-w-6xl px-4 py-10">
         <div className="grid gap-8 sm:grid-cols-3">
           <div>
             <p className="font-bold text-lg">{siteConfig.shortName}</p>
-            <p className="mt-2 text-sm text-muted-foreground max-w-xs">{siteConfig.tagline}</p>
+            <p className="mt-2 text-sm text-muted-foreground max-w-xs">{t.site.tagline}</p>
           </div>
           {columns.map((col) => (
             <div key={col.title}>
@@ -51,22 +55,22 @@ export function SiteFooter() {
           ))}
         </div>
         <div className="mt-8 border-t border-border pt-6 text-xs text-muted-foreground">
-          <p>{siteConfig.legalNotice}</p>
+          <p>{t.site.legalNotice}</p>
           <p className="mt-2">
-            جزء من البيانات الميدانية (مراكز الإيواء والجمعيات وبلديات جيجل) مصدرها منصة{" "}
+            {t.footer.dataCreditBefore}{" "}
             <a
               href="https://sanad-ca736.web.app"
               target="_blank"
               rel="noopener noreferrer"
               className="font-medium hover:text-foreground hover:underline"
             >
-              سند — Sanad
+              {t.footer.dataCreditLink}
             </a>{" "}
-            من تطوير Quanta Club، مع الشكر لهم على جهدهم في جمعها والتحقق منها.
+            {t.footer.dataCreditAfter}
           </p>
           <p className="mt-2">
             <Link href="/admin/login" className="hover:text-foreground">
-              دخول فرق التنسيق
+              {t.footer.staffLogin}
             </Link>
           </p>
         </div>

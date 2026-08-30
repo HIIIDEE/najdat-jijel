@@ -5,13 +5,23 @@ import { PointCard, type PointCardData } from "@/components/shared/point-card";
 import { getPublicCollectionPoints, getPublicReliefHubs } from "@/lib/data/public";
 import { MapClient } from "./map-client";
 import { MapLegend } from "./map-legend";
+import { getDictionary } from "@/i18n/dictionaries";
+import { getLocale } from "@/i18n/server";
 
-export const metadata: Metadata = {
-  title: "خريطة الإغاثة",
-  description: "نقاط التجميع ومراكز الاستقبال ومراكز الإيواء المعتمدة في حملة هبة الجزائر.",
-};
+export async function generateMetadata(): Promise<Metadata> {
+  const locale = await getLocale();
+  const t = await getDictionary(locale);
+  return {
+    title: t.nav.map,
+    description: t.map.pageSubtitle,
+  };
+}
 
 export default async function MapPage() {
+  const locale = await getLocale();
+  const t = await getDictionary(locale);
+  const isFr = locale === "fr";
+
   const [collectionPoints, reliefHubs] = await Promise.all([
     getPublicCollectionPoints(),
     getPublicReliefHubs(),
@@ -60,9 +70,9 @@ export default async function MapPage() {
   return (
     <div className="mx-auto max-w-6xl px-4 py-10">
       <div className="mb-6 text-center">
-        <h1 className="text-3xl font-extrabold">خريطة الإغاثة</h1>
+        <h1 className="text-3xl font-extrabold">{t.map.pageTitle}</h1>
         <p className="mx-auto mt-2 max-w-2xl text-muted-foreground">
-          تحقّق دائمًا من شارة التحقق قبل التحرك. اضغط على أي نقطة للاتصال أو فتح الاتجاهات.
+          {t.map.pageSubtitle}
         </p>
       </div>
 
@@ -70,39 +80,45 @@ export default async function MapPage() {
         <Card className="py-3">
           <CardContent className="px-3 text-center">
             <p className="text-xl font-bold tabular-nums text-[#00843D]">{collect}</p>
-            <p className="text-xs font-medium text-muted-foreground">نقطة تجميع</p>
+            <p className="text-xs font-medium text-muted-foreground">{t.map.legendCollection}</p>
           </CardContent>
         </Card>
         <Card className="py-3">
           <CardContent className="px-3 text-center">
             <p className="text-xl font-bold tabular-nums text-[#1d4ed8]">{hubs}</p>
-            <p className="text-xs font-medium text-muted-foreground">مركز استقبال</p>
+            <p className="text-xs font-medium text-muted-foreground">{t.map.legendRelief}</p>
           </CardContent>
         </Card>
         <Card className="py-3">
           <CardContent className="px-3 text-center">
             <p className="text-xl font-bold tabular-nums text-[#7c3aed]">{shelters}</p>
-            <p className="text-xs font-medium text-muted-foreground">مركز إيواء</p>
+            <p className="text-xs font-medium text-muted-foreground">{t.map.legendShelter}</p>
           </CardContent>
         </Card>
       </div>
 
-      <MapLegend />
+      <MapLegend locale={locale} />
 
       <div className="h-[420px] overflow-hidden rounded-xl border border-border sm:h-[520px]">
-        <MapClient points={points} />
+        <MapClient points={points} locale={locale} />
       </div>
 
-      <h2 className="mt-10 mb-4 text-xl font-bold">كل النقاط ({points.length})</h2>
+      <h2 className="mt-10 mb-4 text-xl font-bold">
+        {isFr ? `Tous les points (${points.length})` : `كل النقاط (${points.length})`}
+      </h2>
       {points.length === 0 ? (
         <EmptyState
-          title="لا توجد نقاط مسجَّلة بعد"
-          description="سيتم عرض نقاط التجميع ومراكز الاستقبال هنا فور إضافتها من الإدارة."
+          title={isFr ? "Aucun point enregistré pour le moment" : "لا توجد نقاط مسجَّلة بعد"}
+          description={
+            isFr
+              ? "Les points de collecte et centres d'accueil apparaîtront ici dès leur validation."
+              : "سيتم عرض نقاط التجميع ومراكز الاستقبال هنا فور إضافتها من الإدارة."
+          }
         />
       ) : (
         <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
           {points.map((p) => (
-            <PointCard key={`${p.kind}-${p.id}`} point={p} />
+            <PointCard key={`${p.kind}-${p.id}`} point={p} locale={locale} />
           ))}
         </div>
       )}

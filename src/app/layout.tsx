@@ -5,6 +5,8 @@ import "./globals.css";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { Toaster } from "@/components/ui/sonner";
 import { siteConfig } from "@/config/site";
+import { getLocale } from "@/i18n/server";
+import { localeMeta } from "@/i18n/locales";
 
 const vazirmatn = Vazirmatn({
   subsets: ["arabic", "latin"],
@@ -39,14 +41,16 @@ export const viewport: Viewport = {
   initialScale: 1,
 };
 
-export default function RootLayout({ children }: { children: React.ReactNode }) {
+export default async function RootLayout({ children }: { children: React.ReactNode }) {
+  const { htmlLang, dir } = localeMeta[await getLocale()];
+
   return (
-    <html lang="ar" dir="rtl" className={`${vazirmatn.variable} h-full antialiased`}>
+    <html lang={htmlLang} dir={dir} className={`${vazirmatn.variable} h-full antialiased`}>
       <body className="min-h-full flex flex-col bg-background text-foreground">
         <TooltipProvider>
           <Analytics />
           {children}
-          <Toaster position="top-center" richColors dir="rtl" />
+          <Toaster position="top-center" richColors dir={dir} />
         </TooltipProvider>
       </body>
     </html>
