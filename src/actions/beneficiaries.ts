@@ -29,8 +29,20 @@ export async function updateBeneficiaryStatus(id: string, status: RequestStatus)
 
 export async function updateBeneficiaryPriority(id: string, priority: PriorityLevel) {
   const supabase = await createClient();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+
   const { error } = await supabase.from("beneficiary_requests").update({ priority }).eq("id", id);
   if (error) return { success: false, error: error.message };
+
+  await logActivity(supabase, {
+    actorId: user?.id,
+    action: `غيّر أولوية طلب مساعدة إلى ${priority}`,
+    entityType: "beneficiary_request",
+    entityId: id,
+  });
+
   revalidatePath("/admin/beneficiaries");
   return { success: true };
 }
