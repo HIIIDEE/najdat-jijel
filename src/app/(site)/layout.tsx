@@ -21,10 +21,10 @@ export default async function SiteLayout({ children }: { children: React.ReactNo
       <MobileBottomNav
         labels={{
           home: t.nav.home,
-          needs: t.nav.needs,
-          haveAid: t.cta.haveAid,
+          officialInfo: locale === "fr" ? "Bulletins" : "البيانات",
+          haveAid: locale === "fr" ? "Donner" : "تقديم عون",
           map: t.nav.map,
-          needHelp: t.cta.needHelp,
+          medical: locale === "fr" ? "Médecins" : "الأطباء",
         }}
       />
       <EmergencyFab locale={locale} />

@@ -9,7 +9,9 @@ export interface EmergencyContact {
   /** الرقم الأخضر المجاني (إن وُجد) */
   greenNumber?: string;
   label: string;
+  label_fr?: string;
   hint?: string;
+  hint_fr?: string;
   icon: LucideIcon;
 }
 
@@ -18,26 +20,34 @@ export const emergencyContacts: EmergencyContact[] = [
     number: "14",
     greenNumber: "1021",
     label: "الحماية المدنية",
+    label_fr: "Protection Civile",
     hint: "إسعاف وإنقاذ وإخماد حرائق",
+    hint_fr: "Secours, sauvetage et extinction des incendies",
     icon: Ambulance,
   },
   {
     number: "1055",
     label: "الدرك الوطني",
+    label_fr: "Gendarmerie Nationale",
     hint: "المناطق الريفية والطرق",
+    hint_fr: "Zones rurales et axes routiers",
     icon: Shield,
   },
   {
     number: "17",
     greenNumber: "1548",
     label: "الشرطة الجزائرية",
+    label_fr: "Police / Sûreté Nationale",
     hint: "الأمن الوطني — المناطق الحضرية",
+    hint_fr: "Sûreté nationale — Zones urbaines",
     icon: ShieldAlert,
   },
   {
     number: "1070",
     label: "المديرية العامة للغابات",
+    label_fr: "Direction Générale des Forêts",
     hint: "التبليغ عن حرائق الغابات",
+    hint_fr: "Signalement des feux de forêt",
     icon: TreePine,
   },
 ];

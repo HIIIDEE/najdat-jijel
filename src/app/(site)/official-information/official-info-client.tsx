@@ -19,30 +19,39 @@ import {
 import { OfficialUpdateCard, type OfficialUpdateItem } from "@/components/shared/official-update-card";
 import { EmptyState } from "@/components/shared/empty-state";
 
+import type { AvailableLocale } from "@/i18n/locales";
+
 const authorityFilters = [
-  { id: "all", label: "جميع المصادر", icon: Radio },
-  { id: "protection_civile_jijel", label: "الحماية المدنية (جيجل)", icon: Flame },
-  { id: "protection_civile", label: "الحماية المدنية (الوطنية)", icon: Flame },
-  { id: "gendarmerie", label: "الدرك الوطني / طريقي", icon: Truck },
-  { id: "forets", label: "محافظة الغابات", icon: Trees },
-  { id: "police", label: "الأمن الوطني", icon: ShieldAlert },
-  { id: "wilaya", label: "خلية الأزمة والأرصاد", icon: Building2 },
+  { id: "all", label: "جميع المصادر", label_fr: "Toutes les sources", icon: Radio },
+  { id: "protection_civile_jijel", label: "الحماية المدنية (جيجل)", label_fr: "Protection Civile (Jijel)", icon: Flame },
+  { id: "protection_civile", label: "الحماية المدنية (الوطنية)", label_fr: "Protection Civile (Nationale)", icon: Flame },
+  { id: "gendarmerie", label: "الدرك الوطني / طريقي", label_fr: "Gendarmerie / Tariki", icon: Truck },
+  { id: "forets", label: "محافظة الغابات", label_fr: "Conservation des Forêts", icon: Trees },
+  { id: "police", label: "الأمن الوطني", label_fr: "Sûreté Nationale (Police)", icon: ShieldAlert },
+  { id: "wilaya", label: "خلية الأزمة والأرصاد", label_fr: "Cellule de Crise & Météo", icon: Building2 },
 ];
 
 const categoryFilters = [
-  { id: "all", label: "الكل" },
-  { id: "fire_alert", label: "حرائق وإخماد" },
-  { id: "road_status", label: "حالة الطرقات" },
-  { id: "weather_warning", label: "نشرات الطقس" },
-  { id: "safety_guidelines", label: "إرشادات وإجلاء" },
+  { id: "all", label: "الكل", label_fr: "Tous" },
+  { id: "fire_alert", label: "حرائق وإخماد", label_fr: "Incendies & Extinction" },
+  { id: "road_status", label: "حالة الطرقات", label_fr: "État des routes" },
+  { id: "weather_warning", label: "نشرات الطقس", label_fr: "Alertes météo" },
+  { id: "safety_guidelines", label: "إرشادات وإجلاء", label_fr: "Consignes & Évacuation" },
 ];
 
-export function OfficialInfoClient({ initialUpdates }: { initialUpdates: OfficialUpdateItem[] }) {
+export function OfficialInfoClient({
+  initialUpdates,
+  locale = "ar",
+}: {
+  initialUpdates: OfficialUpdateItem[];
+  locale?: AvailableLocale;
+}) {
   const [updates, setUpdates] = useState<OfficialUpdateItem[]>(initialUpdates);
   const [search, setSearch] = useState("");
   const [selectedAuthority, setSelectedAuthority] = useState("all");
   const [selectedCategory, setSelectedCategory] = useState("all");
   const [isSyncing, setIsSyncing] = useState(false);
+  const isFr = locale === "fr";
 
   const handleSync = async () => {
     setIsSyncing(true);
@@ -110,7 +119,9 @@ export function OfficialInfoClient({ initialUpdates }: { initialUpdates: Officia
           </div>
           <div>
             <p className="text-xl sm:text-2xl font-black tabular-nums text-priority-critical">{stats.fireAlerts}</p>
-            <p className="text-[11px] sm:text-xs font-bold text-muted-foreground">بلاغات حرائق نشطة</p>
+            <p className="text-[11px] sm:text-xs font-bold text-muted-foreground">
+              {isFr ? "Alertes incendies" : "بلاغات حرائق نشطة"}
+            </p>
           </div>
         </div>
 
@@ -120,7 +131,9 @@ export function OfficialInfoClient({ initialUpdates }: { initialUpdates: Officia
           </div>
           <div>
             <p className="text-xl sm:text-2xl font-black tabular-nums text-blue-600 dark:text-blue-400">{stats.roadAlerts}</p>
-            <p className="text-[11px] sm:text-xs font-bold text-muted-foreground">حالة الطرقات والمعابر</p>
+            <p className="text-[11px] sm:text-xs font-bold text-muted-foreground">
+              {isFr ? "État des routes & accès" : "حالة الطرقات والمعابر"}
+            </p>
           </div>
         </div>
 
@@ -130,7 +143,9 @@ export function OfficialInfoClient({ initialUpdates }: { initialUpdates: Officia
           </div>
           <div>
             <p className="text-xl sm:text-2xl font-black tabular-nums text-amber-600 dark:text-amber-400">{stats.weatherAlerts}</p>
-            <p className="text-[11px] sm:text-xs font-bold text-muted-foreground">نشرات جوية خاصة</p>
+            <p className="text-[11px] sm:text-xs font-bold text-muted-foreground">
+              {isFr ? "Bulletins météo (BMS)" : "نشرات جوية خاصة"}
+            </p>
           </div>
         </div>
 
@@ -140,7 +155,9 @@ export function OfficialInfoClient({ initialUpdates }: { initialUpdates: Officia
           </div>
           <div>
             <p className="text-xl sm:text-2xl font-black tabular-nums text-algeria-green">{stats.total}</p>
-            <p className="text-[11px] sm:text-xs font-bold text-muted-foreground">إجمالي البيانات الموثقة</p>
+            <p className="text-[11px] sm:text-xs font-bold text-muted-foreground">
+              {isFr ? "Communiqués vérifiés" : "إجمالي البيانات الموثقة"}
+            </p>
           </div>
         </div>
       </div>
@@ -149,32 +166,32 @@ export function OfficialInfoClient({ initialUpdates }: { initialUpdates: Officia
       <div className="flex flex-wrap items-center justify-between gap-3 rounded-2xl border border-border/80 bg-card p-3 sm:px-5 text-xs">
         <div className="flex items-center gap-2 font-bold text-foreground">
           <Phone className="size-4 text-priority-critical animate-pulse shrink-0" />
-          <span>أرقام النجدة المباشرة في حالة الخطر:</span>
+          <span>{isFr ? "Numéros d'urgence directe en cas de danger :" : "أرقام النجدة المباشرة في حالة الخطر:"}</span>
         </div>
         <div className="flex flex-wrap items-center gap-2">
           <a
             href="tel:14"
             className="inline-flex items-center gap-1 rounded-lg bg-priority-critical/10 px-3 py-1 font-bold text-priority-critical hover:bg-priority-critical/20"
           >
-            14 الحماية المدنية
+            {isFr ? "14 Protection Civile" : "14 الحماية المدنية"}
           </a>
           <a
             href="tel:1021"
             className="inline-flex items-center gap-1 rounded-lg bg-green-600/10 px-3 py-1 font-bold text-green-700 dark:text-green-300 hover:bg-green-600/20"
           >
-            1021 الغابات
+            {isFr ? "1021 Forêts" : "1021 الغابات"}
           </a>
           <a
             href="tel:1055"
             className="inline-flex items-center gap-1 rounded-lg bg-emerald-600/10 px-3 py-1 font-bold text-emerald-700 dark:text-emerald-300 hover:bg-emerald-600/20"
           >
-            1055 الدرك الوطني
+            {isFr ? "1055 Gendarmerie" : "1055 الدرك الوطني"}
           </a>
           <a
             href="tel:1548"
             className="inline-flex items-center gap-1 rounded-lg bg-blue-600/10 px-3 py-1 font-bold text-blue-700 dark:text-blue-300 hover:bg-blue-600/20"
           >
-            1548 الشرطة
+            {isFr ? "1548 Police" : "1548 الشرطة"}
           </a>
         </div>
       </div>
@@ -187,7 +204,7 @@ export function OfficialInfoClient({ initialUpdates }: { initialUpdates: Officia
             type="search"
             value={search}
             onChange={(e) => setSearch(e.target.value)}
-            placeholder="بحث في البيانات، حالة الطرقات، البؤر، والولايات..."
+            placeholder={isFr ? "Rechercher dans les communiqués, routes, wilayas..." : "بحث في البيانات، حالة الطرقات، البؤر، والولايات..."}
             className="w-full rounded-xl border border-border bg-card pr-10 pl-10 py-2.5 text-sm text-foreground placeholder:text-muted-foreground focus:border-primary focus:outline-hidden focus:ring-2 focus:ring-primary/20 shadow-xs"
           />
           {search && (
@@ -208,7 +225,7 @@ export function OfficialInfoClient({ initialUpdates }: { initialUpdates: Officia
           className="inline-flex items-center justify-center gap-2 rounded-xl border border-border bg-card px-4 py-2.5 text-xs sm:text-sm font-bold text-foreground hover:bg-secondary transition-colors disabled:opacity-60 shrink-0 shadow-xs cursor-pointer"
         >
           <RotateCw className={`size-4 text-algeria-green ${isSyncing ? "animate-spin" : ""}`} />
-          <span>{isSyncing ? "جارٍ المزامنة..." : "تحديث المصادر الرسمية"}</span>
+          <span>{isFr ? (isSyncing ? "Synchronisation..." : "Actualiser les sources") : (isSyncing ? "جارٍ المزامنة..." : "تحديث المصادر الرسمية")}</span>
         </button>
       </div>
 
@@ -216,7 +233,7 @@ export function OfficialInfoClient({ initialUpdates }: { initialUpdates: Officia
       <div>
         <div className="flex items-center gap-1.5 text-xs font-bold text-muted-foreground mb-2.5">
           <Filter className="size-3.5" />
-          <span>تصفية حسب الجهة الرسمية المصدرة:</span>
+          <span>{isFr ? "Filtrer par source officielle :" : "تصفية حسب الجهة الرسمية المصدرة:"}</span>
         </div>
         <div className="flex flex-wrap gap-2">
           {authorityFilters.map((f) => {
@@ -234,7 +251,7 @@ export function OfficialInfoClient({ initialUpdates }: { initialUpdates: Officia
                 }`}
               >
                 <Icon className="size-3.5" />
-                <span>{f.label}</span>
+                <span>{isFr ? f.label_fr : f.label}</span>
               </button>
             );
           })}
@@ -243,7 +260,7 @@ export function OfficialInfoClient({ initialUpdates }: { initialUpdates: Officia
 
       {/* Category Filter Chips */}
       <div className="flex flex-wrap items-center gap-2 pt-1 border-t border-border/40">
-        <span className="text-xs text-muted-foreground font-medium">النوع:</span>
+        <span className="text-xs text-muted-foreground font-medium">{isFr ? "Type :" : "النوع:"}</span>
         {categoryFilters.map((c) => {
           const isSelected = selectedCategory === c.id;
           return (
@@ -257,7 +274,7 @@ export function OfficialInfoClient({ initialUpdates }: { initialUpdates: Officia
                   : "text-muted-foreground hover:text-foreground hover:bg-secondary/50"
               }`}
             >
-              {c.label}
+              {isFr ? c.label_fr : c.label}
             </button>
           );
         })}
@@ -271,7 +288,7 @@ export function OfficialInfoClient({ initialUpdates }: { initialUpdates: Officia
             }}
             className="text-xs text-priority-critical hover:underline font-bold mr-auto cursor-pointer"
           >
-            إعادة تعيين الفلاتر
+            {isFr ? "Réinitialiser les filtres" : "إعادة تعيين الفلاتر"}
           </button>
         )}
       </div>
@@ -279,18 +296,22 @@ export function OfficialInfoClient({ initialUpdates }: { initialUpdates: Officia
       {/* Cards Feed */}
       {filtered.length === 0 ? (
         <EmptyState
-          title={initialUpdates.length === 0 ? "لا توجد بيانات أو بلاغات رسمية مسجلة حالياً" : "لا توجد بيانات مطابقة لخيارات البحث"}
+          title={
+            initialUpdates.length === 0
+              ? (isFr ? "Aucun communiqué ou bulletin officiel enregistré actuellement" : "لا توجد بيانات أو بلاغات رسمية مسجلة حالياً")
+              : (isFr ? "Aucun communiqué ne correspond à vos critères de recherche" : "لا توجد بيانات مطابقة لخيارات البحث")
+          }
           description={
             initialUpdates.length === 0
-              ? "يتم نشر وتحديث البيانات فور صدورها من مصالح الحماية المدنية، الدرك الوطني، ومحافظات الغابات."
-              : "جرّب تغيير كلمات البحث أو إعادة تعيين فلاتر الجهات الرسمية."
+              ? (isFr ? "Les communiqués sont publiés dès diffusion par les services de la Protection Civile, la Gendarmerie et les Forêts." : "يتم نشر وتحديث البيانات فور صدورها من مصالح الحماية المدنية، الدرك الوطني، ومحافظات الغابات.")
+              : (isFr ? "Essayez de modifier les mots clés ou de réinitialiser les filtres des autorités." : "جرّب تغيير كلمات البحث أو إعادة تعيين فلاتر الجهات الرسمية.")
           }
         />
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-5 items-stretch">
           {filtered.map((u, i) => (
             <div key={u.id || `upd-${i}`} className="h-full flex flex-col">
-              <OfficialUpdateCard update={u} />
+              <OfficialUpdateCard update={u} locale={locale} />
             </div>
           ))}
         </div>

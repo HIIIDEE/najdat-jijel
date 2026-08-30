@@ -1,4 +1,4 @@
-﻿import type { Metadata } from "next";
+import type { Metadata } from "next";
 import { Radio, ShieldCheck } from "lucide-react";
 import { getOfficialUpdates } from "@/lib/data/public";
 import { getDictionary } from "@/i18n/dictionaries";
@@ -44,7 +44,7 @@ export default async function OfficialInformationPage() {
       </div>
 
       {/* Main Interactive Filter & News Deck */}
-      <OfficialInfoClient initialUpdates={updates} />
+      <OfficialInfoClient initialUpdates={updates} locale={locale} />
     </div>
   );
 }
