@@ -97,12 +97,20 @@ export function ReliefMap({ points }: { points: PointCardData[] }) {
         any = true;
         bounds.extend([point.lng, point.lat]);
 
+        // MapLibre يضبط `transform` على العنصر الجذر للمؤشّر ليحدّد موقعه على الخريطة،
+        // فكتابة `transform` عليه في تأثير التحويم كانت تمحو موقعه وتقذفه إلى زاوية الخريطة.
+        // لذلك: عنصر جذر يملكه MapLibre بلا أنماط — يأخذ مقاسه تلقائيًا من العنصر الداخلي
+        // فيبقى الارتكاز `translate(-50%,-50%)` مطابقًا تمامًا لما كان عليه — وبداخله
+        // العنصر المرئي الذي نتحكّم بتحويله وحدنا.
         const el = document.createElement("div");
-        el.style.cssText = `width:20px;height:20px;border-radius:50%;border:2.5px solid #fff;
+
+        const dot = document.createElement("div");
+        dot.style.cssText = `width:20px;height:20px;border-radius:50%;border:2.5px solid #fff;
           box-shadow:0 1px 5px rgba(0,0,0,.45);cursor:pointer;background:${colorByKind[point.kind]};
           transition:transform .15s`;
-        el.onmouseenter = () => (el.style.transform = "scale(1.25)");
-        el.onmouseleave = () => (el.style.transform = "scale(1)");
+        dot.onmouseenter = () => (dot.style.transform = "scale(1.25)");
+        dot.onmouseleave = () => (dot.style.transform = "scale(1)");
+        el.appendChild(dot);
 
         const tel = point.phone ? point.phone.replace(/\s/g, "") : null;
         const dir = `https://www.google.com/maps/dir/?api=1&destination=${point.lat},${point.lng}`;
