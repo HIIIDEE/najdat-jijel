@@ -12,6 +12,7 @@ import {
   Stethoscope,
   LifeBuoy,
   Gift,
+  Hammer,
 } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
 import { LinkButton } from "@/components/shared/link-button";
@@ -355,6 +356,23 @@ export default async function HomePage() {
         <LinkButton href="/medical" variant="outline" className="mt-5 w-full sm:hidden">
           {t.home.medical.registerBtnMobile}
         </LinkButton>
+      </section>
+
+      {/* ————————————————————————————————— ترميم المنازل */}
+      <section className="border-y border-border bg-secondary/30">
+        <div className="mx-auto flex max-w-6xl flex-col items-center gap-3 px-4 py-14 text-center">
+          <Hammer className="size-8 text-algeria-green" />
+          <h2 className="text-2xl font-bold">{t.home.reconstruction.title}</h2>
+          <p className="max-w-xl text-muted-foreground">{t.home.reconstruction.desc}</p>
+          <div className="flex flex-wrap justify-center gap-3">
+            <LinkButton href="/help/damage-assessment" size="lg">
+              {t.home.reconstruction.damageBtn}
+            </LinkButton>
+            <LinkButton href="/artisans" size="lg" variant="outline">
+              {t.home.reconstruction.artisanBtn}
+            </LinkButton>
+          </div>
+        </div>
       </section>
 
       {/* ————————————————————————————————— أرقام الطوارئ */}

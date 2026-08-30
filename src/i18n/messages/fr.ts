@@ -110,6 +110,12 @@ const fr: Dictionary = {
       desc: "Nous publions des bilans transparents des dons reçus et distribués, sans divulguer les données privées des familles.",
       btn: "Page de transparence",
     },
+    reconstruction: {
+      title: "Votre logement a été endommagé ? Réparons-le ensemble",
+      desc: "Décrivez les dégâts et joignez des photos pour estimer automatiquement les matériaux nécessaires, ou proposez vos compétences d'artisan pour aider les familles sinistrées.",
+      damageBtn: "Signaler des dégâts au logement",
+      artisanBtn: "Je suis artisan bénévole",
+    },
   },
   needs: {
     pageTitle: "Quels sont les besoins actuels ?",
