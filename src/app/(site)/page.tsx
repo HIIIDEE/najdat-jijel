@@ -10,10 +10,12 @@ import {
   Stethoscope,
   Gift,
   CheckCircle2,
+  Radio,
 } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
 import { LinkButton } from "@/components/shared/link-button";
 import { PlatformNotice } from "@/components/shared/platform-notice";
+import { OfficialUpdateCard } from "@/components/shared/official-update-card";
 import { AnimatedCounter } from "@/components/interactive/animated-counter";
 import { siteConfig } from "@/config/site";
 import { relativeTimeAr } from "@/lib/constants";
@@ -479,31 +481,38 @@ export default async function HomePage() {
         </div>
       </section>
 
-      {/* ————————————————————————————————— المستجدات */}
+      {/* ————————————————————————————————— آخر البيانات والمستجدات الرسمية */}
       {updates.length > 0 && (
-        <section className="mx-auto max-w-6xl px-4 pb-10 sm:pb-14">
-          <div className="mb-6 flex items-end justify-between gap-3">
-            <h2 className="text-xl sm:text-2xl font-bold">آخر المستجدات الموثقة</h2>
-            <LinkButton href="/official-information" variant="outline" size="sm">
-              كل المعلومات
+        <section className="mx-auto max-w-6xl px-4 py-10 sm:py-16">
+          <div className="mb-6 sm:mb-8 flex flex-col sm:flex-row sm:items-end justify-between gap-3">
+            <div>
+              <div className="inline-flex items-center gap-2 rounded-full border border-algeria-green/30 bg-algeria-green/10 px-3 py-1 text-xs font-bold text-algeria-green mb-2.5">
+                <Radio className="size-3.5 animate-pulse" />
+                <span>متابعة ميدانية حية وموثقة</span>
+              </div>
+              <h2 className="text-2xl sm:text-3xl font-extrabold tracking-tight">آخر البيانات الرسمية وحالة الميدان</h2>
+              <p className="mt-1 text-xs sm:text-sm text-muted-foreground">
+                تحديثات لحظية من مصالح الحماية المدنية، الدرك الوطني (طريقي)، ومحافظات الغابات.
+              </p>
+            </div>
+            <LinkButton href="/official-information" variant="outline" size="sm" className="self-start sm:self-auto shrink-0 font-bold">
+              استعراض كل البيانات ({updates.length})
             </LinkButton>
           </div>
-          <div className="space-y-2.5 sm:space-y-3">
-            {updates.map((u) => (
-              <Card key={u.id}>
-                <CardContent className="flex flex-col gap-1 px-4 py-3 sm:px-5 sm:pt-4">
-                  <div className="flex items-center justify-between gap-2">
-                    <p className="font-bold text-sm sm:text-base">{u.title}</p>
-                    <span className="shrink-0 text-[11px] sm:text-xs text-muted-foreground">
-                      {relativeTimeAr(u.published_at)}
-                    </span>
-                  </div>
-                  {u.body ? <p className="text-xs sm:text-sm text-muted-foreground leading-relaxed">{u.body}</p> : null}
-                  <p className="text-[10px] sm:text-xs text-muted-foreground">المصدر: {u.source}</p>
-                </CardContent>
-              </Card>
+
+          <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
+            {updates.slice(0, 4).map((u) => (
+              <OfficialUpdateCard key={u.id} update={u} />
             ))}
           </div>
+
+          {updates.length > 4 && (
+            <div className="mt-6 text-center sm:hidden">
+              <LinkButton href="/official-information" variant="outline" className="w-full font-bold">
+                عرض المزيد من المستجدات
+              </LinkButton>
+            </div>
+          )}
         </section>
       )}
 

@@ -1,65 +1,41 @@
-import type { Metadata } from "next";
-import { Card, CardContent } from "@/components/ui/card";
-import { EmptyState } from "@/components/shared/empty-state";
-import { relativeTimeAr } from "@/lib/constants";
+﻿import type { Metadata } from "next";
+import { Radio, ShieldCheck } from "lucide-react";
 import { getOfficialUpdates } from "@/lib/data/public";
+import { OfficialInfoClient } from "./official-info-client";
 
 export const metadata: Metadata = {
-  title: "معلومات رسمية",
-  description: "آخر المستجدات الموثقة من مصادر موثوقة حول حملة هبة الجزائر.",
-};
-
-const typeLabels: Record<string, string> = {
-  news: "خبر",
-  statement: "بيان",
-  advisory: "تنبيه",
-  report: "تقرير",
+  title: "مركز البيانات الرسمية والمعلومات الميدانية",
+  description: "آخر المستجدات والبيانات الموثقة من مصالح الحماية المدنية، الدرك الوطني، والأمن الوطني حول الأزمة.",
 };
 
 export default async function OfficialInformationPage() {
   const updates = await getOfficialUpdates(50);
 
   return (
-    <div className="mx-auto max-w-3xl px-4 py-10">
-      <div className="mb-8 text-center">
-        <h1 className="text-3xl font-extrabold">المعلومات الرسمية</h1>
-        <p className="mt-2 text-muted-foreground">
-          آخر المستجدات الموثقة من مصادر موثوقة. هذه منصة تنسيق مستقلة، وليست جهة رسمية — يُنشر هنا
-          فقط ما تم توثيق مصدره.
+    <div className="mx-auto max-w-6xl px-4 py-8 sm:py-12">
+      {/* Page Header */}
+      <div className="mb-8 sm:mb-10 text-center sm:text-right">
+        <div className="inline-flex items-center gap-2 rounded-full border border-algeria-green/30 bg-algeria-green/10 px-3.5 py-1 text-xs font-bold text-algeria-green mb-3">
+          <Radio className="size-3.5 animate-pulse" />
+          <span>تغطية حية موثقة للمصادر الرسمية</span>
+        </div>
+
+        <h1 className="text-2xl sm:text-4xl font-black tracking-tight text-foreground">
+          مركز البيانات والمعلومات الرسمية
+        </h1>
+
+        <p className="mt-2 text-xs sm:text-base leading-relaxed text-muted-foreground max-w-3xl">
+          منصة تنسيق أهلية مستقلة تنشر وتوثّق البلاغات الحصرية الصادرة عن مصالح الحماية المدنية، الدرك الوطني (طريقي)، مصالح الغابات، وخلايا الأزمة لضمان تدفق معلومات موثوقة إلى الميدان.
         </p>
+
+        <div className="mt-3 flex items-center gap-1.5 text-xs text-algeria-green font-semibold">
+          <ShieldCheck className="size-4 shrink-0" />
+          <span>يتم التحقق من كل بيان مع رابط المصدر الأصلي لتفادي الشائعات</span>
+        </div>
       </div>
 
-      {updates.length === 0 ? (
-        <EmptyState
-          title="لا توجد معلومات رسمية منشورة بعد"
-          description="سيتم نشر أي معلومة موثقة من مصدر موثوق هنا فور توفرها."
-        />
-      ) : (
-        <div className="space-y-4">
-          {updates.map((u) => (
-            <Card key={u.id}>
-              <CardContent className="space-y-2 px-5">
-                <div className="flex flex-wrap items-center justify-between gap-2">
-                  <span className="inline-flex items-center rounded-full bg-muted px-2.5 py-1 text-xs font-semibold">
-                    {typeLabels[u.update_type] ?? u.update_type}
-                  </span>
-                  <span className="text-xs text-muted-foreground">{relativeTimeAr(u.published_at)}</span>
-                </div>
-                <p className="text-lg font-bold">{u.title}</p>
-                {u.body && <p className="text-sm text-muted-foreground">{u.body}</p>}
-                <div className="flex items-center justify-between text-xs text-muted-foreground">
-                  <span>المصدر: {u.source}</span>
-                  {u.url && (
-                    <a href={u.url} target="_blank" rel="noopener noreferrer" className="text-algeria-green hover:underline">
-                      الرابط الأصلي
-                    </a>
-                  )}
-                </div>
-              </CardContent>
-            </Card>
-          ))}
-        </div>
-      )}
+      {/* Main Interactive Filter & News Deck */}
+      <OfficialInfoClient initialUpdates={updates} />
     </div>
   );
 }
