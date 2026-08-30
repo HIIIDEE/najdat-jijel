@@ -16,6 +16,7 @@ export async function SiteFooter() {
         { href: "/news", label: t.nav.news },
         { href: "/transparency", label: t.nav.transparency },
         { href: "/official-information", label: t.nav.officialInformation },
+        { href: "/track", label: t.help.referenceTrackLink },
       ],
     },
     {

@@ -14,6 +14,7 @@ import type { Database } from "@/types/database";
 type Row = Pick<
   Database["public"]["Tables"]["beneficiary_requests"]["Row"],
   | "id"
+  | "reference"
   | "full_name"
   | "phone"
   | "wilaya"
@@ -55,9 +56,13 @@ export function BeneficiariesList({ rows }: { rows: Row[] }) {
   return (
     <AdminListFilter
       rows={rows}
-      searchPlaceholder="ابحث بالاسم، الهاتف، أو البلدية..."
+      searchPlaceholder="ابحث بالمرجع، الاسم، الهاتف، أو البلدية..."
       searchMatch={(r, q) =>
-        r.full_name.toLowerCase().includes(q) || r.phone.includes(q) || r.commune.toLowerCase().includes(q)
+        // المرجع أولًا: هو ما يمليه المتصل في الهاتف، وبه يُعثر على طلبه فورًا.
+        r.reference.toLowerCase().includes(q) ||
+        r.full_name.toLowerCase().includes(q) ||
+        r.phone.includes(q) ||
+        r.commune.toLowerCase().includes(q)
       }
       filters={[
         { label: "الحالة", options: STATUS_OPTIONS, match: (r, v) => r.status === v },
@@ -76,6 +81,9 @@ export function BeneficiariesList({ rows }: { rows: Row[] }) {
                   <p className="font-bold">{r.full_name}</p>
                   <p className="text-sm text-muted-foreground" dir="ltr">
                     {r.phone}
+                  </p>
+                  <p className="mt-0.5 font-mono text-xs tracking-wider text-muted-foreground" dir="ltr">
+                    {r.reference}
                   </p>
                   {dupCount > 1 && (
                     <p className="mt-1 flex items-center gap-1 text-xs font-medium text-priority-medium">

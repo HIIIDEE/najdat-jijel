@@ -20,7 +20,7 @@ export default async function AdminBeneficiariesPage() {
   const { data } = await supabase
     .from("beneficiary_requests")
     .select(
-      "id, full_name, phone, wilaya, commune, family_members_count, children_count, is_housing_habitable, has_injuries, needs_medical, needed_categories, status, verification_level, priority, created_at",
+      "id, reference, full_name, phone, wilaya, commune, family_members_count, children_count, is_housing_habitable, has_injuries, needs_medical, needed_categories, status, verification_level, priority, created_at",
     )
     .order("created_at", { ascending: false });
 

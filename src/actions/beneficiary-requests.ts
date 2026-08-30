@@ -6,12 +6,21 @@ import {
   type BeneficiaryRequestInput,
 } from "@/schemas/beneficiary-request";
 import { activeCampaignSlug } from "@/config/site";
+import { generateRequestReference } from "@/lib/reference";
 
 export interface SubmitBeneficiaryRequestResult {
   success: boolean;
+  /** المرجع العلني للطلب — يُعرض للمتضرّر ليتابع به طلبه لاحقًا. */
+  reference?: string;
   error?: string;
   fieldErrors?: Record<string, string[] | undefined>;
 }
+
+/** رمز خطأ Postgres لخرق قيد التفرّد. */
+const UNIQUE_VIOLATION = "23505";
+
+/** محاولات إضافية عند تصادم مرجعين — احتمال بعيد، وتكلفته إعادة توليد فقط. */
+const MAX_REFERENCE_ATTEMPTS = 3;
 
 export async function submitBeneficiaryRequest(
   input: BeneficiaryRequestInput,
@@ -37,7 +46,9 @@ export async function submitBeneficiaryRequest(
     return { success: false, error: "تعذر تحديد الحملة النشطة حاليًا. حاول مرة أخرى لاحقًا." };
   }
 
-  const { error } = await supabase.from("beneficiary_requests").insert({
+  // المرجع يُولَّد هنا لا في قاعدة البيانات: سياسة RLS تمنح الزائر حق الإدراج
+  // وحده دون القراءة، فلا سبيل لاسترجاع القيمة التي ولّدتها القاعدة بعد الإدراج.
+  const row = {
     campaign_id: campaign.id,
     full_name: data.full_name,
     phone: data.phone,
@@ -57,11 +68,22 @@ export async function submitBeneficiaryRequest(
     lost_income: data.lost_income,
     needed_categories: data.needed_categories,
     other_needs_note: data.other_needs_note || null,
-  });
+  };
 
-  if (error) {
-    return { success: false, error: "حدث خطأ أثناء تسجيل طلبك. حاول مرة أخرى." };
+  for (let attempt = 1; attempt <= MAX_REFERENCE_ATTEMPTS; attempt++) {
+    const reference = generateRequestReference();
+    const { error } = await supabase
+      .from("beneficiary_requests")
+      .insert({ ...row, reference });
+
+    if (!error) return { success: true, reference };
+
+    // تصادم مرجعين يُعاد منه؛ أي خطأ آخر لا فائدة من تكراره.
+    if (error.code !== UNIQUE_VIOLATION) {
+      console.error("[action] submitBeneficiaryRequest:", error);
+      break;
+    }
   }
 
-  return { success: true };
+  return { success: false, error: "حدث خطأ أثناء تسجيل طلبك. حاول مرة أخرى." };
 }

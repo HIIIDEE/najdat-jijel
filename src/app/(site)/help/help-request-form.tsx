@@ -19,6 +19,10 @@ import {
   type BeneficiaryRequestInput,
 } from "@/schemas/beneficiary-request";
 import { SuccessPanel } from "@/components/shared/success-panel";
+import {
+  ReferenceCallout,
+  type ReferenceCalloutLabels,
+} from "@/components/shared/reference-callout";
 import { submitBeneficiaryRequest } from "@/actions/beneficiary-requests";
 import { campaignWilayas } from "@/config/site";
 import type { AvailableLocale } from "@/i18n/locales";
@@ -39,11 +43,14 @@ const categoryLabelsFr: Record<string, string> = {
 
 export function HelpRequestForm({
   locale = "ar",
+  referenceLabels,
 }: {
   locale?: AvailableLocale;
+  referenceLabels: ReferenceCalloutLabels;
 }) {
   const isFr = locale === "fr";
   const [submitted, setSubmitted] = useState(false);
+  const [reference, setReference] = useState<string | null>(null);
   const [submitting, setSubmitting] = useState(false);
   const [submitError, setSubmitError] = useState<string | null>(null);
 
@@ -103,6 +110,7 @@ export function HelpRequestForm({
         );
         return;
       }
+      setReference(res.reference ?? null);
       setSubmitted(true);
     } catch {
       setSubmitError(
@@ -127,6 +135,8 @@ export function HelpRequestForm({
         primaryHref="/map"
         primaryLabel={isFr ? "Centres d'hébergement proches" : "مراكز الإيواء القريبة"}
       >
+        {reference ? <ReferenceCallout reference={reference} labels={referenceLabels} /> : null}
+
         {watch("is_housing_habitable") !== "yes" && (
           <div className="rounded-xl border border-border bg-muted/40 p-4 text-center text-sm">
             {isFr ? (

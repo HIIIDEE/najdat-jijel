@@ -203,6 +203,11 @@ const fr: Dictionary = {
     successTitle: "Demande d'aide reçue",
     successDesc: "Votre demande a été enregistrée. L'équipe de coordination la vérifiera et vous contactera dans les plus brefs délais.",
     anotherRequest: "Envoyer une autre demande",
+    referenceTitle: "Conservez cette référence",
+    referenceDesc: "C'est elle qui vous permet de suivre votre demande sans avoir à appeler. Prenez une capture d'écran ou notez-la.",
+    referenceCopy: "Copier la référence",
+    referenceCopied: "Référence copiée",
+    referenceTrackLink: "Suivre ma demande",
   },
   transport: {
     pageTitle: "Je peux transporter",
@@ -346,6 +351,25 @@ const fr: Dictionary = {
       successDesc: "Vos informations ont été enregistrées avec succès. L'équipe de coordination vous contactera dès que des travaux nécessiteront votre expertise.",
       homeBtn: "Retour à l'accueil",
     },
+  track: {
+    pageTitle: "Suivre une demande d'aide",
+    pageSubtitle:
+      "Saisissez la référence affichée après l'envoi de votre demande et le numéro de téléphone utilisé, pour savoir où elle en est.",
+    referenceLabel: "Référence de la demande",
+    phoneLabel: "Numéro de téléphone",
+    submitBtn: "Voir l'état de la demande",
+    submitting: "Recherche en cours...",
+    resultTitle: "État de votre demande",
+    submittedOn: "Envoyée le",
+    lastUpdate: "Dernière mise à jour",
+    searchAgain: "Chercher une autre demande",
+    notFoundTitle: "Aucune demande ne correspond",
+    notFoundDesc:
+      "Vérifiez la référence et le numéro de téléphone tels que vous les avez saisis à l'envoi. Si la référence est perdue, appelez les numéros officiels ; si vous n'avez pas encore fait de demande, commencez ici.",
+    newRequest: "Faire une demande d'aide",
+    privacyNote:
+      "Seuls l'état de la demande et ses dates sont affichés ici. Le nom, l'adresse et les besoins ne sont visibles que par l'équipe de coordination.",
+  },
   common: {
     wilayaPrefix: "Wilaya de",
     loading: "Chargement...",

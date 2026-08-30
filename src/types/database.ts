@@ -267,6 +267,7 @@ export type Database = {
           needs_medical: boolean
           other_needs_note: string | null
           phone: string
+          reference: string
           priority: Database["public"]["Enums"]["priority_level"]
           source_type: Database["public"]["Enums"]["source_type"]
           status: Database["public"]["Enums"]["request_status"]
@@ -298,6 +299,7 @@ export type Database = {
           needs_medical?: boolean
           other_needs_note?: string | null
           phone: string
+          reference?: string
           priority?: Database["public"]["Enums"]["priority_level"]
           source_type?: Database["public"]["Enums"]["source_type"]
           status?: Database["public"]["Enums"]["request_status"]
@@ -329,6 +331,7 @@ export type Database = {
           needs_medical?: boolean
           other_needs_note?: string | null
           phone?: string
+          reference?: string
           priority?: Database["public"]["Enums"]["priority_level"]
           source_type?: Database["public"]["Enums"]["source_type"]
           status?: Database["public"]["Enums"]["request_status"]
@@ -1761,6 +1764,19 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      generate_request_reference: {
+        Args: never
+        Returns: string
+      }
+      get_beneficiary_request_status: {
+        Args: { p_phone: string; p_reference: string }
+        Returns: {
+          created_at: string
+          reference: string
+          status: Database["public"]["Enums"]["request_status"]
+          updated_at: string
+        }[]
+      }
       get_public_artisan_volunteers: {
         Args: never
         Returns: {
