@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -125,7 +126,30 @@ export function HelpRequestForm({
         }
         primaryHref="/map"
         primaryLabel={isFr ? "Centres d'hébergement proches" : "مراكز الإيواء القريبة"}
-      />
+      >
+        {watch("is_housing_habitable") !== "yes" && (
+          <div className="rounded-xl border border-border bg-muted/40 p-4 text-center text-sm">
+            {isFr ? (
+              <>
+                Le logement lui-même a-t-il été endommagé ?{" "}
+                <Link href="/help/damage-assessment" className="font-medium text-algeria-green hover:underline">
+                  Soumettez une évaluation détaillée des dégâts
+                </Link>{" "}
+                (avec photos) pour estimer les matériaux de réparation nécessaires et vous mettre en relation
+                avec des donateurs et artisans.
+              </>
+            ) : (
+              <>
+                هل تضرر السكن نفسه؟{" "}
+                <Link href="/help/damage-assessment" className="font-medium text-algeria-green hover:underline">
+                  قدّم تقييمًا تفصيليًا للأضرار
+                </Link>{" "}
+                (مع صور) لنقدّر مواد الترميم اللازمة ونربطك بمتبرعين وحرفيين.
+              </>
+            )}
+          </div>
+        )}
+      </SuccessPanel>
     );
   }
 

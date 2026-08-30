@@ -437,3 +437,22 @@ export function getMedicalVerificationStatusLabel(
 ): string {
   return localizedMedicalVerificationStatusLabels[locale]?.[status] ?? medicalVerificationStatusLabels[status];
 }
+
+export type ArtisanVerificationStatus = Database["public"]["Enums"]["artisan_verification_status"];
+
+export const artisanVerificationStatusLabels: Record<ArtisanVerificationStatus, string> = {
+  pending: "قيد التحقق",
+  verified: "موثّق",
+  rejected: "مرفوض",
+};
+
+export type DamageAssessmentStatus = Database["public"]["Enums"]["damage_assessment_status"];
+
+export const damageAssessmentStatusLabels: Record<DamageAssessmentStatus, string> = {
+  pending: "قيد المراجعة",
+  estimated: "تم التقدير",
+  matched: "تمت المطابقة",
+  in_progress: "قيد التنفيذ",
+  completed: "منجَز",
+  rejected: "مرفوض",
+};
