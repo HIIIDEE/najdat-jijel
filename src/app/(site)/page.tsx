@@ -303,7 +303,7 @@ export default async function HomePage() {
               </LinkButton>
             </div>
 
-            {/* Wilayas Summary Grid (Like in screenshot) */}
+            {/* Wilayas Summary Grid (Exact match to reference mockup) */}
             <div className="grid grid-cols-2 gap-2.5 sm:gap-4 md:grid-cols-4">
               {areaWilayas.map((w) => {
                 const items = areas.filter((a) => a.wilaya === w);
@@ -314,27 +314,25 @@ export default async function HomePage() {
                   <Link
                     key={w}
                     href={`/affected-areas?wilaya=${encodeURIComponent(w)}`}
-                    className="group flex flex-col justify-between rounded-2xl border border-border bg-card p-3.5 sm:p-5 transition-all hover:-translate-y-0.5 hover:border-priority-critical hover:shadow-md"
+                    className="group flex items-center justify-between rounded-2xl border border-border bg-card p-4 sm:p-5 transition-all hover:-translate-y-0.5 hover:border-priority-critical hover:shadow-md"
                   >
-                    <div>
-                      <div className="flex items-start justify-between gap-1">
-                        <p className="text-sm sm:text-base font-bold leading-tight">{t.home.affectedAreas.wilayaPrefix} {w}</p>
-                        <span className="text-xl sm:text-3xl font-extrabold tabular-nums text-priority-critical">
-                          {items.length}
-                        </span>
-                      </div>
-                      <p className="mt-1 text-[11px] sm:text-xs text-muted-foreground leading-snug">
+                    <div className="text-start">
+                      <p className="text-sm sm:text-base font-extrabold text-foreground">{t.home.affectedAreas.wilayaPrefix} {w}</p>
+                      <p className="mt-0.5 text-[11px] sm:text-xs text-muted-foreground">
                         {severe > 0
                           ? `${severe} منها أضرار جسيمة أو إجلاء`
                           : `${items.length} بؤر مرصودة`}
                       </p>
                     </div>
+                    <span className="text-2xl sm:text-3xl font-black tabular-nums text-priority-critical ms-2">
+                      {items.length}
+                    </span>
                   </Link>
                 );
               })}
             </div>
 
-            {/* Communes Chips Strip (Like in screenshot) */}
+            {/* Communes Chips Strip (Exact match to reference mockup) */}
             {areaCommunes.length > 0 && (
               <div className="mt-6 pt-5 border-t border-border/50">
                 <div className="mb-3 text-start">
@@ -342,7 +340,7 @@ export default async function HomePage() {
                     {isFr ? "Communes touchées" : "البلديات المتضررة"}
                   </h3>
                   <p className="text-[11px] sm:text-xs text-muted-foreground">
-                    {isFr ? "Nombre de signalements enregistrés par commune." : "عدد البؤر والاحتياجات المسجلة في كل بلدية."}
+                    {isFr ? "Nombre de signalements enregistrés par commune." : "عدد الاحتياجات والنداءات المسجلة في كل بلدية."}
                   </p>
                 </div>
                 <div className="flex flex-wrap items-center gap-2">
@@ -350,11 +348,11 @@ export default async function HomePage() {
                     <Link
                       key={c.name}
                       href={`/affected-areas?commune=${encodeURIComponent(c.name)}`}
-                      className="group inline-flex items-center gap-1.5 rounded-full border border-border/80 bg-background/90 px-3 py-1 text-xs font-semibold text-foreground hover:border-priority-critical hover:bg-card shadow-xs transition-all active:scale-95"
+                      className="group inline-flex items-center gap-2 rounded-full border border-border/80 bg-card px-3.5 py-1.5 text-xs font-bold text-foreground hover:border-priority-critical hover:bg-secondary/40 shadow-xs transition-all active:scale-95"
                     >
-                      <MapPin className="size-3 text-muted-foreground group-hover:text-priority-critical transition-colors" />
+                      <MapPin className="size-3.5 text-muted-foreground group-hover:text-priority-critical transition-colors" />
                       <span>{c.name}</span>
-                      <span className="flex size-4.5 items-center justify-center rounded-full bg-priority-critical/10 text-priority-critical text-[10px] font-bold">
+                      <span className="flex size-5 items-center justify-center rounded-full bg-priority-critical/10 text-priority-critical text-[11px] font-extrabold">
                         {c.count}
                       </span>
                     </Link>
