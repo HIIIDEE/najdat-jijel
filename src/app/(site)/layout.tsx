@@ -4,14 +4,26 @@ import { SiteFooter } from "@/components/layout/site-footer";
 import { MobileBottomNav } from "@/components/layout/mobile-bottom-nav";
 import { EmergencyFab } from "@/components/interactive/emergency-fab";
 import { WelcomeDialog } from "@/components/interactive/welcome-dialog";
+import { getDictionary } from "@/i18n/dictionaries";
+import { getLocale } from "@/i18n/server";
 
-export default function SiteLayout({ children }: { children: React.ReactNode }) {
+export default async function SiteLayout({ children }: { children: React.ReactNode }) {
+  const t = await getDictionary(await getLocale());
+
   return (
     <div className="flex min-h-screen flex-col">
       <SiteHeader />
       <main className="flex-1 pb-16 md:pb-0">{children}</main>
       <SiteFooter />
-      <MobileBottomNav />
+      <MobileBottomNav
+        labels={{
+          home: t.nav.home,
+          needs: t.nav.needs,
+          haveAid: t.cta.haveAid,
+          map: t.nav.map,
+          needHelp: t.cta.needHelp,
+        }}
+      />
       <EmergencyFab />
       <GoogleAnalytics />
       <WelcomeDialog />

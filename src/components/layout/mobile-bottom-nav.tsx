@@ -5,16 +5,28 @@ import { usePathname } from "next/navigation";
 import { Home, ListChecks, MapPin, Gift, LifeBuoy } from "lucide-react";
 import { cn } from "@/lib/utils";
 
-const items = [
-  { href: "/", label: "الرئيسية", icon: Home },
-  { href: "/needs", label: "الاحتياجات", icon: ListChecks },
-  { href: "/donate", label: "لديّ مساعدات", icon: Gift },
-  { href: "/map", label: "الخريطة", icon: MapPin },
-  { href: "/help", label: "أحتاج مساعدة", icon: LifeBuoy },
-];
+export interface MobileBottomNavLabels {
+  home: string;
+  needs: string;
+  haveAid: string;
+  map: string;
+  needHelp: string;
+}
 
-export function MobileBottomNav() {
+/**
+ * مكوّن عميل: لا يستطيع قراءة القاموس بنفسه، فالتسميات تصله من التخطيط
+ * (مكوّن خادم) عبر الخصائص.
+ */
+export function MobileBottomNav({ labels }: { labels: MobileBottomNavLabels }) {
   const pathname = usePathname();
+
+  const items = [
+    { href: "/", label: labels.home, icon: Home },
+    { href: "/needs", label: labels.needs, icon: ListChecks },
+    { href: "/donate", label: labels.haveAid, icon: Gift },
+    { href: "/map", label: labels.map, icon: MapPin },
+    { href: "/help", label: labels.needHelp, icon: LifeBuoy },
+  ];
 
   if (pathname?.startsWith("/admin")) return null;
 
