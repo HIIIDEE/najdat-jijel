@@ -1,11 +1,13 @@
 "use client";
 
+import { CheckCircle2, Ban } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
 import { PriorityBadge } from "@/components/shared/priority-badge";
-import { formatQuantity, relativeTimeAr, unitLabels, priorityLabels } from "@/lib/constants";
+import { formatQuantity, relativeTimeAr, unitLabels, priorityLabels, needStatusLabels } from "@/lib/constants";
 import { CategoryIcon } from "@/components/shared/category-icon";
-import { AdminListFilter } from "@/components/admin/list-filter";
+import { AdminListFilter, type AdminBulkAction } from "@/components/admin/list-filter";
 import { NeedActions } from "./need-actions";
+import { updateNeedStatus } from "@/actions/needs";
 import type { Database } from "@/types/database";
 
 type Need = Database["public"]["Tables"]["needs"]["Row"] & {
@@ -13,10 +15,11 @@ type Need = Database["public"]["Tables"]["needs"]["Row"] & {
 };
 
 const PRIORITY_OPTIONS = Object.entries(priorityLabels).map(([value, label]) => ({ value, label }));
-const STATUS_OPTIONS = [
-  { value: "active", label: "نشط" },
-  { value: "fulfilled", label: "تمت التلبية" },
-  { value: "expired", label: "منتهي" },
+const STATUS_OPTIONS = Object.entries(needStatusLabels).map(([value, label]) => ({ value, label }));
+
+const BULK_ACTIONS: AdminBulkAction<Need>[] = [
+  { label: "تمت التلبية", icon: CheckCircle2, run: (n) => updateNeedStatus(n.id, "resolved") },
+  { label: "تعليم كمنتهٍ", icon: Ban, variant: "outline", run: (n) => updateNeedStatus(n.id, "expired") },
 ];
 
 export function NeedsList({ rows }: { rows: Need[] }) {
@@ -34,6 +37,8 @@ export function NeedsList({ rows }: { rows: Need[] }) {
         { label: "الأولوية", options: PRIORITY_OPTIONS, match: (n, v) => n.priority === v },
         { label: "الحالة", options: STATUS_OPTIONS, match: (n, v) => n.status === v },
       ]}
+      getRowId={(n) => n.id}
+      bulkActions={BULK_ACTIONS}
       emptyTitle="لا توجد احتياجات مسجَّلة بعد"
       renderRow={(n) => (
         <Card key={n.id}>

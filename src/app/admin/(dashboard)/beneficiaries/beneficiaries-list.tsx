@@ -1,13 +1,14 @@
 "use client";
 
-import { House, Bandage, Pill, Copy } from "lucide-react";
+import { House, Bandage, Pill, Copy, CheckCircle2, Archive } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
 import { PriorityBadge } from "@/components/shared/priority-badge";
 import { VerificationBadge } from "@/components/shared/verification-badge";
 import { needCategoryOptions } from "@/schemas/beneficiary-request";
 import { relativeTimeAr, requestStatusLabels, priorityLabels } from "@/lib/constants";
-import { AdminListFilter } from "@/components/admin/list-filter";
+import { AdminListFilter, type AdminBulkAction } from "@/components/admin/list-filter";
 import { BeneficiaryActions } from "./beneficiary-actions";
+import { updateBeneficiaryStatus } from "@/actions/beneficiaries";
 import type { Database } from "@/types/database";
 
 type Row = Pick<
@@ -36,6 +37,11 @@ function normalizePhone(phone: string): string {
 const STATUS_OPTIONS = Object.entries(requestStatusLabels).map(([value, label]) => ({ value, label }));
 const PRIORITY_OPTIONS = Object.entries(priorityLabels).map(([value, label]) => ({ value, label }));
 
+const BULK_ACTIONS: AdminBulkAction<Row>[] = [
+  { label: "تمت المساعدة", icon: CheckCircle2, run: (r) => updateBeneficiaryStatus(r.id, "helped") },
+  { label: "إغلاق", icon: Archive, variant: "outline", run: (r) => updateBeneficiaryStatus(r.id, "closed") },
+];
+
 export function BeneficiariesList({ rows }: { rows: Row[] }) {
   const categoryLabel = (slug: string) => needCategoryOptions.find((o) => o.value === slug)?.label ?? slug;
 
@@ -57,6 +63,8 @@ export function BeneficiariesList({ rows }: { rows: Row[] }) {
         { label: "الحالة", options: STATUS_OPTIONS, match: (r, v) => r.status === v },
         { label: "الأولوية", options: PRIORITY_OPTIONS, match: (r, v) => r.priority === v },
       ]}
+      getRowId={(r) => r.id}
+      bulkActions={BULK_ACTIONS}
       emptyTitle="لا توجد طلبات مسجَّلة بعد"
       renderRow={(r) => {
         const dupCount = phoneCounts.get(normalizePhone(r.phone)) ?? 1;

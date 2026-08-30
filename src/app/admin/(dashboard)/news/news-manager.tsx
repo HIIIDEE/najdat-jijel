@@ -14,6 +14,7 @@ import {
   RotateCw,
   Radio,
   CheckCircle2,
+  XCircle,
   FileText,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -49,7 +50,8 @@ import {
 } from "@/components/ui/select";
 import { EmptyState } from "@/components/shared/empty-state";
 import { relativeTimeAr } from "@/lib/constants";
-import { AdminListFilter } from "@/components/admin/list-filter";
+import { AdminListFilter, type AdminBulkAction } from "@/components/admin/list-filter";
+import { ExportPostsCsvButton, ExportOfficialUpdatesCsvButton } from "./export-csv-button";
 import { createPost, deletePost, togglePostPublished } from "@/actions/posts";
 import { createOfficialUpdate, deleteOfficialUpdate } from "@/actions/official-updates";
 import type { Database } from "@/types/database";
@@ -71,6 +73,28 @@ const POST_STATUS_OPTIONS = [
 ];
 
 const UPDATE_TYPE_OPTIONS = Object.entries(UPDATE_TYPE_LABELS).map(([value, label]) => ({ value, label }));
+
+const POST_BULK_ACTIONS: AdminBulkAction<Post>[] = [
+  { label: "نشر", icon: CheckCircle2, run: (p) => togglePostPublished(p.id, true) },
+  { label: "إلغاء النشر", icon: XCircle, variant: "outline", run: (p) => togglePostPublished(p.id, false) },
+  {
+    label: "حذف",
+    icon: Trash2,
+    variant: "destructive",
+    confirmMessage: "حذف الأخبار المحدَّدة نهائيًا؟",
+    run: (p) => deletePost(p.id),
+  },
+];
+
+const OFFICIAL_UPDATE_BULK_ACTIONS: AdminBulkAction<OfficialUpdate>[] = [
+  {
+    label: "حذف",
+    icon: Trash2,
+    variant: "destructive",
+    confirmMessage: "حذف البيانات الرسمية المحدَّدة نهائيًا؟",
+    run: (u) => deleteOfficialUpdate(u.id),
+  },
+];
 
 export function NewsManager({
   posts,
@@ -299,9 +323,12 @@ export function NewsManager({
 
         {/* Official Bulletins List */}
         <div>
-          <h3 className="text-sm font-bold text-muted-foreground mb-3">
-            البيانات المنشورة حالياً في قسم المعلومات الرسمية ({officialUpdates.length}):
-          </h3>
+          <div className="mb-3 flex flex-wrap items-center justify-between gap-2">
+            <h3 className="text-sm font-bold text-muted-foreground">
+              البيانات المنشورة حالياً في قسم المعلومات الرسمية ({officialUpdates.length}):
+            </h3>
+            <ExportOfficialUpdatesCsvButton rows={officialUpdates} />
+          </div>
 
           {officialUpdates.length === 0 ? (
             <EmptyState
@@ -316,6 +343,8 @@ export function NewsManager({
                 searchPlaceholder="ابحث في عنوان البيانات..."
                 searchMatch={(u, q) => u.title.toLowerCase().includes(q) || u.source.toLowerCase().includes(q)}
                 filters={[{ label: "النوع", options: UPDATE_TYPE_OPTIONS, match: (u, v) => u.update_type === v }]}
+                getRowId={(u) => u.id}
+                bulkActions={OFFICIAL_UPDATE_BULK_ACTIONS}
                 emptyTitle="لا توجد بيانات رسمية مسجلة بعد"
                 listClassName="space-y-2.5"
                 renderRow={(u) => (
@@ -373,48 +402,51 @@ export function NewsManager({
             </p>
           </div>
 
-          <Dialog open={openPostModal} onOpenChange={setOpenPostModal}>
-            <DialogTrigger render={<Button size="sm"><Plus className="size-4" /> خبر جديد</Button>} />
-            <DialogContent className="max-h-[85vh] overflow-y-auto sm:max-w-lg">
-              <DialogHeader>
-                <DialogTitle>نشر خبر جديد</DialogTitle>
-              </DialogHeader>
-              <div className="space-y-4">
-                <div>
-                  <Label className="mb-1.5">العنوان</Label>
-                  <Input value={postTitle} onChange={(e) => setPostTitle(e.target.value)} maxLength={200} />
+          <div className="flex items-center gap-2">
+            <ExportPostsCsvButton rows={posts} />
+            <Dialog open={openPostModal} onOpenChange={setOpenPostModal}>
+              <DialogTrigger render={<Button size="sm"><Plus className="size-4" /> خبر جديد</Button>} />
+              <DialogContent className="max-h-[85vh] overflow-y-auto sm:max-w-lg">
+                <DialogHeader>
+                  <DialogTitle>نشر خبر جديد</DialogTitle>
+                </DialogHeader>
+                <div className="space-y-4">
+                  <div>
+                    <Label className="mb-1.5">العنوان</Label>
+                    <Input value={postTitle} onChange={(e) => setPostTitle(e.target.value)} maxLength={200} />
+                  </div>
+                  <div>
+                    <Label className="mb-1.5">مقدمة قصيرة (اختياري)</Label>
+                    <Textarea
+                      value={postExcerpt}
+                      onChange={(e) => setPostExcerpt(e.target.value)}
+                      maxLength={400}
+                      rows={2}
+                    />
+                  </div>
+                  <div>
+                    <Label className="mb-1.5">نص الخبر</Label>
+                    <Textarea
+                      value={postBody}
+                      onChange={(e) => setPostBody(e.target.value)}
+                      rows={9}
+                      placeholder="اترك سطرًا فارغًا بين كل فقرة وأخرى."
+                    />
+                  </div>
+                  <label className="flex items-center gap-2 text-sm">
+                    <Checkbox checked={postPublish} onCheckedChange={(v) => setPostPublish(Boolean(v))} />
+                    نشر مباشرة (أزل التحديد لحفظه كمسودة)
+                  </label>
+                  <DialogFooter>
+                    <Button onClick={() => void submitPost()} disabled={submittingPost} className="w-full">
+                      {submittingPost && <Loader2 className="size-4 animate-spin" />}
+                      {postPublish ? "نشر" : "حفظ كمسودة"}
+                    </Button>
+                  </DialogFooter>
                 </div>
-                <div>
-                  <Label className="mb-1.5">مقدمة قصيرة (اختياري)</Label>
-                  <Textarea
-                    value={postExcerpt}
-                    onChange={(e) => setPostExcerpt(e.target.value)}
-                    maxLength={400}
-                    rows={2}
-                  />
-                </div>
-                <div>
-                  <Label className="mb-1.5">نص الخبر</Label>
-                  <Textarea
-                    value={postBody}
-                    onChange={(e) => setPostBody(e.target.value)}
-                    rows={9}
-                    placeholder="اترك سطرًا فارغًا بين كل فقرة وأخرى."
-                  />
-                </div>
-                <label className="flex items-center gap-2 text-sm">
-                  <Checkbox checked={postPublish} onCheckedChange={(v) => setPostPublish(Boolean(v))} />
-                  نشر مباشرة (أزل التحديد لحفظه كمسودة)
-                </label>
-                <DialogFooter>
-                  <Button onClick={() => void submitPost()} disabled={submittingPost} className="w-full">
-                    {submittingPost && <Loader2 className="size-4 animate-spin" />}
-                    {postPublish ? "نشر" : "حفظ كمسودة"}
-                  </Button>
-                </DialogFooter>
-              </div>
-            </DialogContent>
-          </Dialog>
+              </DialogContent>
+            </Dialog>
+          </div>
         </div>
 
         {posts.length === 0 ? (
@@ -431,6 +463,8 @@ export function NewsManager({
                 match: (p, v) => (v === "published" ? p.is_published : !p.is_published),
               },
             ]}
+            getRowId={(p) => p.id}
+            bulkActions={POST_BULK_ACTIONS}
             emptyTitle="لا توجد أخبار بعد"
             listClassName="space-y-2.5"
             renderRow={(p) => (

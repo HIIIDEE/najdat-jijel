@@ -1,10 +1,12 @@
 "use client";
 
+import { PackageCheck } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
 import { formatQuantity, relativeTimeAr, unitLabels, donationStatusLabels } from "@/lib/constants";
 import { CategoryIcon } from "@/components/shared/category-icon";
-import { AdminListFilter } from "@/components/admin/list-filter";
+import { AdminListFilter, type AdminBulkAction } from "@/components/admin/list-filter";
 import { DonationStatusSelect } from "./donation-status-select";
+import { updateDonationStatus } from "@/actions/donations-admin";
 import type { Database } from "@/types/database";
 
 type Donation = Database["public"]["Tables"]["donations"]["Row"] & {
@@ -18,6 +20,10 @@ type Donation = Database["public"]["Tables"]["donations"]["Row"] & {
 
 const STATUS_OPTIONS = Object.entries(donationStatusLabels).map(([value, label]) => ({ value, label }));
 
+const BULK_ACTIONS: AdminBulkAction<Donation>[] = [
+  { label: "تعليم كمُسلَّمة", icon: PackageCheck, run: (d) => updateDonationStatus(d.id, "delivered") },
+];
+
 export function DonationsList({ rows }: { rows: Donation[] }) {
   return (
     <AdminListFilter
@@ -30,6 +36,8 @@ export function DonationsList({ rows }: { rows: Donation[] }) {
         (d.current_commune ?? "").toLowerCase().includes(q)
       }
       filters={[{ label: "الحالة", options: STATUS_OPTIONS, match: (d, v) => d.status === v }]}
+      getRowId={(d) => d.id}
+      bulkActions={BULK_ACTIONS}
       emptyTitle="لا توجد مساعدات مسجَّلة بعد"
       renderRow={(d) => (
         <Card key={d.id}>
