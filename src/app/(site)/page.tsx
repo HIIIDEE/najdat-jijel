@@ -99,7 +99,7 @@ export default async function HomePage() {
   return (
     <>
       {/* ————————————————————————————————— Hero */}
-      <section className="relative overflow-hidden border-b border-border bg-gradient-to-b from-algeria-green/10 via-secondary/20 to-background pt-16 pb-20 sm:pt-20 sm:pb-24">
+      <section className="relative flex min-h-[calc(100dvh-4rem)] flex-col justify-center overflow-hidden border-b border-border bg-gradient-to-b from-algeria-green/10 via-secondary/20 to-background py-10 sm:py-16">
         {/* Ambient Top Glows */}
         <div
           aria-hidden
@@ -110,7 +110,7 @@ export default async function HomePage() {
           className="pointer-events-none absolute -top-12 left-1/4 h-64 w-64 rounded-full bg-[radial-gradient(circle,var(--priority-critical)/8,transparent_70%)] blur-3xl"
         />
 
-        <div className="relative mx-auto max-w-6xl px-4 text-center">
+        <div className="relative mx-auto w-full max-w-6xl px-4 text-center">
           {/* Top Status & Emergency Bar */}
           <div className="inline-flex flex-wrap items-center justify-center gap-2.5 rounded-full border border-border/80 bg-background/80 px-4 py-1.5 shadow-sm backdrop-blur-md">
             <span className="inline-flex items-center gap-2 text-xs font-bold text-algeria-green">
