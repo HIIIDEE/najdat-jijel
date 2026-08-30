@@ -111,6 +111,14 @@ export default async function HomePage() {
 
   const areaWilayas = [...new Set(areas.map((a) => a.wilaya))];
 
+  const areaCommunes = Array.from(
+    areas.reduce((map, a) => {
+      const name = isFr && a.commune_fr ? a.commune_fr : a.commune;
+      map.set(name, (map.get(name) || 0) + 1);
+      return map;
+    }, new Map<string, number>()),
+  ).map(([name, count]) => ({ name, count }));
+
   return (
     <>
       {/* ————————————————————————————————— Hero (Full Viewport) */}
@@ -240,53 +248,54 @@ export default async function HomePage() {
 
       {/* 2. ————————————————————————————————— آخر البيانات والمستجدات الرسمية */}
       {updates.length > 0 && (
-        <section className="border-b border-border bg-card/60 py-10 sm:py-16">
+        <section className="border-b border-border bg-card/60 py-8 sm:py-14">
           <div className="mx-auto max-w-6xl px-4">
-            <div className="mb-6 sm:mb-8 flex flex-col sm:flex-row sm:items-end justify-between gap-3">
+            <div className="mb-5 sm:mb-8 flex flex-col sm:flex-row sm:items-end justify-between gap-3">
               <div>
-                <div className="inline-flex items-center gap-2 rounded-full border border-algeria-green/30 bg-algeria-green/10 px-3 py-1 text-xs font-bold text-algeria-green mb-2.5">
+                <div className="inline-flex items-center gap-2 rounded-full border border-algeria-green/30 bg-algeria-green/10 px-3 py-1 text-xs font-bold text-algeria-green mb-2">
                   <Radio className="size-3.5 animate-pulse" />
                   <span>{isFr ? "Couverture vérifiée en direct" : "متابعة ميدانية حية وموثقة"}</span>
                 </div>
-                <h2 className="text-2xl sm:text-3xl font-extrabold tracking-tight">{t.home.updates.title}</h2>
+                <h2 className="text-xl sm:text-3xl font-extrabold tracking-tight">{t.home.updates.title}</h2>
                 <p className="mt-1 text-xs sm:text-sm text-muted-foreground">
                   {isFr ? "Mises à jour des services de la Protection Civile, de la Gendarmerie (Tariki) et des Forêts." : "تحديثات لحظية من مصالح الحماية المدنية، الدرك الوطني (طريقي)، ومحافظات الغابات."}
                 </p>
               </div>
-              <LinkButton href="/official-information" variant="outline" size="sm" className="self-start sm:self-auto shrink-0 font-bold">
+              <LinkButton href="/official-information" variant="outline" size="sm" className="hidden sm:inline-flex shrink-0 font-bold">
                 {t.home.updates.allInfo}
               </LinkButton>
             </div>
 
-            <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
-              {updates.slice(0, 4).map((u) => (
-                <OfficialUpdateCard key={u.id} update={u} />
+            {/* 2 items on phone, 4 on desktop */}
+            <div className="grid grid-cols-1 gap-3.5 sm:gap-4 md:grid-cols-2">
+              {updates.slice(0, 4).map((u, i) => (
+                <div key={u.id} className={i >= 2 ? "hidden md:block" : "block"}>
+                  <OfficialUpdateCard update={u} />
+                </div>
               ))}
             </div>
 
-            {updates.length > 4 && (
-              <div className="mt-6 text-center sm:hidden">
-                <LinkButton href="/official-information" variant="outline" className="w-full font-bold">
-                  {isFr ? "Voir plus de communiqués" : "عرض المزيد من المستجدات"}
-                </LinkButton>
-              </div>
-            )}
+            <div className="mt-4 text-center sm:hidden">
+              <LinkButton href="/official-information" variant="outline" className="w-full font-bold">
+                {isFr ? "Voir tous les communiqués" : "عرض كل البيانات والمستجدات"}
+              </LinkButton>
+            </div>
           </div>
         </section>
       )}
 
-      {/* 3. ————————————————————————————————— المناطق المتضررة */}
+      {/* 3. ————————————————————————————————— المناطق والبلديات المتضررة */}
       {areas.length > 0 && (
-        <section className="border-b border-border bg-priority-critical/5">
-          <div className="mx-auto max-w-6xl px-4 py-10 sm:py-16">
-            <div className="mb-6 sm:mb-8 flex items-end justify-between gap-3">
+        <section className="border-b border-border bg-priority-critical/[0.03] py-8 sm:py-14">
+          <div className="mx-auto max-w-6xl px-4">
+            <div className="mb-5 sm:mb-8 flex items-end justify-between gap-3">
               <div>
                 <h2 className="flex items-center gap-2 text-xl sm:text-2xl font-bold">
                   <TriangleAlert className="size-5 sm:size-6 text-priority-critical" />
                   {t.home.affectedAreas.title}
                 </h2>
-                <p className="mt-1 sm:mt-1.5 text-xs sm:text-sm text-muted-foreground leading-relaxed">
-                  {areas.length} {t.home.affectedAreas.subtitleCount} {areaWilayas.length} {t.home.affectedAreas.subtitleWilayas}
+                <p className="mt-1 text-xs sm:text-sm text-muted-foreground leading-relaxed">
+                  {areas.length} {t.home.affectedAreas.subtitleCount} {areaWilayas.length} {t.home.affectedAreas.subtitleWilayas} — اضغط على ولاية أو بلدية لعرض تفاصيلها.
                 </p>
               </div>
               <LinkButton href="/affected-areas" variant="outline" size="sm" className="hidden sm:inline-flex">
@@ -294,74 +303,65 @@ export default async function HomePage() {
               </LinkButton>
             </div>
 
-            <div className="grid gap-3 sm:gap-4 md:grid-cols-12 items-stretch">
-              {/* Wilaya Summary Card */}
-              <div className={areaWilayas.length === 1 ? "md:col-span-5 lg:col-span-4" : "grid gap-3 sm:grid-cols-2 md:col-span-12 lg:grid-cols-4"}>
-                {areaWilayas.map((w) => {
-                  const items = areas.filter((a) => a.wilaya === w);
-                  const severe = items.filter(
-                    (a) => a.severity === "ravaged" || a.severity === "evacuated" || a.severity === "burning",
-                  ).length;
-                  return (
-                    <Link
-                      key={w}
-                      href={`/affected-areas?wilaya=${encodeURIComponent(w)}`}
-                      className="group flex h-full flex-col justify-between rounded-2xl border border-border bg-card p-4 sm:p-6 transition-all hover:-translate-y-0.5 hover:border-priority-critical hover:shadow-md"
-                    >
-                      <div>
-                        <div className="flex items-center justify-between">
-                          <span className="rounded-full bg-priority-critical/10 px-2.5 py-0.5 text-xs font-bold text-priority-critical">
-                            {isFr ? "Zone d'alerte" : "بؤرة طوارئ"}
-                          </span>
-                          <span className="text-2xl sm:text-3xl font-extrabold tabular-nums text-priority-critical">
-                            {items.length}
-                          </span>
-                        </div>
-                        <p className="mt-3 sm:mt-4 text-lg sm:text-xl font-bold">{t.home.affectedAreas.wilayaPrefix} {w}</p>
-                        <p className="mt-1 text-xs text-muted-foreground leading-relaxed">
-                          {severe > 0
-                            ? `${severe} ${t.home.affectedAreas.severeCount}`
-                            : t.home.affectedAreas.recordedCount}
-                        </p>
+            {/* Wilayas Summary Grid (Like in screenshot) */}
+            <div className="grid grid-cols-2 gap-2.5 sm:gap-4 md:grid-cols-4">
+              {areaWilayas.map((w) => {
+                const items = areas.filter((a) => a.wilaya === w);
+                const severe = items.filter(
+                  (a) => a.severity === "ravaged" || a.severity === "evacuated" || a.severity === "burning",
+                ).length;
+                return (
+                  <Link
+                    key={w}
+                    href={`/affected-areas?wilaya=${encodeURIComponent(w)}`}
+                    className="group flex flex-col justify-between rounded-2xl border border-border bg-card p-3.5 sm:p-5 transition-all hover:-translate-y-0.5 hover:border-priority-critical hover:shadow-md"
+                  >
+                    <div>
+                      <div className="flex items-start justify-between gap-1">
+                        <p className="text-sm sm:text-base font-bold leading-tight">{t.home.affectedAreas.wilayaPrefix} {w}</p>
+                        <span className="text-xl sm:text-3xl font-extrabold tabular-nums text-priority-critical">
+                          {items.length}
+                        </span>
                       </div>
-                      <div className="mt-4 sm:mt-6 flex items-center gap-1.5 text-xs sm:text-sm font-bold text-priority-critical transition-colors group-hover:text-priority-critical/80">
-                        <span>{isFr ? `Voir tout : ${w}` : `عرض كل بؤر ولاية ${w}`}</span>
-                        <ArrowLeft className="size-3.5 sm:size-4" />
-                      </div>
-                    </Link>
-                  );
-                })}
-              </div>
-
-              {/* Active Spots Live Breakdown when 1 wilaya */}
-              {areaWilayas.length === 1 && (
-                <div className="grid gap-2.5 sm:gap-3 sm:grid-cols-2 md:col-span-7 lg:col-span-8">
-                  {areas.slice(0, 4).map((a) => {
-                    const sev = severityConfig[a.severity] ?? { label: a.severity, tone: "bg-muted text-muted-foreground border-border" };
-                    return (
-                      <Link
-                        key={a.id}
-                        href={`/affected-areas?wilaya=${encodeURIComponent(a.wilaya)}`}
-                        className="group flex flex-col justify-between rounded-2xl border border-border bg-card p-3.5 sm:p-5 transition-all hover:-translate-y-0.5 hover:border-algeria-green hover:shadow-sm"
-                      >
-                        <div className="flex items-start justify-between gap-2">
-                          <div>
-                            <p className="font-bold text-sm sm:text-base leading-snug">{isFr && a.spot_fr ? a.spot_fr : a.spot}</p>
-                            <p className="mt-0.5 sm:mt-1 flex items-center gap-1 text-[11px] sm:text-xs text-muted-foreground">
-                              <MapPin className="size-3 sm:size-3.5 text-muted-foreground/70" />
-                              {isFr ? `Commune de ${a.commune_fr || a.commune} · ${a.daira_fr || a.daira}` : `بلدية ${a.commune} · دائرة ${a.daira}`}
-                            </p>
-                          </div>
-                          <span className={`shrink-0 rounded-full border px-2 py-0.5 text-[10px] sm:text-xs font-bold ${sev.tone}`}>
-                            {sev.label}
-                          </span>
-                        </div>
-                      </Link>
-                    );
-                  })}
-                </div>
-              )}
+                      <p className="mt-1 text-[11px] sm:text-xs text-muted-foreground leading-snug">
+                        {severe > 0
+                          ? `${severe} منها أضرار جسيمة أو إجلاء`
+                          : `${items.length} بؤر مرصودة`}
+                      </p>
+                    </div>
+                  </Link>
+                );
+              })}
             </div>
+
+            {/* Communes Chips Strip (Like in screenshot) */}
+            {areaCommunes.length > 0 && (
+              <div className="mt-6 pt-5 border-t border-border/50">
+                <div className="mb-3 text-start">
+                  <h3 className="text-sm sm:text-base font-bold text-foreground">
+                    {isFr ? "Communes touchées" : "البلديات المتضررة"}
+                  </h3>
+                  <p className="text-[11px] sm:text-xs text-muted-foreground">
+                    {isFr ? "Nombre de signalements enregistrés par commune." : "عدد البؤر والاحتياجات المسجلة في كل بلدية."}
+                  </p>
+                </div>
+                <div className="flex flex-wrap items-center gap-2">
+                  {areaCommunes.map((c) => (
+                    <Link
+                      key={c.name}
+                      href={`/affected-areas?commune=${encodeURIComponent(c.name)}`}
+                      className="group inline-flex items-center gap-1.5 rounded-full border border-border/80 bg-background/90 px-3 py-1 text-xs font-semibold text-foreground hover:border-priority-critical hover:bg-card shadow-xs transition-all active:scale-95"
+                    >
+                      <MapPin className="size-3 text-muted-foreground group-hover:text-priority-critical transition-colors" />
+                      <span>{c.name}</span>
+                      <span className="flex size-4.5 items-center justify-center rounded-full bg-priority-critical/10 text-priority-critical text-[10px] font-bold">
+                        {c.count}
+                      </span>
+                    </Link>
+                  ))}
+                </div>
+              </div>
+            )}
 
             <LinkButton href="/affected-areas" variant="outline" className="mt-5 w-full sm:hidden">
               {t.home.affectedAreas.fullListMobile}
@@ -370,15 +370,15 @@ export default async function HomePage() {
         </section>
       )}
 
-      {/* ————————————————————————————————— مراكز الإيواء */}
+      {/* 4. ————————————————————————————————— مراكز الإيواء والاستقبال المفتوحة */}
       {shelters.length > 0 && (
-        <section className="mx-auto max-w-6xl px-4 py-10 sm:py-16">
-          <div className="mb-6 sm:mb-8 flex items-end justify-between gap-3">
+        <section className="mx-auto max-w-6xl px-4 py-8 sm:py-14">
+          <div className="mb-5 sm:mb-8 flex items-end justify-between gap-3">
             <div>
               <h2 className="flex items-center gap-2 text-xl sm:text-2xl font-bold">
                 <Home className="size-5 sm:size-6 text-blue-600 dark:text-blue-400" /> {t.home.shelters.title}
               </h2>
-              <p className="mt-1 sm:mt-1.5 text-xs sm:text-sm text-muted-foreground leading-relaxed">
+              <p className="mt-1 text-xs sm:text-sm text-muted-foreground leading-relaxed">
                 {t.home.shelters.subtitle}
               </p>
             </div>
@@ -389,25 +389,25 @@ export default async function HomePage() {
 
           <div className="grid gap-3 sm:gap-4 sm:grid-cols-2 lg:grid-cols-3">
             {shelters.slice(0, 6).map((s) => (
-              <div key={s.id} className="flex flex-col justify-between rounded-2xl border border-border bg-card p-4 sm:p-6 transition-all hover:shadow-sm">
-                <div className="space-y-2">
+              <div key={s.id} className="flex flex-col justify-between rounded-2xl border border-border bg-card p-4 sm:p-5 transition-all hover:shadow-sm">
+                <div className="space-y-1.5">
                   <p className="font-bold text-sm sm:text-base leading-snug">{s.name}</p>
-                  <p className="flex items-start gap-1.5 text-xs sm:text-sm text-muted-foreground">
-                    <MapPin className="mt-0.5 size-3.5 sm:size-4 shrink-0 text-muted-foreground/70" />
+                  <p className="flex items-start gap-1.5 text-xs text-muted-foreground">
+                    <MapPin className="mt-0.5 size-3.5 shrink-0 text-muted-foreground/70" />
                     {s.address ?? `${s.commune}، ولاية ${s.wilaya}`}
                   </p>
                   {s.capacity_note && (
-                    <p className="text-xs text-muted-foreground leading-relaxed">{s.capacity_note}</p>
+                    <p className="text-[11px] sm:text-xs text-muted-foreground/90 leading-relaxed pt-0.5">{s.capacity_note}</p>
                   )}
                 </div>
                 {s.phone && (
-                  <div className="mt-3 sm:mt-4 pt-3 border-t border-border/60">
+                  <div className="mt-3 pt-3 border-t border-border/50">
                     <a
                       href={`tel:${s.phone.replace(/\s/g, "")}`}
                       dir="ltr"
-                      className="inline-flex items-center justify-center gap-1.5 w-full sm:w-auto rounded-lg bg-algeria-green/10 py-1.5 px-3 text-xs sm:text-sm font-bold text-algeria-green hover:bg-algeria-green/20"
+                      className="inline-flex items-center justify-center gap-1.5 w-full rounded-xl bg-algeria-green/10 py-1.5 px-3 text-xs sm:text-sm font-bold text-algeria-green hover:bg-algeria-green/20 active:scale-95 transition-all"
                     >
-                      <Phone className="size-3.5 sm:size-4" /> {s.phone}
+                      <Phone className="size-3.5" /> {s.phone}
                     </a>
                   </div>
                 )}
