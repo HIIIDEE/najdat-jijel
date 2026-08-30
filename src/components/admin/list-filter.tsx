@@ -31,6 +31,7 @@ export function AdminListFilter<T>({
   renderRow,
   emptyTitle,
   noResultsTitle = "لا توجد نتائج مطابقة",
+  listClassName = "space-y-3",
 }: {
   rows: T[];
   searchPlaceholder: string;
@@ -40,6 +41,8 @@ export function AdminListFilter<T>({
   renderRow: (row: T) => React.ReactNode;
   emptyTitle: string;
   noResultsTitle?: string;
+  /** حاوية الصفوف — الافتراضي عمود واحد، يمكن تمرير شبكة (grid) للبطاقات القصيرة. */
+  listClassName?: string;
 }) {
   const [query, setQuery] = useState("");
   const [activeFilters, setActiveFilters] = useState<Record<number, string>>({});
@@ -119,7 +122,7 @@ export function AdminListFilter<T>({
       {filtered.length === 0 ? (
         <EmptyState title={noResultsTitle} />
       ) : (
-        <div className="space-y-3">{filtered.map(renderRow)}</div>
+        <div className={listClassName}>{filtered.map(renderRow)}</div>
       )}
     </div>
   );

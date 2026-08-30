@@ -1,11 +1,8 @@
 import type { Metadata } from "next";
 import { createClient } from "@/lib/supabase/server";
 import { getAllCategories, getAllReliefHubs } from "@/lib/data/admin";
-import { Card, CardContent } from "@/components/ui/card";
-import { EmptyState } from "@/components/shared/empty-state";
-import { formatQuantity, unitLabels } from "@/lib/constants";
-import { CategoryIcon } from "@/components/shared/category-icon";
 import { CreateDistributionDialog } from "./create-distribution-dialog";
+import { DistributionsList } from "./distributions-list";
 
 export const metadata: Metadata = { title: "عمليات التوزيع", robots: { index: false } };
 
@@ -32,29 +29,7 @@ export default async function AdminDistributionsPage() {
         <CreateDistributionDialog hubs={hubs} categories={categories} />
       </div>
 
-      {rows.length === 0 ? (
-        <EmptyState title="لا توجد عمليات توزيع مسجَّلة بعد" />
-      ) : (
-        <div className="space-y-3">
-          {rows.map((d) => (
-            <Card key={d.id}>
-              <CardContent className="flex flex-wrap items-center justify-between gap-3 px-5">
-                <div>
-                  <p className="font-bold">
-                    <CategoryIcon slug={d.categories?.slug} className="inline size-3.5" />{" "}
-                    {formatQuantity(Number(d.quantity))} {unitLabels[d.unit]} — {d.categories?.name_ar}
-                  </p>
-                  <p className="text-sm text-muted-foreground">
-                    {d.relief_hubs?.name} · {d.beneficiary_family_count} أسرة مستفيدة
-                  </p>
-                  <p className="text-xs text-muted-foreground">المسؤول: {d.responsible_name}</p>
-                </div>
-                <span className="text-xs text-muted-foreground">{d.distribution_date}</span>
-              </CardContent>
-            </Card>
-          ))}
-        </div>
-      )}
+      <DistributionsList rows={rows} hubs={hubs} />
     </div>
   );
 }

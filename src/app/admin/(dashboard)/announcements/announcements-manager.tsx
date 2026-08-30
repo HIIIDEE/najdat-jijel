@@ -19,6 +19,7 @@ import {
 } from "@/components/ui/alert-dialog";
 import { EmptyState } from "@/components/shared/empty-state";
 import { relativeTimeAr } from "@/lib/constants";
+import { AdminListFilter } from "@/components/admin/list-filter";
 import {
   createAnnouncement,
   deleteAnnouncement,
@@ -27,6 +28,11 @@ import {
 import type { Database } from "@/types/database";
 
 type Announcement = Database["public"]["Tables"]["announcements"]["Row"];
+
+const STATUS_OPTIONS = [
+  { value: "active", label: "مفعّلة" },
+  { value: "inactive", label: "متوقفة" },
+];
 
 export function AnnouncementsManager({ items }: { items: Announcement[] }) {
   const [message, setMessage] = useState("");
@@ -83,8 +89,20 @@ export function AnnouncementsManager({ items }: { items: Announcement[] }) {
           description="عند عدم وجود رسائل مفعّلة يظهر التنبيه الافتراضي حول عدم إرسال مساعدات عشوائية."
         />
       ) : (
-        <div className="space-y-2">
-          {items.map((a) => (
+        <AdminListFilter
+          rows={items}
+          searchPlaceholder="ابحث في نص الرسائل..."
+          searchMatch={(a, q) => a.message.toLowerCase().includes(q)}
+          filters={[
+            {
+              label: "الحالة",
+              options: STATUS_OPTIONS,
+              match: (a, v) => (v === "active" ? a.is_active : !a.is_active),
+            },
+          ]}
+          emptyTitle="لا توجد رسائل في الشريط"
+          listClassName="space-y-2"
+          renderRow={(a) => (
             <Card key={a.id} className={a.is_active ? "" : "opacity-60"}>
               <CardContent className="flex flex-wrap items-center justify-between gap-3 px-5">
                 <div className="min-w-0 flex-1">
@@ -118,8 +136,8 @@ export function AnnouncementsManager({ items }: { items: Announcement[] }) {
                 </div>
               </CardContent>
             </Card>
-          ))}
-        </div>
+          )}
+        />
       )}
 
       <AlertDialog open={!!pendingDelete} onOpenChange={(v) => !v && setPendingDelete(null)}>

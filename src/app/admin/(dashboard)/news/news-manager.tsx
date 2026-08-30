@@ -49,12 +49,28 @@ import {
 } from "@/components/ui/select";
 import { EmptyState } from "@/components/shared/empty-state";
 import { relativeTimeAr } from "@/lib/constants";
+import { AdminListFilter } from "@/components/admin/list-filter";
 import { createPost, deletePost, togglePostPublished } from "@/actions/posts";
 import { createOfficialUpdate, deleteOfficialUpdate } from "@/actions/official-updates";
 import type { Database } from "@/types/database";
 
 type Post = Database["public"]["Tables"]["posts"]["Row"];
 type OfficialUpdate = Database["public"]["Tables"]["official_updates"]["Row"];
+
+const UPDATE_TYPE_LABELS: Record<string, string> = {
+  fire_alert: "بلاغ حرائق وإخماد",
+  road_status: "حالة الطرقات والمعابر",
+  weather_warning: "إنذار جوي ونشرية",
+  safety_guidelines: "توجيهات السلامة والإجلاء",
+  statement: "بيان رسمي موثّق",
+};
+
+const POST_STATUS_OPTIONS = [
+  { value: "published", label: "منشور" },
+  { value: "draft", label: "مسودة" },
+];
+
+const UPDATE_TYPE_OPTIONS = Object.entries(UPDATE_TYPE_LABELS).map(([value, label]) => ({ value, label }));
 
 export function NewsManager({
   posts,
@@ -294,46 +310,54 @@ export function NewsManager({
               description="استخدم زر مزامنة المصادر أو أضف بياناً يدوياً لنشره للعامة."
             />
           ) : (
-            <div className="space-y-2.5 max-h-[380px] overflow-y-auto pr-1">
-              {officialUpdates.map((u) => (
-                <Card key={u.id} className="py-3">
-                  <CardContent className="flex flex-wrap items-center justify-between gap-3 px-4">
-                    <div className="min-w-0 flex-1">
-                      <div className="flex items-center gap-2 mb-1">
-                        <span className="rounded-full bg-algeria-green/10 px-2 py-0.5 text-[10px] font-bold text-algeria-green border border-algeria-green/20">
-                          {u.source}
-                        </span>
-                        <span className="text-[11px] text-muted-foreground">
-                          {relativeTimeAr(u.published_at)}
-                        </span>
+            <div className="max-h-[420px] overflow-y-auto pr-1">
+              <AdminListFilter
+                rows={officialUpdates}
+                searchPlaceholder="ابحث في عنوان البيانات..."
+                searchMatch={(u, q) => u.title.toLowerCase().includes(q) || u.source.toLowerCase().includes(q)}
+                filters={[{ label: "النوع", options: UPDATE_TYPE_OPTIONS, match: (u, v) => u.update_type === v }]}
+                emptyTitle="لا توجد بيانات رسمية مسجلة بعد"
+                listClassName="space-y-2.5"
+                renderRow={(u) => (
+                  <Card key={u.id} className="py-3">
+                    <CardContent className="flex flex-wrap items-center justify-between gap-3 px-4">
+                      <div className="min-w-0 flex-1">
+                        <div className="flex items-center gap-2 mb-1">
+                          <span className="rounded-full bg-algeria-green/10 px-2 py-0.5 text-[10px] font-bold text-algeria-green border border-algeria-green/20">
+                            {u.source}
+                          </span>
+                          <span className="text-[11px] text-muted-foreground">
+                            {relativeTimeAr(u.published_at)}
+                          </span>
+                        </div>
+                        <p className="font-bold text-sm leading-snug line-clamp-1">{u.title}</p>
                       </div>
-                      <p className="font-bold text-sm leading-snug line-clamp-1">{u.title}</p>
-                    </div>
 
-                    <div className="flex items-center gap-1.5">
-                      {u.url && (
+                      <div className="flex items-center gap-1.5">
+                        {u.url && (
+                          <Button
+                            variant="ghost"
+                            size="icon-sm"
+                            render={<a href={u.url} target="_blank" rel="noopener noreferrer" />}
+                            title="عرض الرابط الأصلي"
+                          >
+                            <ExternalLink className="size-3.5" />
+                          </Button>
+                        )}
                         <Button
                           variant="ghost"
                           size="icon-sm"
-                          render={<a href={u.url} target="_blank" rel="noopener noreferrer" />}
-                          title="عرض الرابط الأصلي"
+                          aria-label="حذف"
+                          onClick={() => setPendingDeleteOfficial(u)}
+                          className="text-destructive hover:bg-destructive/10"
                         >
-                          <ExternalLink className="size-3.5" />
+                          <Trash2 className="size-4" />
                         </Button>
-                      )}
-                      <Button
-                        variant="ghost"
-                        size="icon-sm"
-                        aria-label="حذف"
-                        onClick={() => setPendingDeleteOfficial(u)}
-                        className="text-destructive hover:bg-destructive/10"
-                      >
-                        <Trash2 className="size-4" />
-                      </Button>
-                    </div>
-                  </CardContent>
-                </Card>
-              ))}
+                      </div>
+                    </CardContent>
+                  </Card>
+                )}
+              />
             </div>
           )}
         </div>
@@ -396,8 +420,20 @@ export function NewsManager({
         {posts.length === 0 ? (
           <EmptyState icon={Newspaper} title="لا توجد أخبار بعد" description="انشر أول خبر للمنصة." />
         ) : (
-          <div className="space-y-2.5">
-            {posts.map((p) => (
+          <AdminListFilter
+            rows={posts}
+            searchPlaceholder="ابحث في عنوان الأخبار..."
+            searchMatch={(p, q) => p.title.toLowerCase().includes(q)}
+            filters={[
+              {
+                label: "الحالة",
+                options: POST_STATUS_OPTIONS,
+                match: (p, v) => (v === "published" ? p.is_published : !p.is_published),
+              },
+            ]}
+            emptyTitle="لا توجد أخبار بعد"
+            listClassName="space-y-2.5"
+            renderRow={(p) => (
               <Card key={p.id} className={p.is_published ? "" : "opacity-70"}>
                 <CardContent className="flex flex-wrap items-center justify-between gap-3 px-5">
                   <div className="min-w-0 flex-1">
@@ -443,8 +479,8 @@ export function NewsManager({
                   </div>
                 </CardContent>
               </Card>
-            ))}
-          </div>
+            )}
+          />
         )}
       </div>
 

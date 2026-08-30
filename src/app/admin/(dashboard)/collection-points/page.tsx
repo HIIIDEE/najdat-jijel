@@ -1,14 +1,7 @@
 import type { Metadata } from "next";
-import { Phone, Clock, MapPinned } from "lucide-react";
-import { Card, CardContent } from "@/components/ui/card";
-import { EmptyState } from "@/components/shared/empty-state";
-import { PointStatusBadge } from "@/components/shared/status-badge";
-import { VerificationBadge } from "@/components/shared/verification-badge";
-import { relativeTimeAr } from "@/lib/constants";
-import { CategoryIcon } from "@/components/shared/category-icon";
 import { getAllCategories, getAllCollectionPoints } from "@/lib/data/admin";
 import { CreatePointDialog } from "./create-point-dialog";
-import { PointActions } from "./point-actions";
+import { CollectionPointsList } from "./collection-points-list";
 
 export const metadata: Metadata = { title: "نقاط التجميع", robots: { index: false } };
 
@@ -27,46 +20,7 @@ export default async function AdminCollectionPointsPage() {
         <CreatePointDialog categories={categories} />
       </div>
 
-      {points.length === 0 ? (
-        <EmptyState title="لا توجد نقاط تجميع مسجَّلة بعد" />
-      ) : (
-        <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
-          {points.map((p) => (
-            <Card key={p.id}>
-              <CardContent className="space-y-2 px-5">
-                <p className="font-bold">{p.name}</p>
-                <p className="flex items-center gap-1.5 text-sm text-muted-foreground">
-                  <MapPinned className="size-3.5 shrink-0" />
-                  {p.commune}، ولاية {p.wilaya}
-                </p>
-                {p.opening_hours && (
-                  <p className="flex items-center gap-1.5 text-sm text-muted-foreground">
-                    <Clock className="size-3.5 shrink-0" /> {p.opening_hours}
-                  </p>
-                )}
-                {p.phone && (
-                  <p className="flex items-center gap-1.5 text-sm text-muted-foreground" dir="ltr">
-                    <Phone className="size-3.5 shrink-0" /> {p.phone}
-                  </p>
-                )}
-                {p.accepted_categories.length > 0 && (
-                  <p className="flex flex-wrap gap-1 text-sm">
-                    {p.accepted_categories.map((slug) => (
-                      <CategoryIcon key={slug} slug={slug} className="size-4" />
-                    ))}
-                  </p>
-                )}
-                <div className="flex flex-wrap items-center gap-2">
-                  <VerificationBadge level={p.verification_level} />
-                  <PointStatusBadge status={p.status} />
-                </div>
-                <PointActions id={p.id} status={p.status} verificationLevel={p.verification_level} />
-                <p className="text-xs text-muted-foreground">آخر تحديث: {relativeTimeAr(p.updated_at)}</p>
-              </CardContent>
-            </Card>
-          ))}
-        </div>
-      )}
+      <CollectionPointsList points={points} />
     </div>
   );
 }
