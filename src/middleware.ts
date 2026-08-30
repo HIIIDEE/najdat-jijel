@@ -26,6 +26,9 @@ export async function middleware(request: NextRequest) {
 
 export const config = {
   matcher: [
-    "/((?!_next/static|_next/image|favicon.ico|.*\\.(?:svg|png|jpg|jpeg|gif|webp)$).*)",
+    // ملفات الفهرسة وصورة المشاركة أصول ثابتة لا جلسة لها. صورة المشاركة
+    // بالذات تُطلب عند كل معاينة رابط في واتساب أو فيسبوك، وهي من أكثر روابط
+    // الموقع طلبًا: تمريرها عبر الوسيط يكلّف استدعاءً وعميل Supabase بلا سبب.
+    "/((?!_next/static|_next/image|favicon.ico|robots\\.txt|sitemap\\.xml|opengraph-image|.*\\.(?:svg|png|jpg|jpeg|gif|webp)$).*)",
   ],
 };
