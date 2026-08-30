@@ -1,10 +1,22 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import { Users, Gift, Truck, Warehouse, TriangleAlert, UserX, Activity } from "lucide-react";
-import { StatCard } from "@/components/shared/stat-card";
+import {
+  Users,
+  Gift,
+  Truck,
+  Warehouse,
+  TriangleAlert,
+  UserX,
+  Activity,
+  ListChecks,
+  MapPin,
+  PackageCheck,
+} from "lucide-react";
+import { StatCard, iconColorClasses } from "@/components/shared/stat-card";
 import { Card, CardContent } from "@/components/ui/card";
 import { EmptyState } from "@/components/shared/empty-state";
 import { relativeTimeAr } from "@/lib/constants";
+import { cn } from "@/lib/utils";
 import {
   getAdminDashboardStats,
   getRecentActivity,
@@ -34,26 +46,34 @@ export default async function AdminOverviewPage() {
       </div>
 
       <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-        <StatCard label="الأسر المتضررة" value={stats.totalFamilies} icon={Users} />
+        <StatCard label="الأسر المتضررة" value={stats.totalFamilies} icon={Users} iconColor="purple" />
         <StatCard
           label="أسر لم تصلها مساعدات بعد"
           value={stats.familiesAwaiting}
           icon={UserX}
           tone="critical"
+          iconColor="critical"
         />
         <StatCard
           label="المساعدات المسجَّلة"
           value={stats.donationsCount}
           icon={Gift}
+          iconColor="green"
           trend={{ delta: weekDelta.donationsDeltaPct, label: "هذا الأسبوع" }}
         />
-        <StatCard label="الشحنات النشطة" value={stats.activeShipments} icon={Truck} />
-        <StatCard label="نقاط الاستقبال المفتوحة" value={stats.activePoints} icon={Warehouse} />
+        <StatCard label="الشحنات النشطة" value={stats.activeShipments} icon={Truck} iconColor="blue" />
+        <StatCard
+          label="نقاط الاستقبال المفتوحة"
+          value={stats.activePoints}
+          icon={Warehouse}
+          iconColor="emerald"
+        />
         <StatCard
           label="الاحتياجات الحرجة"
           value={stats.criticalNeeds}
           icon={TriangleAlert}
           tone="critical"
+          iconColor="critical"
           trend={{ delta: weekDelta.needsDeltaPct, label: "احتياجات جديدة هذا الأسبوع" }}
         />
       </div>
@@ -76,19 +96,29 @@ export default async function AdminOverviewPage() {
         </Card>
       </div>
 
-      <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-        <Link href="/admin/needs" className="rounded-lg border border-dashed border-border p-4 text-center text-sm font-medium hover:border-algeria-green hover:text-algeria-green">
-          + إضافة احتياج
-        </Link>
-        <Link href="/admin/collection-points" className="rounded-lg border border-dashed border-border p-4 text-center text-sm font-medium hover:border-algeria-green hover:text-algeria-green">
-          + إضافة نقطة تجميع
-        </Link>
-        <Link href="/admin/relief-hubs" className="rounded-lg border border-dashed border-border p-4 text-center text-sm font-medium hover:border-algeria-green hover:text-algeria-green">
-          + إضافة مركز استقبال
-        </Link>
-        <Link href="/admin/distributions" className="rounded-lg border border-dashed border-border p-4 text-center text-sm font-medium hover:border-algeria-green hover:text-algeria-green">
-          + تسجيل توزيع
-        </Link>
+      <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
+        {[
+          { href: "/admin/needs", label: "إضافة احتياج", icon: ListChecks, color: "green" },
+          { href: "/admin/collection-points", label: "إضافة نقطة تجميع", icon: MapPin, color: "purple" },
+          { href: "/admin/relief-hubs", label: "إضافة مركز استقبال", icon: Warehouse, color: "emerald" },
+          { href: "/admin/distributions", label: "تسجيل توزيع", icon: PackageCheck, color: "blue" },
+        ].map((a) => (
+          <Link
+            key={a.href}
+            href={a.href}
+            className="group flex items-center gap-3 rounded-xl border border-dashed border-border bg-card p-3.5 text-sm font-medium transition-all hover:-translate-y-0.5 hover:border-solid hover:border-algeria-green hover:shadow-sm"
+          >
+            <span
+              className={cn(
+                "flex size-9 shrink-0 items-center justify-center rounded-xl transition-transform duration-200 group-hover:scale-110",
+                iconColorClasses[a.color as keyof typeof iconColorClasses],
+              )}
+            >
+              <a.icon className="size-4" />
+            </span>
+            {a.label}
+          </Link>
+        ))}
       </div>
 
       <div>
