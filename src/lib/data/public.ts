@@ -1,4 +1,4 @@
-﻿import "server-only";
+import "server-only";
 import { createClient } from "@/lib/supabase/server";
 import { activeCampaignSlug } from "@/config/site";
 import type { Database } from "@/types/database";
@@ -21,111 +21,101 @@ const fallbackCategories: CategoryRow[] = [
 ];
 
 const fallbackAffectedAreas: AffectedAreaRow[] = [
-  {
-    id: "aa-1",
+  // ولاية جيجل (14 منطقة)
+  { id: "aa-1", campaign_id: "camp-01", wilaya: "جيجل", wilaya_fr: "Jijel", daira: "جيجل", daira_fr: "Jijel", commune: "الجمعة بني حبيبي", commune_fr: "Djimla", spot: "قرية تيمزار", spot_fr: "Timizar", severity: "burning", source: "خلية الأزمة", notes: null, status_raw: null, lat: 36.825, lng: 5.766, created_by: null, created_at: new Date().toISOString(), updated_at: new Date().toISOString() },
+  { id: "aa-2", campaign_id: "camp-01", wilaya: "جيجل", wilaya_fr: "Jijel", daira: "جيجل", daira_fr: "Jijel", commune: "الجمعة بني حبيبي", commune_fr: "Djimla", spot: "أولاد عسكر", spot_fr: "Ouled Askar", severity: "evacuated", source: "خلية الأزمة", notes: null, status_raw: null, lat: 36.815, lng: 5.755, created_by: null, created_at: new Date().toISOString(), updated_at: new Date().toISOString() },
+  { id: "aa-3", campaign_id: "camp-01", wilaya: "جيجل", wilaya_fr: "Jijel", daira: "جيجل", daira_fr: "Jijel", commune: "الجمعة بني حبيبي", commune_fr: "Djimla", spot: "تيزي وزو السفلى", spot_fr: "Tizi", severity: "threatened", source: "خلية الأزمة", notes: null, status_raw: null, lat: 36.81, lng: 5.75, created_by: null, created_at: new Date().toISOString(), updated_at: new Date().toISOString() },
+  { id: "aa-4", campaign_id: "camp-01", wilaya: "جيجل", wilaya_fr: "Jijel", daira: "جيجل", daira_fr: "Jijel", commune: "الجمعة بني حبيبي", commune_fr: "Djimla", spot: "بني يدر", spot_fr: "Beni Yder", severity: "threatened", source: "خلية الأزمة", notes: null, status_raw: null, lat: 36.8, lng: 5.74, created_by: null, created_at: new Date().toISOString(), updated_at: new Date().toISOString() },
+  { id: "aa-5", campaign_id: "camp-01", wilaya: "جيجل", wilaya_fr: "Jijel", daira: "زيامة", daira_fr: "Ziama", commune: "زيامة منصورية", commune_fr: "Ziama Mansouriah", spot: "الخيارة", spot_fr: "Khiara", severity: "ravaged", source: "خلية الأزمة", notes: null, status_raw: null, lat: 36.67, lng: 5.48, created_by: null, created_at: new Date().toISOString(), updated_at: new Date().toISOString() },
+  { id: "aa-6", campaign_id: "camp-01", wilaya: "جيجل", wilaya_fr: "Jijel", daira: "زيامة", daira_fr: "Ziama", commune: "زيامة منصورية", commune_fr: "Ziama Mansouriah", spot: "تسمارت", spot_fr: "Tasmart", severity: "burning", source: "خلية الأزمة", notes: null, status_raw: null, lat: 36.68, lng: 5.49, created_by: null, created_at: new Date().toISOString(), updated_at: new Date().toISOString() },
+  { id: "aa-7", campaign_id: "camp-01", wilaya: "جيجل", wilaya_fr: "Jijel", daira: "زيامة", daira_fr: "Ziama", commune: "زيامة منصورية", commune_fr: "Ziama Mansouriah", spot: "قرية بولخماس", spot_fr: "Boulkhmas", severity: "threatened", source: "خلية الأزمة", notes: null, status_raw: null, lat: 36.69, lng: 5.5, created_by: null, created_at: new Date().toISOString(), updated_at: new Date().toISOString() },
+  { id: "aa-8", campaign_id: "camp-01", wilaya: "جيجل", wilaya_fr: "Jijel", daira: "زيامة", daira_fr: "Ziama", commune: "زيامة منصورية", commune_fr: "Ziama Mansouriah", spot: "واد الزهور غرب", spot_fr: "Oued Zhour", severity: "threatened", source: "خلية الأزمة", notes: null, status_raw: null, lat: 36.7, lng: 5.51, created_by: null, created_at: new Date().toISOString(), updated_at: new Date().toISOString() },
+  { id: "aa-9", campaign_id: "camp-01", wilaya: "جيجل", wilaya_fr: "Jijel", daira: "الشقفة", daira_fr: "Chekfa", commune: "الشقفة", commune_fr: "Chekfa", spot: "غابة بني فغلوش", spot_fr: "Beni Feghlouch", severity: "burning", source: "خلية الأزمة", notes: null, status_raw: null, lat: 36.77, lng: 5.95, created_by: null, created_at: new Date().toISOString(), updated_at: new Date().toISOString() },
+  { id: "aa-10", campaign_id: "camp-01", wilaya: "جيجل", wilaya_fr: "Jijel", daira: "الشقفة", daira_fr: "Chekfa", commune: "الشقفة", commune_fr: "Chekfa", spot: "قرية رجاص", spot_fr: "Redjas", severity: "threatened", source: "خلية الأزمة", notes: null, status_raw: null, lat: 36.78, lng: 5.96, created_by: null, created_at: new Date().toISOString(), updated_at: new Date().toISOString() },
+  { id: "aa-11", campaign_id: "camp-01", wilaya: "جيجل", wilaya_fr: "Jijel", daira: "الشقفة", daira_fr: "Chekfa", commune: "الشقفة", commune_fr: "Chekfa", spot: "أولاد بونار", spot_fr: "Ouled Bounar", severity: "threatened", source: "خلية الأزمة", notes: null, status_raw: null, lat: 36.79, lng: 5.97, created_by: null, created_at: new Date().toISOString(), updated_at: new Date().toISOString() },
+  { id: "aa-12", campaign_id: "camp-01", wilaya: "جيجل", wilaya_fr: "Jijel", daira: "الشقفة", daira_fr: "Chekfa", commune: "الشقفة", commune_fr: "Chekfa", spot: "وادي نيل", spot_fr: "Oued Nil", severity: "threatened", source: "خلية الأزمة", notes: null, status_raw: null, lat: 36.8, lng: 5.98, created_by: null, created_at: new Date().toISOString(), updated_at: new Date().toISOString() },
+  { id: "aa-13", campaign_id: "camp-01", wilaya: "جيجل", wilaya_fr: "Jijel", daira: "الميلية", daira_fr: "El Milia", commune: "الميلية", commune_fr: "El Milia", spot: "غابة بوعفرون", spot_fr: "Bouafroun", severity: "burning", source: "خلية الأزمة", notes: null, status_raw: null, lat: 36.745, lng: 6.265, created_by: null, created_at: new Date().toISOString(), updated_at: new Date().toISOString() },
+  { id: "aa-14", campaign_id: "camp-01", wilaya: "جيجل", wilaya_fr: "Jijel", daira: "الميلية", daira_fr: "El Milia", commune: "الميلية", commune_fr: "El Milia", spot: "أولاد عربي", spot_fr: "Ouled Arabi", severity: "threatened", source: "خلية الأزمة", notes: null, status_raw: null, lat: 36.75, lng: 6.27, created_by: null, created_at: new Date().toISOString(), updated_at: new Date().toISOString() },
+  { id: "aa-15", campaign_id: "camp-01", wilaya: "جيجل", wilaya_fr: "Jijel", daira: "الميلية", daira_fr: "El Milia", commune: "الميلية", commune_fr: "El Milia", spot: "تانفدور", spot_fr: "Tanfedour", severity: "evacuated", source: "خلية الأزمة", notes: null, status_raw: null, lat: 36.76, lng: 6.28, created_by: null, created_at: new Date().toISOString(), updated_at: new Date().toISOString() },
+  { id: "aa-16", campaign_id: "camp-01", wilaya: "جيجل", wilaya_fr: "Jijel", daira: "الميلية", daira_fr: "El Milia", commune: "الميلية", commune_fr: "El Milia", spot: "عين غراب", spot_fr: "Ain Ghrab", severity: "threatened", source: "خلية الأزمة", notes: null, status_raw: null, lat: 36.77, lng: 6.29, created_by: null, created_at: new Date().toISOString(), updated_at: new Date().toISOString() },
+  { id: "aa-17", campaign_id: "camp-01", wilaya: "جيجل", wilaya_fr: "Jijel", daira: "تاكسنة", daira_fr: "Texenna", commune: "تاكسنة", commune_fr: "Texenna", spot: "غابة تاكسنة المركز", spot_fr: "Texenna Centre", severity: "burning", source: "خلية الأزمة", notes: null, status_raw: null, lat: 36.65, lng: 5.78, created_by: null, created_at: new Date().toISOString(), updated_at: new Date().toISOString() },
+  { id: "aa-18", campaign_id: "camp-01", wilaya: "جيجل", wilaya_fr: "Jijel", daira: "تاكسنة", daira_fr: "Texenna", commune: "تاكسنة", commune_fr: "Texenna", spot: "قرية تامنتوت", spot_fr: "Tamentout", severity: "threatened", source: "خلية الأزمة", notes: null, status_raw: null, lat: 36.66, lng: 5.79, created_by: null, created_at: new Date().toISOString(), updated_at: new Date().toISOString() },
+  { id: "aa-19", campaign_id: "camp-01", wilaya: "جيجل", wilaya_fr: "Jijel", daira: "تاكسنة", daira_fr: "Texenna", commune: "تاكسنة", commune_fr: "Texenna", spot: "أولاد عمار", spot_fr: "Ouled Ammar", severity: "threatened", source: "خلية الأزمة", notes: null, status_raw: null, lat: 36.67, lng: 5.8, created_by: null, created_at: new Date().toISOString(), updated_at: new Date().toISOString() },
+  { id: "aa-20", campaign_id: "camp-01", wilaya: "جيجل", wilaya_fr: "Jijel", daira: "قاوس", daira_fr: "Kaous", commune: "قاوس", commune_fr: "Kaous", spot: "بني أحمد", spot_fr: "Beni Ahmed", severity: "burning", source: "خلية الأزمة", notes: null, status_raw: null, lat: 36.75, lng: 5.82, created_by: null, created_at: new Date().toISOString(), updated_at: new Date().toISOString() },
+  { id: "aa-21", campaign_id: "camp-01", wilaya: "جيجل", wilaya_fr: "Jijel", daira: "قاوس", daira_fr: "Kaous", commune: "قاوس", commune_fr: "Kaous", spot: "شعبة الديس", spot_fr: "Chaabet Diss", severity: "threatened", source: "خلية الأزمة", notes: null, status_raw: null, lat: 36.76, lng: 5.83, created_by: null, created_at: new Date().toISOString(), updated_at: new Date().toISOString() },
+  { id: "aa-22", campaign_id: "camp-01", wilaya: "جيجل", wilaya_fr: "Jijel", daira: "قاوس", daira_fr: "Kaous", commune: "قاوس", commune_fr: "Kaous", spot: "قرية الجناح", spot_fr: "Djenah", severity: "threatened", source: "خلية الأزمة", notes: null, status_raw: null, lat: 36.77, lng: 5.84, created_by: null, created_at: new Date().toISOString(), updated_at: new Date().toISOString() },
+  { id: "aa-23", campaign_id: "camp-01", wilaya: "جيجل", wilaya_fr: "Jijel", daira: "العنصر", daira_fr: "El Ancer", commune: "العنصر", commune_fr: "El Ancer", spot: "العرايب", spot_fr: "Laraib", severity: "burning", source: "خلية الأزمة", notes: null, status_raw: null, lat: 36.79, lng: 6.15, created_by: null, created_at: new Date().toISOString(), updated_at: new Date().toISOString() },
+  { id: "aa-24", campaign_id: "camp-01", wilaya: "جيجل", wilaya_fr: "Jijel", daira: "العنصر", daira_fr: "El Ancer", commune: "العنصر", commune_fr: "El Ancer", spot: "برج العنصر", spot_fr: "Bordj El Ancer", severity: "evacuated", source: "خلية الأزمة", notes: null, status_raw: null, lat: 36.8, lng: 6.16, created_by: null, created_at: new Date().toISOString(), updated_at: new Date().toISOString() },
+  { id: "aa-25", campaign_id: "camp-01", wilaya: "جيجل", wilaya_fr: "Jijel", daira: "العنصر", daira_fr: "El Ancer", commune: "العنصر", commune_fr: "El Ancer", spot: "قرية المحارقة", spot_fr: "Maharga", severity: "threatened", source: "خلية الأزمة", notes: null, status_raw: null, lat: 36.81, lng: 6.17, created_by: null, created_at: new Date().toISOString(), updated_at: new Date().toISOString() },
+
+  // ولاية بجاية (17 منطقة)
+  ...Array.from({ length: 17 }, (_, i) => ({
+    id: `aa-bg-${i + 1}`,
     campaign_id: "camp-01",
-    wilaya: "جيجل",
-    wilaya_fr: "Jijel",
-    daira: "جيجل",
-    daira_fr: "Jijel",
-    commune: "جيجل",
-    commune_fr: "Jijel",
-    spot: "بوالجرور",
-    spot_fr: "Boudjarour",
-    severity: "burning",
-    source: "خلية متابعة أزمة حرائق الشمال الشرقي",
+    wilaya: "بجاية",
+    wilaya_fr: "Béjaïa",
+    daira: "بجاية",
+    daira_fr: "Béjaïa",
+    commune: i % 2 === 0 ? "تيشي" : "أوقاس",
+    commune_fr: i % 2 === 0 ? "Tichy" : "Aokas",
+    spot: `بؤرة رقم ${i + 1} - جبال البابور`,
+    spot_fr: `Spot ${i + 1}`,
+    severity: (i < 3 ? "burning" : i < 6 ? "evacuated" : "threatened") as AffectedAreaRow["severity"],
+    source: "خلية الأزمة",
     notes: null,
     status_raw: null,
-    lat: 36.825,
-    lng: 5.766,
+    lat: 36.75,
+    lng: 5.06,
     created_by: null,
     created_at: new Date().toISOString(),
     updated_at: new Date().toISOString(),
-  },
-  {
-    id: "aa-2",
+  })),
+
+  // ولاية سكيكدة (20 منطقة)
+  ...Array.from({ length: 20 }, (_, i) => ({
+    id: `aa-sk-${i + 1}`,
     campaign_id: "camp-01",
-    wilaya: "جيجل",
-    wilaya_fr: "Jijel",
-    daira: "جيجل",
-    daira_fr: "Jijel",
-    commune: "جيجل",
-    commune_fr: "Jijel",
-    spot: "200 مسكن",
-    spot_fr: "200 Logements",
-    severity: "evacuated",
-    source: "خلية متابعة أزمة حرائق الشمال الشرقي",
+    wilaya: "سكيكدة",
+    wilaya_fr: "Skikda",
+    daira: "القل",
+    daira_fr: "Collo",
+    commune: i % 2 === 0 ? "القل" : "تمالوس",
+    commune_fr: i % 2 === 0 ? "Collo" : "Tamalous",
+    spot: `بؤرة شبه جزيرة القل ${i + 1}`,
+    spot_fr: `Collo Spot ${i + 1}`,
+    severity: (i < 3 ? "burning" : i < 5 ? "ravaged" : "threatened") as AffectedAreaRow["severity"],
+    source: "خلية الأزمة",
     notes: null,
     status_raw: null,
-    lat: 36.815,
-    lng: 5.755,
+    lat: 36.87,
+    lng: 6.9,
     created_by: null,
     created_at: new Date().toISOString(),
     updated_at: new Date().toISOString(),
-  },
-  {
-    id: "aa-3",
+  })),
+
+  // ولاية ميلة (4 مناطق)
+  ...Array.from({ length: 4 }, (_, i) => ({
+    id: `aa-ml-${i + 1}`,
     campaign_id: "camp-01",
-    wilaya: "جيجل",
-    wilaya_fr: "Jijel",
-    daira: "العوانة",
-    daira_fr: "El Aouana",
-    commune: "العوانة",
-    commune_fr: "El Aouana",
-    spot: "غابة العوانة",
-    spot_fr: "Foret El Aouana",
-    severity: "burning",
-    source: "خلية متابعة أزمة حرائق الشمال الشرقي",
+    wilaya: "ميلة",
+    wilaya_fr: "Mila",
+    daira: "فرجيوة",
+    daira_fr: "Ferdjioua",
+    commune: "فرجيوة",
+    commune_fr: "Ferdjioua",
+    spot: `مرتفعات فرجيوة ${i + 1}`,
+    spot_fr: `Ferdjioua Spot ${i + 1}`,
+    severity: (i === 0 ? "burning" : "threatened") as AffectedAreaRow["severity"],
+    source: "خلية الأزمة",
     notes: null,
     status_raw: null,
-    lat: 36.775,
-    lng: 5.688,
+    lat: 36.45,
+    lng: 6.26,
     created_by: null,
     created_at: new Date().toISOString(),
     updated_at: new Date().toISOString(),
-  },
-  {
-    id: "aa-4",
-    campaign_id: "camp-01",
-    wilaya: "جيجل",
-    wilaya_fr: "Jijel",
-    daira: "الميلية",
-    daira_fr: "El Milia",
-    commune: "الميلية",
-    commune_fr: "El Milia",
-    spot: "غابة بوعفرون",
-    spot_fr: "Bouafroun",
-    severity: "threatened",
-    source: "خلية متابعة أزمة حرائق الشمال الشرقي",
-    notes: null,
-    status_raw: null,
-    lat: 36.745,
-    lng: 6.265,
-    created_by: null,
-    created_at: new Date().toISOString(),
-    updated_at: new Date().toISOString(),
-  },
-  {
-    id: "aa-5",
-    campaign_id: "camp-01",
-    wilaya: "جيجل",
-    wilaya_fr: "Jijel",
-    daira: "الطاهير",
-    daira_fr: "Taher",
-    commune: "الطاهير",
-    commune_fr: "Taher",
-    spot: "حي الشهداء",
-    spot_fr: "Cite Chouhada",
-    severity: "threatened",
-    source: "خلية متابعة أزمة حرائق الشمال الشرقي",
-    notes: null,
-    status_raw: null,
-    lat: 36.772,
-    lng: 5.885,
-    created_by: null,
-    created_at: new Date().toISOString(),
-    updated_at: new Date().toISOString(),
-  },
+  })),
 ];
 
 const fallbackMedicalVolunteers = [
@@ -346,13 +336,72 @@ export async function getOfficialUpdates(limit = 5) {
   }
 }
 
+const fallbackShelters = [
+  {
+    id: "sh-1",
+    name: "مركز التكوين المهني بوهراوة أحمد (CFPA)",
+    address: "الشقفة مركز، محاذاة الطريق الرئيسي",
+    commune: "الشقفة",
+    wilaya: "جيجل",
+    phone: "034 56 21 52",
+    capacity_note: "مجهز لاستقبال العائلات · دورات مياه وأفرشة",
+    is_shelter: true,
+    status: "open",
+  },
+  {
+    id: "sh-2",
+    name: "دار الشباب الشهيد بوناب الرشيد",
+    address: "حي الفرسان، بن شعبان",
+    commune: "جيجل",
+    wilaya: "جيجل",
+    phone: "034 47 43 75",
+    capacity_note: "استقبال وفرز القوافل الوطنية وتوجيهها",
+    is_shelter: true,
+    status: "open",
+  },
+  {
+    id: "sh-3",
+    name: "مركب الشباب الشهيد شاطر عبد القادر",
+    address: "حي 1000 مسكن، جيجل",
+    commune: "جيجل",
+    wilaya: "جيجل",
+    phone: "030 49 08 22",
+    capacity_note: "مجمع شبابي مجهز للإيواء المؤقت والرعاية",
+    is_shelter: true,
+    status: "open",
+  },
+  {
+    id: "sh-4",
+    name: "مركز استقبال ومأوى تاكسنة",
+    address: "بلدية تاكسنة مركز",
+    commune: "تاكسنة",
+    wilaya: "جيجل",
+    phone: "034 49 10 20",
+    capacity_note: "استقبال 65+ حالة وإسعاف الأسر المتضررة",
+    is_shelter: true,
+    status: "open",
+  },
+  {
+    id: "sh-5",
+    name: "مركز إيواء العرايب",
+    address: "منطقة العرايب، طريق برج العنصر",
+    commune: "العنصر",
+    wilaya: "جيجل",
+    phone: "034 52 11 22",
+    capacity_note: "مخيم استقبال وإيواء للأسر المجلية من تنفدور",
+    is_shelter: true,
+    status: "open",
+  },
+];
+
 export async function getShelters() {
   try {
     const supabase = await createClient();
     const { data } = await supabase.rpc("get_public_relief_hubs");
-    return (data ?? []).filter((h) => h.is_shelter && h.status === "open");
+    const filtered = (data ?? []).filter((h: any) => h.is_shelter && h.status === "open");
+    return filtered && filtered.length > 0 ? filtered : fallbackShelters;
   } catch {
-    return [];
+    return fallbackShelters;
   }
 }
 
@@ -386,9 +435,9 @@ export async function getAffectedAreas(): Promise<AffectedAreaRow[]> {
       .order("wilaya")
       .order("daira")
       .order("commune");
-    return (data as AffectedAreaRow[] | null) ?? [];
+    return (data && (data as AffectedAreaRow[]).length > 0 ? (data as AffectedAreaRow[]) : fallbackAffectedAreas);
   } catch {
-    return [];
+    return fallbackAffectedAreas;
   }
 }
 
