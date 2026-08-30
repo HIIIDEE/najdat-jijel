@@ -12,6 +12,7 @@ import {
   Stethoscope,
   LifeBuoy,
   Gift,
+  Hammer,
 } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
 import { LinkButton } from "@/components/shared/link-button";
@@ -355,6 +356,35 @@ export default async function HomePage() {
         <LinkButton href="/medical" variant="outline" className="mt-5 w-full sm:hidden">
           {t.home.medical.registerBtnMobile}
         </LinkButton>
+      </section>
+
+      {/* ————————————————————————————————— ترميم المنازل */}
+      <section className="border-y border-border bg-secondary/30">
+        <div className="mx-auto max-w-6xl px-4 py-14">
+          <div className="flex items-end justify-between gap-3">
+            <div>
+              <h2 className="flex items-center gap-2 text-2xl font-bold">
+                <Hammer className="size-5 text-algeria-green" /> {t.home.reconstruction.title}
+              </h2>
+              <p className="mt-1 text-sm text-muted-foreground">{t.home.reconstruction.desc}</p>
+            </div>
+            <div className="hidden shrink-0 gap-2 sm:flex">
+              <LinkButton href="/help/damage-assessment">{t.home.reconstruction.damageBtn}</LinkButton>
+              <LinkButton href="/artisans" variant="outline">
+                {t.home.reconstruction.artisanBtn}
+              </LinkButton>
+            </div>
+          </div>
+
+          <div className="mt-5 flex gap-3 sm:hidden">
+            <LinkButton href="/help/damage-assessment" className="flex-1">
+              {t.home.reconstruction.damageBtn}
+            </LinkButton>
+            <LinkButton href="/artisans" variant="outline" className="flex-1">
+              {t.home.reconstruction.artisanBtn}
+            </LinkButton>
+          </div>
+        </div>
       </section>
 
       {/* ————————————————————————————————— أرقام الطوارئ */}
