@@ -1,4 +1,4 @@
-﻿import Link from "next/link";
+import Link from "next/link";
 import { siteConfig } from "@/config/site";
 import { getDictionary } from "@/i18n/dictionaries";
 import { getLocale } from "@/i18n/server";
@@ -11,7 +11,7 @@ export async function SiteFooter() {
       title: t.footer.platformColumn,
       links: [
         { href: "/affected-areas", label: t.nav.affectedAreas },
-        { href: "/medical", label: "الأطقم الطبية" },
+        { href: "/medical", label: t.nav.medical },
         { href: "/map", label: t.footer.reliefMap },
         { href: "/news", label: t.nav.news },
         { href: "/transparency", label: t.nav.transparency },
@@ -23,7 +23,7 @@ export async function SiteFooter() {
       links: [
         { href: "/donate", label: t.cta.haveAid },
         { href: "/transport", label: t.cta.canTransport },
-        { href: "/medical", label: "التطوع الطبي" },
+        { href: "/medical", label: t.cta.volunteerMedical },
       ],
     },
   ];
