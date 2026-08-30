@@ -5,6 +5,7 @@ import { createClient } from "@/lib/supabase/server";
 import { AdminSidebarNav } from "@/components/layout/admin-sidebar";
 import { AdminTopbar } from "../admin-topbar";
 import { siteConfig } from "@/config/site";
+import { getPendingCounts } from "@/lib/data/admin";
 
 export default async function AdminDashboardLayout({
   children,
@@ -37,6 +38,8 @@ export default async function AdminDashboardLayout({
     );
   }
 
+  const counts = await getPendingCounts();
+
   return (
     <div className="flex min-h-screen">
       <aside className="hidden w-64 shrink-0 border-e border-border bg-secondary/20 p-4 md:block">
@@ -46,10 +49,10 @@ export default async function AdminDashboardLayout({
           </span>
           {siteConfig.shortName}
         </Link>
-        <AdminSidebarNav />
+        <AdminSidebarNav counts={counts} />
       </aside>
       <div className="flex min-h-screen flex-1 flex-col">
-        <AdminTopbar fullName={profile.full_name} role={profile.role} />
+        <AdminTopbar fullName={profile.full_name} role={profile.role} counts={counts} />
         <main className="flex-1 bg-secondary/10 p-4 md:p-6">{children}</main>
       </div>
     </div>

@@ -14,6 +14,7 @@ import {
   RotateCw,
   Radio,
   CheckCircle2,
+  XCircle,
   FileText,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -49,12 +50,51 @@ import {
 } from "@/components/ui/select";
 import { EmptyState } from "@/components/shared/empty-state";
 import { relativeTimeAr } from "@/lib/constants";
+import { AdminListFilter, type AdminBulkAction } from "@/components/admin/list-filter";
+import { ExportPostsCsvButton, ExportOfficialUpdatesCsvButton } from "./export-csv-button";
 import { createPost, deletePost, togglePostPublished } from "@/actions/posts";
 import { createOfficialUpdate, deleteOfficialUpdate } from "@/actions/official-updates";
 import type { Database } from "@/types/database";
 
 type Post = Database["public"]["Tables"]["posts"]["Row"];
 type OfficialUpdate = Database["public"]["Tables"]["official_updates"]["Row"];
+
+const UPDATE_TYPE_LABELS: Record<string, string> = {
+  fire_alert: "بلاغ حرائق وإخماد",
+  road_status: "حالة الطرقات والمعابر",
+  weather_warning: "إنذار جوي ونشرية",
+  safety_guidelines: "توجيهات السلامة والإجلاء",
+  statement: "بيان رسمي موثّق",
+};
+
+const POST_STATUS_OPTIONS = [
+  { value: "published", label: "منشور" },
+  { value: "draft", label: "مسودة" },
+];
+
+const UPDATE_TYPE_OPTIONS = Object.entries(UPDATE_TYPE_LABELS).map(([value, label]) => ({ value, label }));
+
+const POST_BULK_ACTIONS: AdminBulkAction<Post>[] = [
+  { label: "نشر", icon: CheckCircle2, run: (p) => togglePostPublished(p.id, true) },
+  { label: "إلغاء النشر", icon: XCircle, variant: "outline", run: (p) => togglePostPublished(p.id, false) },
+  {
+    label: "حذف",
+    icon: Trash2,
+    variant: "destructive",
+    confirmMessage: "حذف الأخبار المحدَّدة نهائيًا؟",
+    run: (p) => deletePost(p.id),
+  },
+];
+
+const OFFICIAL_UPDATE_BULK_ACTIONS: AdminBulkAction<OfficialUpdate>[] = [
+  {
+    label: "حذف",
+    icon: Trash2,
+    variant: "destructive",
+    confirmMessage: "حذف البيانات الرسمية المحدَّدة نهائيًا؟",
+    run: (u) => deleteOfficialUpdate(u.id),
+  },
+];
 
 export function NewsManager({
   posts,
@@ -283,9 +323,12 @@ export function NewsManager({
 
         {/* Official Bulletins List */}
         <div>
-          <h3 className="text-sm font-bold text-muted-foreground mb-3">
-            البيانات المنشورة حالياً في قسم المعلومات الرسمية ({officialUpdates.length}):
-          </h3>
+          <div className="mb-3 flex flex-wrap items-center justify-between gap-2">
+            <h3 className="text-sm font-bold text-muted-foreground">
+              البيانات المنشورة حالياً في قسم المعلومات الرسمية ({officialUpdates.length}):
+            </h3>
+            <ExportOfficialUpdatesCsvButton rows={officialUpdates} />
+          </div>
 
           {officialUpdates.length === 0 ? (
             <EmptyState
@@ -294,46 +337,56 @@ export function NewsManager({
               description="استخدم زر مزامنة المصادر أو أضف بياناً يدوياً لنشره للعامة."
             />
           ) : (
-            <div className="space-y-2.5 max-h-[380px] overflow-y-auto pr-1">
-              {officialUpdates.map((u) => (
-                <Card key={u.id} className="py-3">
-                  <CardContent className="flex flex-wrap items-center justify-between gap-3 px-4">
-                    <div className="min-w-0 flex-1">
-                      <div className="flex items-center gap-2 mb-1">
-                        <span className="rounded-full bg-algeria-green/10 px-2 py-0.5 text-[10px] font-bold text-algeria-green border border-algeria-green/20">
-                          {u.source}
-                        </span>
-                        <span className="text-[11px] text-muted-foreground">
-                          {relativeTimeAr(u.published_at)}
-                        </span>
+            <div className="max-h-[420px] overflow-y-auto pr-1">
+              <AdminListFilter
+                rows={officialUpdates}
+                searchPlaceholder="ابحث في عنوان البيانات..."
+                searchMatch={(u, q) => u.title.toLowerCase().includes(q) || u.source.toLowerCase().includes(q)}
+                filters={[{ label: "النوع", options: UPDATE_TYPE_OPTIONS, match: (u, v) => u.update_type === v }]}
+                getRowId={(u) => u.id}
+                bulkActions={OFFICIAL_UPDATE_BULK_ACTIONS}
+                emptyTitle="لا توجد بيانات رسمية مسجلة بعد"
+                listClassName="space-y-2.5"
+                renderRow={(u) => (
+                  <Card key={u.id} className="py-3">
+                    <CardContent className="flex flex-wrap items-center justify-between gap-3 px-4">
+                      <div className="min-w-0 flex-1">
+                        <div className="flex items-center gap-2 mb-1">
+                          <span className="rounded-full bg-algeria-green/10 px-2 py-0.5 text-[10px] font-bold text-algeria-green border border-algeria-green/20">
+                            {u.source}
+                          </span>
+                          <span className="text-[11px] text-muted-foreground">
+                            {relativeTimeAr(u.published_at)}
+                          </span>
+                        </div>
+                        <p className="font-bold text-sm leading-snug line-clamp-1">{u.title}</p>
                       </div>
-                      <p className="font-bold text-sm leading-snug line-clamp-1">{u.title}</p>
-                    </div>
 
-                    <div className="flex items-center gap-1.5">
-                      {u.url && (
+                      <div className="flex items-center gap-1.5">
+                        {u.url && (
+                          <Button
+                            variant="ghost"
+                            size="icon-sm"
+                            render={<a href={u.url} target="_blank" rel="noopener noreferrer" />}
+                            title="عرض الرابط الأصلي"
+                          >
+                            <ExternalLink className="size-3.5" />
+                          </Button>
+                        )}
                         <Button
                           variant="ghost"
                           size="icon-sm"
-                          render={<a href={u.url} target="_blank" rel="noopener noreferrer" />}
-                          title="عرض الرابط الأصلي"
+                          aria-label="حذف"
+                          onClick={() => setPendingDeleteOfficial(u)}
+                          className="text-destructive hover:bg-destructive/10"
                         >
-                          <ExternalLink className="size-3.5" />
+                          <Trash2 className="size-4" />
                         </Button>
-                      )}
-                      <Button
-                        variant="ghost"
-                        size="icon-sm"
-                        aria-label="حذف"
-                        onClick={() => setPendingDeleteOfficial(u)}
-                        className="text-destructive hover:bg-destructive/10"
-                      >
-                        <Trash2 className="size-4" />
-                      </Button>
-                    </div>
-                  </CardContent>
-                </Card>
-              ))}
+                      </div>
+                    </CardContent>
+                  </Card>
+                )}
+              />
             </div>
           )}
         </div>
@@ -349,55 +402,72 @@ export function NewsManager({
             </p>
           </div>
 
-          <Dialog open={openPostModal} onOpenChange={setOpenPostModal}>
-            <DialogTrigger render={<Button size="sm"><Plus className="size-4" /> خبر جديد</Button>} />
-            <DialogContent className="max-h-[85vh] overflow-y-auto sm:max-w-lg">
-              <DialogHeader>
-                <DialogTitle>نشر خبر جديد</DialogTitle>
-              </DialogHeader>
-              <div className="space-y-4">
-                <div>
-                  <Label className="mb-1.5">العنوان</Label>
-                  <Input value={postTitle} onChange={(e) => setPostTitle(e.target.value)} maxLength={200} />
+          <div className="flex items-center gap-2">
+            <ExportPostsCsvButton rows={posts} />
+            <Dialog open={openPostModal} onOpenChange={setOpenPostModal}>
+              <DialogTrigger render={<Button size="sm"><Plus className="size-4" /> خبر جديد</Button>} />
+              <DialogContent className="max-h-[85vh] overflow-y-auto sm:max-w-lg">
+                <DialogHeader>
+                  <DialogTitle>نشر خبر جديد</DialogTitle>
+                </DialogHeader>
+                <div className="space-y-4">
+                  <div>
+                    <Label className="mb-1.5">العنوان</Label>
+                    <Input value={postTitle} onChange={(e) => setPostTitle(e.target.value)} maxLength={200} />
+                  </div>
+                  <div>
+                    <Label className="mb-1.5">مقدمة قصيرة (اختياري)</Label>
+                    <Textarea
+                      value={postExcerpt}
+                      onChange={(e) => setPostExcerpt(e.target.value)}
+                      maxLength={400}
+                      rows={2}
+                    />
+                  </div>
+                  <div>
+                    <Label className="mb-1.5">نص الخبر</Label>
+                    <Textarea
+                      value={postBody}
+                      onChange={(e) => setPostBody(e.target.value)}
+                      rows={9}
+                      placeholder="اترك سطرًا فارغًا بين كل فقرة وأخرى."
+                    />
+                  </div>
+                  <label className="flex items-center gap-2 text-sm">
+                    <Checkbox checked={postPublish} onCheckedChange={(v) => setPostPublish(Boolean(v))} />
+                    نشر مباشرة (أزل التحديد لحفظه كمسودة)
+                  </label>
+                  <DialogFooter>
+                    <Button onClick={() => void submitPost()} disabled={submittingPost} className="w-full">
+                      {submittingPost && <Loader2 className="size-4 animate-spin" />}
+                      {postPublish ? "نشر" : "حفظ كمسودة"}
+                    </Button>
+                  </DialogFooter>
                 </div>
-                <div>
-                  <Label className="mb-1.5">مقدمة قصيرة (اختياري)</Label>
-                  <Textarea
-                    value={postExcerpt}
-                    onChange={(e) => setPostExcerpt(e.target.value)}
-                    maxLength={400}
-                    rows={2}
-                  />
-                </div>
-                <div>
-                  <Label className="mb-1.5">نص الخبر</Label>
-                  <Textarea
-                    value={postBody}
-                    onChange={(e) => setPostBody(e.target.value)}
-                    rows={9}
-                    placeholder="اترك سطرًا فارغًا بين كل فقرة وأخرى."
-                  />
-                </div>
-                <label className="flex items-center gap-2 text-sm">
-                  <Checkbox checked={postPublish} onCheckedChange={(v) => setPostPublish(Boolean(v))} />
-                  نشر مباشرة (أزل التحديد لحفظه كمسودة)
-                </label>
-                <DialogFooter>
-                  <Button onClick={() => void submitPost()} disabled={submittingPost} className="w-full">
-                    {submittingPost && <Loader2 className="size-4 animate-spin" />}
-                    {postPublish ? "نشر" : "حفظ كمسودة"}
-                  </Button>
-                </DialogFooter>
-              </div>
-            </DialogContent>
-          </Dialog>
+              </DialogContent>
+            </Dialog>
+          </div>
         </div>
 
         {posts.length === 0 ? (
           <EmptyState icon={Newspaper} title="لا توجد أخبار بعد" description="انشر أول خبر للمنصة." />
         ) : (
-          <div className="space-y-2.5">
-            {posts.map((p) => (
+          <AdminListFilter
+            rows={posts}
+            searchPlaceholder="ابحث في عنوان الأخبار..."
+            searchMatch={(p, q) => p.title.toLowerCase().includes(q)}
+            filters={[
+              {
+                label: "الحالة",
+                options: POST_STATUS_OPTIONS,
+                match: (p, v) => (v === "published" ? p.is_published : !p.is_published),
+              },
+            ]}
+            getRowId={(p) => p.id}
+            bulkActions={POST_BULK_ACTIONS}
+            emptyTitle="لا توجد أخبار بعد"
+            listClassName="space-y-2.5"
+            renderRow={(p) => (
               <Card key={p.id} className={p.is_published ? "" : "opacity-70"}>
                 <CardContent className="flex flex-wrap items-center justify-between gap-3 px-5">
                   <div className="min-w-0 flex-1">
@@ -443,8 +513,8 @@ export function NewsManager({
                   </div>
                 </CardContent>
               </Card>
-            ))}
-          </div>
+            )}
+          />
         )}
       </div>
 

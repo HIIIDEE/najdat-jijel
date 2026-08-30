@@ -1,13 +1,9 @@
 import type { Metadata } from "next";
 import { createClient } from "@/lib/supabase/server";
 import { getAllCategories } from "@/lib/data/admin";
-import { Card, CardContent } from "@/components/ui/card";
-import { EmptyState } from "@/components/shared/empty-state";
-import { PriorityBadge } from "@/components/shared/priority-badge";
-import { formatQuantity, relativeTimeAr, unitLabels } from "@/lib/constants";
-import { CategoryIcon } from "@/components/shared/category-icon";
 import { CreateNeedDialog } from "./create-need-dialog";
-import { NeedActions } from "./need-actions";
+import { ExportNeedsCsvButton } from "./export-csv-button";
+import { NeedsList } from "./needs-list";
 
 export const metadata: Metadata = { title: "الاحتياجات", robots: { index: false } };
 
@@ -32,41 +28,13 @@ export default async function AdminNeedsPage() {
             الاحتياجات المُعلَّمة (auto) أُنشئت تلقائيًا من انخفاض المخزون تحت الحد الأدنى.
           </p>
         </div>
-        <CreateNeedDialog categories={categories} />
+        <div className="flex items-center gap-2">
+          <ExportNeedsCsvButton rows={rows} />
+          <CreateNeedDialog categories={categories} />
+        </div>
       </div>
 
-      {rows.length === 0 ? (
-        <EmptyState title="لا توجد احتياجات مسجَّلة بعد" />
-      ) : (
-        <div className="space-y-3">
-          {rows.map((n) => (
-            <Card key={n.id}>
-              <CardContent className="flex flex-wrap items-center justify-between gap-3 px-5">
-                <div className="min-w-0">
-                  <div className="flex items-center gap-2">
-                    <CategoryIcon slug={n.categories?.slug} className="size-4" />
-                    <p className="font-bold">{n.title || n.categories?.name_ar}</p>
-                    {n.is_auto_generated && (
-                      <span className="rounded-full bg-muted px-2 py-0.5 text-xs font-semibold text-muted-foreground">
-                        auto
-                      </span>
-                    )}
-                  </div>
-                  <p className="text-sm text-muted-foreground">
-                    {n.commune}، ولاية {n.wilaya} — {formatQuantity(Number(n.quantity_available))}/
-                    {formatQuantity(Number(n.quantity_needed))} {unitLabels[n.unit]}
-                  </p>
-                  <p className="text-xs text-muted-foreground">آخر تحديث: {relativeTimeAr(n.updated_at)}</p>
-                </div>
-                <div className="flex items-center gap-2">
-                  <PriorityBadge priority={n.priority} />
-                  <NeedActions id={n.id} priority={n.priority} status={n.status} />
-                </div>
-              </CardContent>
-            </Card>
-          ))}
-        </div>
-      )}
+      <NeedsList rows={rows} />
     </div>
   );
 }

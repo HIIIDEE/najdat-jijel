@@ -8,7 +8,15 @@ import { AdminSidebarNav } from "@/components/layout/admin-sidebar";
 import { signOut } from "@/actions/auth";
 import { roleLabels, type AppRole } from "@/lib/constants";
 
-export function AdminTopbar({ fullName, role }: { fullName: string | null; role: AppRole }) {
+export function AdminTopbar({
+  fullName,
+  role,
+  counts,
+}: {
+  fullName: string | null;
+  role: AppRole;
+  counts?: Record<string, number>;
+}) {
   const [open, setOpen] = useState(false);
 
   return (
@@ -24,7 +32,7 @@ export function AdminTopbar({ fullName, role }: { fullName: string | null; role:
           />
           <SheetContent side="right" className="w-72 p-4">
             <SheetTitle className="mb-4 text-right">القائمة</SheetTitle>
-            <AdminSidebarNav onNavigate={() => setOpen(false)} />
+            <AdminSidebarNav onNavigate={() => setOpen(false)} counts={counts} />
           </SheetContent>
         </Sheet>
         <p className="font-bold md:hidden">لوحة الإدارة</p>

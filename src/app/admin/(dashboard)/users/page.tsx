@@ -1,13 +1,9 @@
 import type { Metadata } from "next";
 import { ShieldCheck, Info } from "lucide-react";
 import { createClient } from "@/lib/supabase/server";
-import { Card, CardContent } from "@/components/ui/card";
-import { EmptyState } from "@/components/shared/empty-state";
-import { relativeTimeAr, roleLabels } from "@/lib/constants";
-import { UserRoleSelect } from "./user-role-select";
 import { AddStaffDialog } from "./add-staff-dialog";
-import { DeleteUserButton } from "./delete-user-button";
 import { ExportUsersCsvButton } from "./export-csv-button";
+import { UsersList } from "./users-list";
 
 export const metadata: Metadata = { title: "المستخدمون", robots: { index: false } };
 
@@ -55,37 +51,7 @@ export default async function AdminUsersPage() {
         </div>
       )}
 
-      {rows.length === 0 ? (
-        <EmptyState title="لا يوجد مستخدمون بعد" />
-      ) : (
-        <div className="space-y-3">
-          {rows.map((p) => (
-            <Card key={p.id}>
-              <CardContent className="flex flex-wrap items-center justify-between gap-3 px-5">
-                <div className="min-w-0">
-                  <p className="font-medium">
-                    {p.full_name || "بدون اسم"}
-                    {p.id === user?.id && (
-                      <span className="ms-2 rounded-full bg-algeria-green/10 px-2 py-0.5 text-xs font-semibold text-algeria-green">
-                        أنت
-                      </span>
-                    )}
-                  </p>
-                  <p className="text-xs text-muted-foreground">
-                    {p.phone || "بدون رقم"} · {roleLabels[p.role]} · انضم {relativeTimeAr(p.created_at)}
-                  </p>
-                </div>
-                <div className="flex items-center gap-2">
-                  <UserRoleSelect id={p.id} role={p.role} />
-                  {isAdmin && p.id !== user?.id && (
-                    <DeleteUserButton id={p.id} name={p.full_name || "هذا المستخدم"} />
-                  )}
-                </div>
-              </CardContent>
-            </Card>
-          ))}
-        </div>
-      )}
+      <UsersList rows={rows} currentUserId={user?.id} isAdmin={isAdmin} />
 
       <div className="flex items-start gap-2 rounded-xl border border-dashed border-border p-4">
         <Info className="mt-0.5 size-4 shrink-0 text-muted-foreground" />
