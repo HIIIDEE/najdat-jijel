@@ -19,8 +19,8 @@ export function MobileBottomNav() {
   if (pathname?.startsWith("/admin")) return null;
 
   return (
-    <nav className="fixed inset-x-0 bottom-0 z-40 border-t border-border bg-background/95 backdrop-blur md:hidden">
-      <div className="grid grid-cols-5">
+    <nav className="fixed inset-x-0 bottom-0 z-40 border-t border-border/80 bg-background/95 pb-[env(safe-area-inset-bottom,0px)] shadow-lg backdrop-blur-md supports-backdrop-filter:bg-background/85 md:hidden">
+      <div className="grid grid-cols-5 items-center">
         {items.map((item) => {
           const active = pathname === item.href;
           const Icon = item.icon;
@@ -29,12 +29,21 @@ export function MobileBottomNav() {
               key={item.href}
               href={item.href}
               className={cn(
-                "flex flex-col items-center gap-1 py-2 text-xs font-semibold",
-                active ? "text-algeria-green" : "text-muted-foreground",
+                "flex flex-col items-center justify-center gap-1 py-2 text-[10px] sm:text-xs font-bold transition-all",
+                active
+                  ? "text-algeria-green"
+                  : "text-muted-foreground hover:text-foreground",
               )}
             >
-              <Icon className="size-5" />
-              {item.label}
+              <span
+                className={cn(
+                  "flex size-7 items-center justify-center rounded-full transition-all",
+                  active && "bg-algeria-green/15 text-algeria-green scale-110",
+                )}
+              >
+                <Icon className="size-4" />
+              </span>
+              <span>{item.label}</span>
             </Link>
           );
         })}
