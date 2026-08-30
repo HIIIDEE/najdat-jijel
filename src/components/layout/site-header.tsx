@@ -2,18 +2,24 @@ import Link from "next/link";
 import { HeartHandshake, LifeBuoy, Gift } from "lucide-react";
 import { siteConfig } from "@/config/site";
 import { LinkButton } from "@/components/shared/link-button";
+import { LanguageSwitcher } from "@/components/layout/language-switcher";
+import { getDictionary } from "@/i18n/dictionaries";
+import { getLocale } from "@/i18n/server";
 
-const navLinks = [
-  { href: "/", label: "الرئيسية" },
-  { href: "/needs", label: "الاحتياجات" },
-  { href: "/affected-areas", label: "المناطق المتضررة" },
-  { href: "/map", label: "الخريطة" },
-  { href: "/news", label: "الأخبار" },
-  { href: "/transparency", label: "الشفافية" },
-  { href: "/official-information", label: "معلومات رسمية" },
-];
+export async function SiteHeader() {
+  const locale = await getLocale();
+  const t = await getDictionary(locale);
 
-export function SiteHeader() {
+  const navLinks = [
+    { href: "/", label: t.nav.home },
+    { href: "/needs", label: t.nav.needs },
+    { href: "/affected-areas", label: t.nav.affectedAreas },
+    { href: "/map", label: t.nav.map },
+    { href: "/news", label: t.nav.news },
+    { href: "/transparency", label: t.nav.transparency },
+    { href: "/official-information", label: t.nav.officialInformation },
+  ];
+
   return (
     <header className="sticky top-0 z-40 border-b border-border bg-background/95 backdrop-blur supports-backdrop-filter:bg-background/80">
       <div className="mx-auto flex h-16 max-w-6xl items-center justify-between gap-4 px-4">
@@ -37,11 +43,12 @@ export function SiteHeader() {
         </nav>
 
         <div className="flex items-center gap-2">
+          <LanguageSwitcher current={locale} label={t.language.change} />
           <LinkButton href="/help" size="sm" variant="outline" className="hidden sm:inline-flex">
-            <LifeBuoy className="size-4" /> أحتاج مساعدة
+            <LifeBuoy className="size-4" /> {t.cta.needHelp}
           </LinkButton>
           <LinkButton href="/donate" size="sm">
-            <Gift className="size-4" /> لدي مساعدات
+            <Gift className="size-4" /> {t.cta.haveAid}
           </LinkButton>
         </div>
       </div>
