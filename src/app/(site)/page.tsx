@@ -136,15 +136,30 @@ export default async function HomePage() {
               {t.home.heroTag}
             </span>
 
-            {/* Quick Emergency Hotlines available on mobile */}
-            <div className="inline-flex items-center gap-1.5 rounded-full border border-priority-critical/30 bg-priority-critical/10 px-3 py-1 text-[11px] font-bold text-priority-critical shadow-sm">
-              <Phone className="size-3 animate-pulse" />
-              <span>{isFr ? "Urgences :" : "طوارئ:"}</span>
-              <a href="tel:14" className="hover:underline">14 الحماية</a>
-              <span>·</span>
-              <a href="tel:1021" className="hover:underline">1021 الغابات</a>
-              <span>·</span>
-              <a href="tel:1055" className="hover:underline">1055 الدرك</a>
+            {/* Quick Tap-to-Call Emergency Hotlines on mobile */}
+            <div className="flex flex-wrap items-center justify-center gap-1.5">
+              <a
+                href="tel:14"
+                className="inline-flex items-center gap-1 rounded-full border border-priority-critical/30 bg-priority-critical/10 px-2.5 py-1 text-[11px] font-extrabold text-priority-critical shadow-xs hover:bg-priority-critical/20 active:scale-95 transition-all"
+              >
+                <Phone className="size-3 animate-pulse" />
+                <span>14</span>
+                <span className="font-semibold text-[10px]">الحماية</span>
+              </a>
+              <a
+                href="tel:1021"
+                className="inline-flex items-center gap-1 rounded-full border border-green-600/30 bg-green-600/10 px-2.5 py-1 text-[11px] font-extrabold text-green-700 dark:text-green-300 shadow-xs hover:bg-green-600/20 active:scale-95 transition-all"
+              >
+                <span>1021</span>
+                <span className="font-semibold text-[10px]">الغابات</span>
+              </a>
+              <a
+                href="tel:1055"
+                className="inline-flex items-center gap-1 rounded-full border border-blue-600/30 bg-blue-600/10 px-2.5 py-1 text-[11px] font-extrabold text-blue-700 dark:text-blue-300 shadow-xs hover:bg-blue-600/20 active:scale-95 transition-all"
+              >
+                <span>1055</span>
+                <span className="font-semibold text-[10px]">الدرك</span>
+              </a>
             </div>
           </div>
 
@@ -161,20 +176,30 @@ export default async function HomePage() {
             </p>
           </div>
 
-          {/* Quick Action Cards Deck (2-col on phone, 3 on tablet, 5-across on desktop) */}
+          {/* Quick Action Cards Deck (Featured wide on mobile + 2x2 grid, 5-across on desktop) */}
           <div className="mt-6 sm:mt-12 grid grid-cols-2 gap-3 sm:gap-4 sm:grid-cols-3 lg:grid-cols-5">
-            {quickActions.map((a) => (
-              <Link key={a.href} href={a.href} className="group">
+            {quickActions.map((a, idx) => (
+              <Link
+                key={a.href}
+                href={a.href}
+                className={`group ${idx === 0 ? "col-span-2 sm:col-span-1" : "col-span-1"}`}
+              >
                 <div
-                  className={`relative flex h-full flex-col items-center justify-between rounded-2xl border border-border bg-card/95 p-3.5 sm:p-5 text-center shadow-sm backdrop-blur-sm transition-all duration-200 hover:-translate-y-1 hover:shadow-md ${a.accent}`}
+                  className={`relative flex h-full flex-col justify-between rounded-2xl border border-border bg-card/95 p-3.5 sm:p-5 text-center shadow-sm backdrop-blur-sm transition-all duration-200 active:scale-[0.98] hover:-translate-y-1 hover:shadow-md ${a.accent}`}
                 >
                   {a.badge && (
                     <span className={`absolute end-2.5 top-2.5 sm:end-3 sm:top-3 rounded-full px-2 py-0.5 text-[9px] sm:text-[10px] font-extrabold tracking-wide ${a.badgeColor}`}>
                       {a.badge}
                     </span>
                   )}
-                  <div className="flex flex-col items-center gap-2 sm:gap-3">
-                    <span className={`flex size-10 sm:size-12 items-center justify-center rounded-xl sm:rounded-2xl transition-transform duration-200 group-hover:scale-110 ${a.iconBg}`}>
+                  <div
+                    className={`flex ${
+                      idx === 0
+                        ? "flex-row sm:flex-col items-center justify-center gap-3 text-start sm:text-center"
+                        : "flex-col items-center gap-2 sm:gap-3"
+                    }`}
+                  >
+                    <span className={`flex size-10 sm:size-12 shrink-0 items-center justify-center rounded-xl sm:rounded-2xl transition-transform duration-200 group-hover:scale-110 ${a.iconBg}`}>
                       <a.icon className="size-5 sm:size-6" aria-hidden />
                     </span>
                     <div>

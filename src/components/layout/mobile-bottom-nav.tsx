@@ -1,4 +1,4 @@
-﻿"use client";
+"use client";
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
@@ -18,40 +18,58 @@ export function MobileBottomNav({ labels }: { labels?: MobileBottomNavLabels }) 
 
   const items = [
     { href: "/", label: labels?.home || "الرئيسية", icon: Home },
-    { href: "/affected-areas", label: "المناطق", icon: TriangleAlert },
-    { href: "/donate", label: labels?.haveAid || "المساعدات", icon: Gift },
+    { href: "/official-information", label: "البيانات", icon: TriangleAlert },
+    { href: "/donate", label: labels?.haveAid || "تقديم عون", icon: Gift, isPrimary: true },
     { href: "/map", label: labels?.map || "الخريطة", icon: MapPin },
-    { href: "/medical", label: "الأطقم الطبية", icon: Stethoscope },
+    { href: "/medical", label: "الأطباء", icon: Stethoscope },
   ];
 
   if (pathname?.startsWith("/admin")) return null;
 
   return (
-    <nav className="fixed inset-x-0 bottom-0 z-40 border-t border-border/80 bg-background/95 pb-[max(env(safe-area-inset-bottom),0.75rem)] shadow-lg backdrop-blur-md supports-backdrop-filter:bg-background/85 md:hidden">
-      <div className="grid grid-cols-5 items-center">
+    <nav className="fixed inset-x-0 bottom-0 z-40 border-t border-border/80 bg-background/90 pb-[max(env(safe-area-inset-bottom),0.75rem)] shadow-[0_-4px_20px_rgba(0,0,0,0.06)] backdrop-blur-xl supports-backdrop-filter:bg-background/80 md:hidden">
+      <div className="grid grid-cols-5 items-center px-1">
         {items.map((item) => {
           const active = pathname === item.href;
           const Icon = item.icon;
+
+          if (item.isPrimary) {
+            return (
+              <Link
+                key={item.href}
+                href={item.href}
+                className="group relative -top-3 flex flex-col items-center justify-center"
+              >
+                <span className="flex size-12 items-center justify-center rounded-full bg-algeria-green text-white shadow-lg shadow-algeria-green/30 ring-4 ring-background transition-transform duration-200 active:scale-95 group-hover:scale-105">
+                  <Icon className="size-5" />
+                </span>
+                <span className="mt-1 text-[10px] font-extrabold text-algeria-green">
+                  {item.label}
+                </span>
+              </Link>
+            );
+          }
+
           return (
             <Link
               key={item.href}
               href={item.href}
               className={cn(
-                "flex flex-col items-center justify-center gap-1 py-2 text-[10px] sm:text-xs font-bold transition-all",
+                "flex flex-col items-center justify-center gap-0.5 py-2 text-[10px] font-bold transition-all active:scale-95",
                 active
-                  ? "text-algeria-green"
+                  ? "text-algeria-green font-extrabold"
                   : "text-muted-foreground hover:text-foreground",
               )}
             >
               <span
                 className={cn(
-                  "flex size-7 items-center justify-center rounded-full transition-all",
+                  "flex size-7 items-center justify-center rounded-xl transition-all",
                   active && "bg-algeria-green/15 text-algeria-green scale-110",
                 )}
               >
                 <Icon className="size-4" />
               </span>
-              <span>{item.label}</span>
+              <span className="truncate max-w-[64px]">{item.label}</span>
             </Link>
           );
         })}
