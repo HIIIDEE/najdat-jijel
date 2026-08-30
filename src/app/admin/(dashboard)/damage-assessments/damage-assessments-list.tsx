@@ -7,6 +7,7 @@ import { relativeTimeAr, damageAssessmentStatusLabels } from "@/lib/constants";
 import { AdminListFilter, type AdminBulkAction } from "@/components/admin/list-filter";
 import { DamageAssessmentStatusSelect } from "./damage-assessment-status-select";
 import { AssignArtisanSelect, type ArtisanCandidate } from "./assign-artisan-select";
+import { PhotoLightbox } from "@/components/admin/photo-lightbox";
 import { updateDamageAssessmentStatus } from "@/actions/damage-assessments";
 import type { Database } from "@/types/database";
 
@@ -96,14 +97,7 @@ export function DamageAssessmentsList({ rows }: { rows: Assessment[] }) {
                 <p className="mb-1.5 flex items-center gap-1.5 text-xs font-medium text-muted-foreground">
                   <ImageIcon className="size-3.5" /> صور الأضرار
                 </p>
-                <div className="flex flex-wrap gap-2">
-                  {r.photoUrls.map((url) => (
-                    <a key={url} href={url} target="_blank" rel="noopener noreferrer">
-                      {/* eslint-disable-next-line @next/next/no-img-element -- روابط موقّعة مؤقتة من Storage، لا تناسب next/image الثابت */}
-                      <img src={url} alt="صورة أضرار" className="size-20 rounded-lg border border-border object-cover" />
-                    </a>
-                  ))}
-                </div>
+                <PhotoLightbox urls={r.photoUrls} />
               </div>
             )}
 
