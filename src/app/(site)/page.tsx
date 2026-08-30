@@ -213,9 +213,46 @@ export default async function HomePage() {
         </div>
       </section>
 
-      {/* ————————————————————————————————— المناطق المتضررة */}
+      {/* 2. ————————————————————————————————— آخر البيانات والمستجدات الرسمية */}
+      {updates.length > 0 && (
+        <section className="border-b border-border bg-card/60 py-10 sm:py-16">
+          <div className="mx-auto max-w-6xl px-4">
+            <div className="mb-6 sm:mb-8 flex flex-col sm:flex-row sm:items-end justify-between gap-3">
+              <div>
+                <div className="inline-flex items-center gap-2 rounded-full border border-algeria-green/30 bg-algeria-green/10 px-3 py-1 text-xs font-bold text-algeria-green mb-2.5">
+                  <Radio className="size-3.5 animate-pulse" />
+                  <span>{isFr ? "Couverture vérifiée en direct" : "متابعة ميدانية حية وموثقة"}</span>
+                </div>
+                <h2 className="text-2xl sm:text-3xl font-extrabold tracking-tight">{t.home.updates.title}</h2>
+                <p className="mt-1 text-xs sm:text-sm text-muted-foreground">
+                  {isFr ? "Mises à jour des services de la Protection Civile, de la Gendarmerie (Tariki) et des Forêts." : "تحديثات لحظية من مصالح الحماية المدنية، الدرك الوطني (طريقي)، ومحافظات الغابات."}
+                </p>
+              </div>
+              <LinkButton href="/official-information" variant="outline" size="sm" className="self-start sm:self-auto shrink-0 font-bold">
+                {t.home.updates.allInfo}
+              </LinkButton>
+            </div>
+
+            <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
+              {updates.slice(0, 4).map((u) => (
+                <OfficialUpdateCard key={u.id} update={u} />
+              ))}
+            </div>
+
+            {updates.length > 4 && (
+              <div className="mt-6 text-center sm:hidden">
+                <LinkButton href="/official-information" variant="outline" className="w-full font-bold">
+                  {isFr ? "Voir plus de communiqués" : "عرض المزيد من المستجدات"}
+                </LinkButton>
+              </div>
+            )}
+          </div>
+        </section>
+      )}
+
+      {/* 3. ————————————————————————————————— المناطق المتضررة */}
       {areas.length > 0 && (
-        <section className="border-y border-border bg-priority-critical/5">
+        <section className="border-b border-border bg-priority-critical/5">
           <div className="mx-auto max-w-6xl px-4 py-10 sm:py-16">
             <div className="mb-6 sm:mb-8 flex items-end justify-between gap-3">
               <div>
@@ -576,41 +613,6 @@ export default async function HomePage() {
           ))}
         </div>
       </section>
-
-      {/* ————————————————————————————————— آخر البيانات والمستجدات الرسمية */}
-      {updates.length > 0 && (
-        <section className="mx-auto max-w-6xl px-4 py-10 sm:py-16">
-          <div className="mb-6 sm:mb-8 flex flex-col sm:flex-row sm:items-end justify-between gap-3">
-            <div>
-              <div className="inline-flex items-center gap-2 rounded-full border border-algeria-green/30 bg-algeria-green/10 px-3 py-1 text-xs font-bold text-algeria-green mb-2.5">
-                <Radio className="size-3.5 animate-pulse" />
-                <span>{isFr ? "Couverture vérifiée en direct" : "متابعة ميدانية حية وموثقة"}</span>
-              </div>
-              <h2 className="text-2xl sm:text-3xl font-extrabold tracking-tight">{t.home.updates.title}</h2>
-              <p className="mt-1 text-xs sm:text-sm text-muted-foreground">
-                {isFr ? "Mises à jour des services de la Protection Civile, de la Gendarmerie (Tariki) et des Forêts." : "تحديثات لحظية من مصالح الحماية المدنية، الدرك الوطني (طريقي)، ومحافظات الغابات."}
-              </p>
-            </div>
-            <LinkButton href="/official-information" variant="outline" size="sm" className="self-start sm:self-auto shrink-0 font-bold">
-              {t.home.updates.allInfo}
-            </LinkButton>
-          </div>
-
-          <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
-            {updates.slice(0, 4).map((u) => (
-              <OfficialUpdateCard key={u.id} update={u} />
-            ))}
-          </div>
-
-          {updates.length > 4 && (
-            <div className="mt-6 text-center sm:hidden">
-              <LinkButton href="/official-information" variant="outline" className="w-full font-bold">
-                {isFr ? "Voir plus de communiqués" : "عرض المزيد من المستجدات"}
-              </LinkButton>
-            </div>
-          )}
-        </section>
-      )}
 
       {/* ————————————————————————————————— الشفافية */}
       <section className="border-t border-border bg-algeria-green/5">
