@@ -2,26 +2,45 @@ import { NextResponse } from "next/server";
 import { createClient } from "@/lib/supabase/server";
 import { getActiveCampaign } from "@/lib/data/public";
 import { classifyNewsItem } from "@/config/news-sources";
+import { isApiRequestAuthorized } from "@/lib/api-auth";
+import { z } from "zod";
+
+/**
+ * حمولة الـ webhook.
+ *
+ * كانت تُفكَّك من `body` كما وردت. المُرسِل موثوق بالسرّ، لكن ما يصله هو منشور
+ * فيسبوك بمحتوى لا يتحكّم فيه أحد: الحدود هنا تمنع نصًّا بلا نهاية من ملء
+ * الجدول، و`url` مقيَّد بـ http/https لأنه يُعرض رابطًا قابلًا للنقر — ورابط
+ * بصيغة `javascript:` ينفّذ شيفرة عند نقر الزائر.
+ */
+const webhookPayloadSchema = z.object({
+  title: z.string().max(5000).optional(),
+  text: z.string().max(20000).optional(),
+  message: z.string().max(20000).optional(),
+  url: z
+    .string()
+    .url()
+    .refine((value) => /^https?:$/.test(new URL(value).protocol), "رابط غير مسموح")
+    .max(2000)
+    .optional(),
+  source: z.string().trim().min(1).max(200).default("مديرية الحماية المدنية لولاية جيجل"),
+});
 
 /**
  * Webhook endpoint to receive real-time posts from Facebook Pages (e.g. DGPC0018)
  * Triggered by Make.com, Pipedream, Zapier, or a Python script.
  */
 export async function POST(req: Request) {
-  const secret = process.env.WEBHOOK_SECRET || process.env.CRON_SECRET;
-  const { searchParams } = new URL(req.url);
-  const token =
-    req.headers.get("authorization")?.replace(/^Bearer\s+/i, "") ||
-    searchParams.get("secret") ||
-    searchParams.get("key");
-
-  if (secret && token !== secret) {
+  if (!isApiRequestAuthorized(req)) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 
   try {
-    const body = await req.json();
-    const { title, text, message, url, source = "مديرية الحماية المدنية لولاية جيجل" } = body;
+    const parsed = webhookPayloadSchema.safeParse(await req.json());
+    if (!parsed.success) {
+      return NextResponse.json({ error: "Invalid payload" }, { status: 400 });
+    }
+    const { title, text, message, url, source } = parsed.data;
 
     const postText = message || text || title || "";
     if (!postText.trim()) {
@@ -52,7 +71,9 @@ export async function POST(req: Request) {
     }).select().single();
 
     if (error) {
-      return NextResponse.json({ error: error.message }, { status: 500 });
+      // رسالة Postgres تكشف أسماء الجداول والقيود وسياسات RLS: تبقى في السجلّ.
+      console.error("[api] news/webhook insert:", error);
+      return NextResponse.json({ error: "Insert failed" }, { status: 500 });
     }
 
     return NextResponse.json({
@@ -62,7 +83,7 @@ export async function POST(req: Request) {
       is_urgent,
     });
   } catch (err: unknown) {
-    const errorMsg = err instanceof Error ? err.message : "Unknown error";
-    return NextResponse.json({ error: errorMsg }, { status: 500 });
+    console.error("[api] news/webhook:", err);
+    return NextResponse.json({ error: "Bad request" }, { status: 400 });
   }
 }
