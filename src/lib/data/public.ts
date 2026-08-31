@@ -126,9 +126,12 @@ export async function getPublicReliefHubs() {
 export async function getOfficialUpdates(limit = 5) {
   try {
     const supabase = await createClient();
+    // الأعمدة المعروضة وحدها: `select("*")` كان يمرّر `created_by` — معرّف حساب
+    // المشرف الذي نشر البيان — إلى مكوّن عميل، فيظهر في مصدر صفحة عامة دون أن
+    // يُعرض. نفس الخطأ الذي صُحّح في صفحة الأسر المتضررة بلوحة الإدارة.
     const { data } = await supabase
       .from("official_updates")
-      .select("*")
+      .select("id, title, body, source, url, update_type, published_at")
       .order("published_at", { ascending: false })
       .limit(limit);
     return data ?? [];
