@@ -8,6 +8,15 @@ import { logActivity } from "@/services/activity-log";
 import { activeCampaignSlug } from "@/config/site";
 import type { DamageAssessmentStatus } from "@/lib/constants";
 
+/** حدود رفع الصور — تُطبَّق على الخادم، ويُكرّرها قيد على الحاوية في الهجرة 0030. */
+const MAX_PHOTOS = 6;
+const MAX_PHOTO_BYTES = 10 * 1024 * 1024;
+const ALLOWED_PHOTO_TYPES: Record<string, string> = {
+  "image/jpeg": "jpg",
+  "image/png": "png",
+  "image/webp": "webp",
+};
+
 export type DamageAssessmentActionState = { success: boolean; error?: string };
 
 export async function submitDamageAssessment(
@@ -37,15 +46,33 @@ export async function submitDamageAssessment(
   const supabase = await createClient();
 
   // رفع الصور (أول رفع ملفات عام في المنصة) — الحاوية خاصة، القراءة للطاقم فقط.
+  //
+  // `accept="image/*"` في النموذج تلميح للمتصفّح لا حاجز: هذا المسار مفتوح بلا
+  // حساب، ويُستدعى مباشرة كما يُستدعى أي server action. لذلك يُفحص كل ملف هنا:
+  // النوع من قائمة مسموحة، والحجم والعدد بحدّ أعلى.
   const photoPaths: string[] = [];
-  const photos = formData.getAll("photos");
+  const photos = formData
+    .getAll("photos")
+    .filter((entry): entry is File => entry instanceof File && entry.size > 0)
+    .slice(0, MAX_PHOTOS);
+
   for (const [index, file] of photos.entries()) {
-    if (file instanceof File && file.size > 0) {
-      const ext = file.name.split(".").pop() || "jpg";
-      const path = `${data.wilaya}/${Date.now()}-${index}.${ext}`;
-      const { error: uploadError } = await supabase.storage.from("damage-photos").upload(path, file);
-      if (!uploadError) photoPaths.push(path);
+    const extension = ALLOWED_PHOTO_TYPES[file.type];
+
+    // الامتداد يُشتقّ من نوع المحتوى لا من اسم الملف الذي يختاره المُرسِل.
+    if (!extension) continue;
+    if (file.size > MAX_PHOTO_BYTES) continue;
+
+    const path = `${data.wilaya}/${Date.now()}-${index}.${extension}`;
+    const { error: uploadError } = await supabase.storage
+      .from("damage-photos")
+      .upload(path, file, { contentType: file.type });
+
+    if (uploadError) {
+      console.error("[action] submitDamageAssessment upload:", uploadError);
+      continue;
     }
+    photoPaths.push(path);
   }
 
   const estimate = estimateDamageMaterials({

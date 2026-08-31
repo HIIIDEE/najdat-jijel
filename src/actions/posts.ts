@@ -73,7 +73,11 @@ export async function togglePostPublished(id: string, isPublished: boolean) {
       published_at: isPublished ? new Date().toISOString() : null,
     })
     .eq("id", id);
-  if (error) return { success: false, error: error.message };
+  if (error) {
+    // رسالة Postgres تكشف أسماء الجداول والقيود: تبقى في السجلّ لا عند العميل.
+    console.error("[action] togglePostPublished:", error);
+    return { success: false, error: "تعذّر تنفيذ العملية. حاول مرة أخرى." };
+  }
   revalidatePath("/admin/news");
   revalidatePath("/news");
   return { success: true };
@@ -82,7 +86,11 @@ export async function togglePostPublished(id: string, isPublished: boolean) {
 export async function deletePost(id: string) {
   const supabase = await createClient();
   const { error } = await supabase.from("posts").delete().eq("id", id);
-  if (error) return { success: false, error: error.message };
+  if (error) {
+    // رسالة Postgres تكشف أسماء الجداول والقيود: تبقى في السجلّ لا عند العميل.
+    console.error("[action] deletePost:", error);
+    return { success: false, error: "تعذّر تنفيذ العملية. حاول مرة أخرى." };
+  }
   revalidatePath("/admin/news");
   revalidatePath("/news");
   return { success: true };

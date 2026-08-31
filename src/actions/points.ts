@@ -83,7 +83,11 @@ export async function updateCollectionPointStatus(
   } = await supabase.auth.getUser();
 
   const { error } = await supabase.from("collection_points").update({ status }).eq("id", id);
-  if (error) return { success: false, error: error.message };
+  if (error) {
+    // رسالة Postgres تكشف أسماء الجداول والقيود: تبقى في السجلّ لا عند العميل.
+    console.error("[action] updateCollectionPointStatus:", error);
+    return { success: false, error: "تعذّر تنفيذ العملية. حاول مرة أخرى." };
+  }
 
   await logActivity(supabase, {
     actorId: user?.id,
@@ -110,7 +114,11 @@ export async function updateCollectionPointVerification(
     .from("collection_points")
     .update({ verification_level: level, verified_by: user?.id, verified_at: new Date().toISOString() })
     .eq("id", id);
-  if (error) return { success: false, error: error.message };
+  if (error) {
+    // رسالة Postgres تكشف أسماء الجداول والقيود: تبقى في السجلّ لا عند العميل.
+    console.error("[action] updateCollectionPointVerification:", error);
+    return { success: false, error: "تعذّر تنفيذ العملية. حاول مرة أخرى." };
+  }
 
   await supabase.from("verification_records").insert({
     entity_type: "collection_point",
@@ -187,7 +195,11 @@ export async function updateReliefHubStatus(
   } = await supabase.auth.getUser();
 
   const { error } = await supabase.from("relief_hubs").update({ status }).eq("id", id);
-  if (error) return { success: false, error: error.message };
+  if (error) {
+    // رسالة Postgres تكشف أسماء الجداول والقيود: تبقى في السجلّ لا عند العميل.
+    console.error("[action] updateReliefHubStatus:", error);
+    return { success: false, error: "تعذّر تنفيذ العملية. حاول مرة أخرى." };
+  }
 
   await logActivity(supabase, {
     actorId: user?.id,
@@ -214,7 +226,11 @@ export async function updateReliefHubVerification(
     .from("relief_hubs")
     .update({ verification_level: level, verified_by: user?.id, verified_at: new Date().toISOString() })
     .eq("id", id);
-  if (error) return { success: false, error: error.message };
+  if (error) {
+    // رسالة Postgres تكشف أسماء الجداول والقيود: تبقى في السجلّ لا عند العميل.
+    console.error("[action] updateReliefHubVerification:", error);
+    return { success: false, error: "تعذّر تنفيذ العملية. حاول مرة أخرى." };
+  }
 
   await supabase.from("verification_records").insert({
     entity_type: "relief_hub",

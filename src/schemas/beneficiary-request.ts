@@ -34,7 +34,10 @@ export const beneficiaryRequestSchema = z.object({
   medical_note: z.string().trim().max(500).optional().or(z.literal("")),
   lost_livestock: z.boolean(),
   lost_income: z.boolean(),
-  needed_categories: z.array(z.string()).min(1, "اختر احتياجًا واحدًا على الأقل"),
+  needed_categories: z
+    .array(z.string().max(50))
+    .min(1, "اختر احتياجًا واحدًا على الأقل")
+    .max(20),
   other_needs_note: z.string().trim().max(500).optional().or(z.literal("")),
 });
 

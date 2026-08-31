@@ -22,6 +22,7 @@ import {
 } from "lucide-react";
 import { formatRelativeTime } from "@/lib/constants";
 import type { AvailableLocale } from "@/i18n/locales";
+import { safeExternalUrl } from "@/lib/safe-url";
 
 export interface OfficialUpdateItem {
   id?: string;
@@ -182,7 +183,7 @@ export function OfficialUpdateCard({
         await navigator.share({
           title: update.title,
           text: textToShare,
-          url: update.url || window.location.href,
+          url: safeExternalUrl(update.url) ?? window.location.href,
         });
         return;
       } catch {
@@ -322,9 +323,9 @@ export function OfficialUpdateCard({
           </button>
 
           {/* External Source Link */}
-          {update.url && (
+          {safeExternalUrl(update.url) && (
             <a
-              href={update.url}
+              href={safeExternalUrl(update.url) ?? "#"}
               target="_blank"
               rel="noopener noreferrer"
               className="inline-flex items-center gap-1 rounded-lg bg-primary/10 px-3 py-1.5 text-xs font-bold text-primary hover:bg-primary/20 transition-colors"

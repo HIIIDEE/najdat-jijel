@@ -16,6 +16,7 @@ import {
 import { getOfficialUpdates } from "@/lib/data/public";
 import { formatRelativeTime } from "@/lib/constants";
 import { getLocale } from "@/i18n/server";
+import { safeExternalUrl } from "@/lib/safe-url";
 
 export async function generateMetadata({
   params,
@@ -153,9 +154,9 @@ export default async function OfficialUpdateDetailPage({
               </div>
             </div>
 
-            {update.url && (
+            {safeExternalUrl(update.url) && (
               <a
-                href={update.url}
+                href={safeExternalUrl(update.url) ?? "#"}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="inline-flex items-center justify-center gap-2 rounded-xl bg-algeria-green px-4 py-2.5 text-xs sm:text-sm font-bold text-white hover:bg-algeria-green/90 transition-colors shrink-0"

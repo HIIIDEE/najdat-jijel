@@ -32,7 +32,7 @@ export const donationSchema = z.object({
   can_deliver_self: z.boolean(),
   ready_at: z.string().optional().or(z.literal("")),
   notes: z.string().trim().max(500).optional().or(z.literal("")),
-  items: z.array(donationItemSchema).min(1, "أضف مادة واحدة على الأقل"),
+  items: z.array(donationItemSchema).min(1, "أضف مادة واحدة على الأقل").max(30),
 });
 
 export type DonationInput = z.infer<typeof donationSchema>;

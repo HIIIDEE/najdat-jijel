@@ -54,7 +54,11 @@ export async function createAffectedArea(input: CreateAffectedAreaInput) {
     .select()
     .single();
 
-  if (error) return { success: false, error: error.message };
+  if (error) {
+    // رسالة Postgres تكشف أسماء الجداول والقيود: تبقى في السجلّ لا عند العميل.
+    console.error("[action] createAffectedArea:", error);
+    return { success: false, error: "تعذّر تنفيذ العملية. حاول مرة أخرى." };
+  }
 
   await logActivity(supabase, {
     actorId: user?.id,
@@ -76,7 +80,11 @@ export async function deleteAffectedArea(id: string) {
   } = await supabase.auth.getUser();
 
   const { error } = await supabase.from("affected_areas").delete().eq("id", id);
-  if (error) return { success: false, error: error.message };
+  if (error) {
+    // رسالة Postgres تكشف أسماء الجداول والقيود: تبقى في السجلّ لا عند العميل.
+    console.error("[action] deleteAffectedArea:", error);
+    return { success: false, error: "تعذّر تنفيذ العملية. حاول مرة أخرى." };
+  }
 
   await logActivity(supabase, {
     actorId: user?.id,
@@ -98,7 +106,11 @@ export async function updateAreaSeverity(id: string, severity: AffectedSeverity)
   } = await supabase.auth.getUser();
 
   const { error } = await supabase.from("affected_areas").update({ severity }).eq("id", id);
-  if (error) return { success: false, error: error.message };
+  if (error) {
+    // رسالة Postgres تكشف أسماء الجداول والقيود: تبقى في السجلّ لا عند العميل.
+    console.error("[action] updateAreaSeverity:", error);
+    return { success: false, error: "تعذّر تنفيذ العملية. حاول مرة أخرى." };
+  }
 
   await logActivity(supabase, {
     actorId: user?.id,

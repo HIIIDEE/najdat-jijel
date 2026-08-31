@@ -47,7 +47,11 @@ export async function createAnnouncement(input: z.infer<typeof schema>) {
 export async function toggleAnnouncement(id: string, isActive: boolean) {
   const supabase = await createClient();
   const { error } = await supabase.from("announcements").update({ is_active: isActive }).eq("id", id);
-  if (error) return { success: false, error: error.message };
+  if (error) {
+    // رسالة Postgres تكشف أسماء الجداول والقيود: تبقى في السجلّ لا عند العميل.
+    console.error("[action] toggleAnnouncement:", error);
+    return { success: false, error: "تعذّر تنفيذ العملية. حاول مرة أخرى." };
+  }
   revalidatePath("/admin/announcements");
   revalidatePath("/");
   return { success: true };
@@ -56,7 +60,11 @@ export async function toggleAnnouncement(id: string, isActive: boolean) {
 export async function deleteAnnouncement(id: string) {
   const supabase = await createClient();
   const { error } = await supabase.from("announcements").delete().eq("id", id);
-  if (error) return { success: false, error: error.message };
+  if (error) {
+    // رسالة Postgres تكشف أسماء الجداول والقيود: تبقى في السجلّ لا عند العميل.
+    console.error("[action] deleteAnnouncement:", error);
+    return { success: false, error: "تعذّر تنفيذ العملية. حاول مرة أخرى." };
+  }
   revalidatePath("/admin/announcements");
   revalidatePath("/");
   return { success: true };

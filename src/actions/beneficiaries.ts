@@ -12,7 +12,11 @@ export async function updateBeneficiaryStatus(id: string, status: RequestStatus)
   } = await supabase.auth.getUser();
 
   const { error } = await supabase.from("beneficiary_requests").update({ status }).eq("id", id);
-  if (error) return { success: false, error: error.message };
+  if (error) {
+    // رسالة Postgres تكشف أسماء الجداول والقيود: تبقى في السجلّ لا عند العميل.
+    console.error("[action] updateBeneficiaryStatus:", error);
+    return { success: false, error: "تعذّر تنفيذ العملية. حاول مرة أخرى." };
+  }
 
   await logActivity(supabase, {
     actorId: user?.id,
@@ -34,7 +38,11 @@ export async function updateBeneficiaryPriority(id: string, priority: PriorityLe
   } = await supabase.auth.getUser();
 
   const { error } = await supabase.from("beneficiary_requests").update({ priority }).eq("id", id);
-  if (error) return { success: false, error: error.message };
+  if (error) {
+    // رسالة Postgres تكشف أسماء الجداول والقيود: تبقى في السجلّ لا عند العميل.
+    console.error("[action] updateBeneficiaryPriority:", error);
+    return { success: false, error: "تعذّر تنفيذ العملية. حاول مرة أخرى." };
+  }
 
   await logActivity(supabase, {
     actorId: user?.id,
@@ -57,7 +65,11 @@ export async function updateBeneficiaryVerification(id: string, level: Verificat
     .from("beneficiary_requests")
     .update({ verification_level: level, verified_by: user?.id, verified_at: new Date().toISOString() })
     .eq("id", id);
-  if (error) return { success: false, error: error.message };
+  if (error) {
+    // رسالة Postgres تكشف أسماء الجداول والقيود: تبقى في السجلّ لا عند العميل.
+    console.error("[action] updateBeneficiaryVerification:", error);
+    return { success: false, error: "تعذّر تنفيذ العملية. حاول مرة أخرى." };
+  }
 
   await supabase.from("verification_records").insert({
     entity_type: "beneficiary_request",

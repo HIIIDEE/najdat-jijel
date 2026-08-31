@@ -73,7 +73,11 @@ export async function updateNeedStatus(id: string, status: "active" | "resolved"
   } = await supabase.auth.getUser();
 
   const { error } = await supabase.from("needs").update({ status }).eq("id", id);
-  if (error) return { success: false, error: error.message };
+  if (error) {
+    // رسالة Postgres تكشف أسماء الجداول والقيود: تبقى في السجلّ لا عند العميل.
+    console.error("[action] updateNeedStatus:", error);
+    return { success: false, error: "تعذّر تنفيذ العملية. حاول مرة أخرى." };
+  }
 
   await logActivity(supabase, {
     actorId: user?.id,
@@ -98,7 +102,11 @@ export async function updateNeedPriority(
   } = await supabase.auth.getUser();
 
   const { error } = await supabase.from("needs").update({ priority }).eq("id", id);
-  if (error) return { success: false, error: error.message };
+  if (error) {
+    // رسالة Postgres تكشف أسماء الجداول والقيود: تبقى في السجلّ لا عند العميل.
+    console.error("[action] updateNeedPriority:", error);
+    return { success: false, error: "تعذّر تنفيذ العملية. حاول مرة أخرى." };
+  }
 
   await logActivity(supabase, {
     actorId: user?.id,

@@ -12,7 +12,11 @@ export async function updateTransportOfferStatus(id: string, status: TransportSt
   } = await supabase.auth.getUser();
 
   const { error } = await supabase.from("transport_offers").update({ status }).eq("id", id);
-  if (error) return { success: false, error: error.message };
+  if (error) {
+    // رسالة Postgres تكشف أسماء الجداول والقيود: تبقى في السجلّ لا عند العميل.
+    console.error("[action] updateTransportOfferStatus:", error);
+    return { success: false, error: "تعذّر تنفيذ العملية. حاول مرة أخرى." };
+  }
 
   await logActivity(supabase, {
     actorId: user?.id,
